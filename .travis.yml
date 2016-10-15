@@ -1,4 +1,3 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
 os:
   - linux
@@ -8,12 +7,6 @@ julia:
   - nightly
 notifications:
   email: false
-# uncomment the following lines to override the default test script
-#script:
-#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("Recommendation"); Pkg.test("Recommendation"; coverage=true)'
-after_success:
-  # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("Recommendation")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("Recommendation")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("Recommendation"); Pkg.test("Recommendation"; coverage=true)'
