@@ -1,9 +1,9 @@
 export ItemMean
 
 immutable ItemMean <: Recommender
-    mat::Array{Float64,2}
+    m::SparseMatrixCSC
 end
 
 function predict(recommender::ItemMean, u::Int, i::Int)
-    mean(recommender.mat[:, i])
+    mean(recommender.m[:, i])
 end

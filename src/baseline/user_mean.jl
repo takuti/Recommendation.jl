@@ -1,9 +1,9 @@
 export UserMean
 
 immutable UserMean <: Recommender
-    mat::Array{Float64,2}
+    m::SparseMatrixCSC
 end
 
 function predict(recommender::UserMean, u::Int, i::Int)
-    mean(recommender.mat[u, :])
+    mean(recommender.m[u, :])
 end
