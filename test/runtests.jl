@@ -1,11 +1,9 @@
 using Recommendation
 using Base.Test
 
-# write your own tests here
-@test 1 == 1
+include("test_recommender.jl")
 
-include("recommender.jl")
+include("baseline/test_user_mean.jl")
+include("baseline/test_item_mean.jl")
 
-include("baseline.jl")
-
-include("utils/measures.jl")
+include("utils/test_measures.jl")
