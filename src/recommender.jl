@@ -9,5 +9,5 @@ end
 
 # Return a ranking score of item i for user u
 function ranking(recommender::Recommender, u::Int, i::Int)
-    error("ranking is not implemented for recommender type $(typeof(recommender))")
+    predict(recommender, u, i)
 end
