@@ -8,6 +8,8 @@ include("baseline/most_popular.jl")
 include("baseline/threshold_percentage.jl")
 include("baseline/co_occurrence.jl")
 
+include("content/tf_idf.jl")
+
 include("utils/measures.jl")
 
 end # module

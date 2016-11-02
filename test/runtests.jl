@@ -9,4 +9,6 @@ include("baseline/test_most_popular.jl")
 include("baseline/test_threshold_percentage.jl")
 include("baseline/test_co_occurrence.jl")
 
+include("content/test_tf_idf.jl")
+
 include("utils/test_measures.jl")
