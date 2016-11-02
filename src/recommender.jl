@@ -1,7 +1,17 @@
 export Recommender
-export predict, ranking
+export execute, predict, ranking
 
 abstract Recommender
+
+function execute{T}(recommender::Recommender, u::Int, k::Int, item_names::Array{T})
+    d = Dict{T,Float64}()
+    n_item = size(item_names, 1)
+    for i in 1:n_item
+        score = ranking(recommender, u, i)
+        d[item_names[i]] = score
+    end
+    sort(collect(d), by=tuple->last(tuple), rev=true)[1:k]
+end
 
 function predict(recommender::Recommender, u::Int, i::Int)
     error("predict is not implemented for recommender type $(typeof(recommender))")
