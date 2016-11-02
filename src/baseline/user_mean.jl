@@ -5,5 +5,6 @@ immutable UserMean <: Recommender
 end
 
 function predict(recommender::UserMean, u::Int, i::Int)
-    mean(recommender.m[u, :])
+    v = recommender.m[u, :]
+    sum(v) / nnz(v)
 end

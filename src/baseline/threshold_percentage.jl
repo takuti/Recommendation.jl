@@ -7,5 +7,5 @@ end
 
 function ranking(recommender::ThresholdPercentage, u::Int, i::Int)
     v = recommender.m[:, i]
-    v[v .>= recommender.th].n / v.n * 100.0
+    v[v .>= recommender.th].n / nnz(v) * 100.0
 end
