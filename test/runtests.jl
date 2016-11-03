@@ -11,4 +11,6 @@ include("baseline/test_co_occurrence.jl")
 
 include("content/test_tf_idf.jl")
 
+include("rating/test_user_knn.jl")
+
 include("utils/test_measures.jl")

@@ -10,6 +10,8 @@ include("baseline/co_occurrence.jl")
 
 include("content/tf_idf.jl")
 
+include("rating/user_knn.jl")
+
 include("utils/measures.jl")
 
 end # module
