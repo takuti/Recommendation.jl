@@ -11,12 +11,9 @@ function test_user_knn()
     @test_approx_eq_eps recommender.corr[2, 3] -0.693 1e-3
 
     rec = execute(recommender, 1, 3, ["item$(i)" for i in 1:8])
-    @test first(rec[1]) == "item8"
-    @test last(rec[1]) == 3.0
-    @test first(rec[2]) == "item5"
-    @test last(rec[2]) == 3.0
-    @test first(rec[3]) == "item6"
-    @test last(rec[3]) == 2.0
+    @test rec[1] == ("item8" => 3.0)
+    @test rec[2] == ("item5" => 3.0)
+    @test rec[3] == ("item6" => 2.0)
 end
 
 test_user_knn()

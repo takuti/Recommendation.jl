@@ -10,28 +10,20 @@ function test_item_knn()
     @test_approx_eq_eps recommender.sim[5, 6] 0.405 1e-3
 
     rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])
-    @test first(rec[1]) == "item8"
-    @test last(rec[1]) == 4.0
-    @test first(rec[2]) == "item2"
-    @test last(rec[2]) == 3.0
-    @test first(rec[3]) == "item5"
-    @test last(rec[3]) == 2.0
-    @test first(rec[4]) == "item6"
-    @test last(rec[4]) == 1.0
+    @test rec[1] == ("item8" => 4.0)
+    @test rec[2] == ("item2" => 3.0)
+    @test rec[3] == ("item5" => 2.0)
+    @test rec[4] == ("item6" => 1.0)
 
     recommender = ItemKNN(sparse(m), 1, is_normalized=true);
     @test_approx_eq_eps recommender.sim[1, 2] 0.174 1e-3
     @test_approx_eq_eps recommender.sim[5, 6] 0.039 1e-3
 
     rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])
-    @test first(rec[1]) == "item8"
-    @test last(rec[1]) == 4.0
-    @test first(rec[2]) == "item2"
-    @test last(rec[2]) == 3.0
-    @test first(rec[3]) == "item5"
-    @test last(rec[3]) == 2.0
-    @test first(rec[4]) == "item6"
-    @test last(rec[4]) == 1.0
+    @test rec[1] == ("item8" => 4.0)
+    @test rec[2] == ("item2" => 3.0)
+    @test rec[3] == ("item5" => 2.0)
+    @test rec[4] == ("item6" => 1.0)
 end
 
 test_item_knn()
