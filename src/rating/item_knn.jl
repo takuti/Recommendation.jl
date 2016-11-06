@@ -8,36 +8,7 @@ immutable ItemKNN <: Recommender
 end
 
 ItemKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
-    n_user, n_item = size(m)
-    sim = zeros(n_item, n_item)
-
-    m_ = copy(m)
-    if is_normalized
-        # subtract mean
-        for u in 1:n_user
-            indices = !isnan(m_[u, :])
-            vmean = mean(m_[u, indices])
-            m_[u, indices] -= vmean
-        end
-    end
-
-    # unlike pearson correlation, matrix can be filled by zeros for cosine similarity
-    m_[isnan(m_)] = 0
-
-    # compute L2 nrom of each column
-    norms = sqrt(sum(m_.^2, 1))
-
-    for ii in 1:n_item
-        for ij in ii:n_item
-            numer = dot(m_[:, ii], m_[:, ij])
-            denom = norms[ii] * norms[ij]
-            s = numer / denom
-
-            sim[ii, ij] = s
-            if (ii != ij); sim[ij, ii] = s; end
-        end
-    end
-
+    sim = MatrixUtils.cosine_similarity(m, 2, is_normalized=is_normalized)
     ItemKNN(m, sim, k, is_normalized)
 end
 

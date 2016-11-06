@@ -8,26 +8,7 @@ immutable UserKNN <: Recommender
 end
 
 UserKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
-    n_user = size(m)[1]
-    corr = zeros(n_user, n_user)
-
-    for ui in 1:n_user
-        for uj in ui:n_user
-            # pairwise correlation (i.e., ignore NaNs)
-            ij = !isnan(m[ui, :]) & !isnan(m[uj, :])
-
-            vi = m[ui, :] - mean(m[ui, ij])
-            vj = m[uj, :] - mean(m[uj, ij])
-
-            numer = dot(vi[ij], vj[ij])
-            denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
-
-            c = numer / denom
-            corr[ui, uj] = c
-            if (ui != uj); corr[uj, ui] = c; end
-        end
-    end
-
+    corr = MatrixUtils.pearson_correlation(m, 1)
     UserKNN(m, corr, k, is_normalized)
 end
 

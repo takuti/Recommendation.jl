@@ -14,5 +14,6 @@ include("rating/user_knn.jl")
 include("rating/item_knn.jl")
 
 include("utils/measures.jl")
+include("utils/matrix.jl")
 
 end # module
