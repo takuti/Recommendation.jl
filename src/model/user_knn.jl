@@ -2,20 +2,28 @@ export UserKNN
 
 immutable UserKNN <: Recommender
     m::AbstractMatrix
-    corr::AbstractMatrix
+    sim::AbstractMatrix
     k::Int
-    is_normalized::Bool
+    is_normalized_pred::Bool
 end
 
-UserKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
-    corr = MatrixUtils.pearson_correlation(m, 1)
-    UserKNN(m, corr, k, is_normalized)
+UserKNN(m::AbstractMatrix, k::Int;
+        similarity="pearson", is_normalized_cosine::Bool=false,
+        is_normalized_pred::Bool=false) = begin
+
+    if similarity == "pearson"
+        sim = MatrixUtils.pearson_correlation(m, 1)
+    elseif similarity == "cosine"
+        sim = MatrixUtils.cosine_similarity(m, 1, is_normalized_cosine)
+    end
+
+    UserKNN(m, sim, k, is_normalized_pred)
 end
 
 function predict(recommender::UserKNN, u::Int, i::Int)
     numer = denom = 0
 
-    pairs = collect(zip(1:size(recommender.m)[1], recommender.corr[u, :]))
+    pairs = collect(zip(1:size(recommender.m)[1], recommender.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
 
@@ -26,7 +34,7 @@ function predict(recommender::UserKNN, u::Int, i::Int)
         if isnan(r); continue; end
 
         r_ = 0
-        if recommender.is_normalized
+        if recommender.is_normalized_pred
             jj = !isnan(v_near)
             r_ = mean(v_near[jj])
         end
@@ -36,7 +44,7 @@ function predict(recommender::UserKNN, u::Int, i::Int)
     end
 
     pred = (denom == 0) ? 0 : numer / denom
-    if recommender.is_normalized
+    if recommender.is_normalized_pred
         ii = !isnan(recommender.m[u, :])
         pred += mean(recommender.m[u, ii])
     end

@@ -28,7 +28,7 @@ function pearson_correlation(mat::AbstractMatrix, axis::Int=1)
     corr
 end
 
-function cosine_similarity(mat::AbstractMatrix, axis::Int=1; is_normalized::Bool=false)
+function cosine_similarity(mat::AbstractMatrix, axis::Int=1, is_normalized::Bool=false)
     m = (axis == 1) ? mat' : copy(mat)
 
     n_row, n_col = size(m)

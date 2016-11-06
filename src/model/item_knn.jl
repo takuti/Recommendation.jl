@@ -4,12 +4,18 @@ immutable ItemKNN <: Recommender
     m::AbstractMatrix
     sim::AbstractMatrix
     k::Int
-    is_normalized::Bool
 end
 
-ItemKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
-    sim = MatrixUtils.cosine_similarity(m, 2, is_normalized=is_normalized)
-    ItemKNN(m, sim, k, is_normalized)
+ItemKNN(m::AbstractMatrix, k::Int;
+        similarity="pearson", is_normalized_cosine::Bool=false) = begin
+
+    if similarity == "pearson"
+        sim = MatrixUtils.pearson_correlation(m, 2)
+    elseif similarity == "cosine"
+        sim = MatrixUtils.cosine_similarity(m, 2, is_normalized_cosine)
+    end
+
+    ItemKNN(m, sim, k)
 end
 
 function predict(recommender::ItemKNN, u::Int, i::Int)
