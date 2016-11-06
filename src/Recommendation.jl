@@ -8,12 +8,11 @@ include("baseline/most_popular.jl")
 include("baseline/threshold_percentage.jl")
 include("baseline/co_occurrence.jl")
 
-include("content/tf_idf.jl")
+include("model/tf_idf.jl")
+include("model/user_knn.jl")
+include("model/item_knn.jl")
 
-include("rating/user_knn.jl")
-include("rating/item_knn.jl")
-
-include("utils/measures.jl")
-include("utils/matrix.jl")
+include("util/measures.jl")
+include("util/matrix.jl")
 
 end # module
