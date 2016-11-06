@@ -1,14 +1,14 @@
 export UserKNN
 
 immutable UserKNN <: Recommender
-    m::SparseMatrixCSC
+    m::AbstractMatrix
     corr::AbstractMatrix
     k::Int
     is_normalized::Bool
 end
 
-UserKNN(m::SparseMatrixCSC, k::Int; is_normalized::Bool=false) = begin
-    n_user = m.m
+UserKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
+    n_user = size(m)[1]
     corr = zeros(n_user, n_user)
 
     for ui in 1:n_user
@@ -34,7 +34,7 @@ end
 function predict(recommender::UserKNN, u::Int, i::Int)
     numer = denom = 0
 
-    pairs = collect(zip(1:recommender.m.m, recommender.corr[u, :]))
+    pairs = collect(zip(1:size(recommender.m)[1], recommender.corr[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
 

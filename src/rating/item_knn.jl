@@ -1,13 +1,13 @@
 export ItemKNN
 
 immutable ItemKNN <: Recommender
-    m::SparseMatrixCSC
+    m::AbstractMatrix
     sim::AbstractMatrix
     k::Int
     is_normalized::Bool
 end
 
-ItemKNN(m::SparseMatrixCSC, k::Int; is_normalized::Bool=false) = begin
+ItemKNN(m::AbstractMatrix, k::Int; is_normalized::Bool=false) = begin
     n_user, n_item = size(m)
     sim = zeros(n_item, n_item)
 
@@ -45,7 +45,7 @@ function predict(recommender::ItemKNN, u::Int, i::Int)
     numer = denom = 0
 
     # negative similarities are filtered
-    pairs = collect(zip(1:recommender.m.n, max(recommender.sim[i, :], 0)))
+    pairs = collect(zip(1:size(recommender.m)[2], max(recommender.sim[i, :], 0)))
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
 
     for (j, s) in ordered_pairs

@@ -1,12 +1,12 @@
 export TFIDF
 
 immutable TFIDF <: ContentRecommender
-    m::SparseMatrixCSC # document x attribute
-    tf::Array{Int,2} # 1 x attribute
-    idf::Array{Float64,2} # 1 x attribute
+    m::AbstractMatrix # document x attribute
+    tf::AbstractMatrix # 1 x attribute
+    idf::AbstractMatrix # 1 x attribute
 end
 
-TFIDF(m::SparseMatrixCSC; does_use_idf::Bool=false, is_normalized::Bool=false) = begin
+TFIDF(m::AbstractMatrix; does_use_idf::Bool=false, is_normalized::Bool=false) = begin
     tf = sum(m, 1)
 
     idf = ones(size(tf))
@@ -21,7 +21,7 @@ TFIDF(m::SparseMatrixCSC; does_use_idf::Bool=false, is_normalized::Bool=false) =
     TFIDF(m, tf, idf)
 end
 
-function predict(recommender::TFIDF, uv::SparseVector, i::Int)
+function predict(recommender::TFIDF, uv::AbstractVector, i::Int)
     profile = recommender.m' * uv # attribute x 1
     ((recommender.m .* recommender.idf) * profile)[i]
 end

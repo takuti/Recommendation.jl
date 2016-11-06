@@ -3,7 +3,7 @@ export execute, predict, ranking
 
 abstract Recommender
 
-function execute{T}(recommender::Recommender, u::Int, k::Int, item_names::Array{T})
+function execute{T}(recommender::Recommender, u::Int, k::Int, item_names::AbstractVector{T})
     d = Dict{T,Float64}()
     n_item = size(item_names, 1)
     for i in 1:n_item
@@ -24,7 +24,7 @@ end
 
 abstract ContentRecommender <: Recommender
 
-function execute{T}(recommender::ContentRecommender, uv::SparseVector, k::Int, item_names::Array{T})
+function execute{T}(recommender::ContentRecommender, uv::AbstractVector, k::Int, item_names::AbstractVector{T})
     d = Dict{T,Float64}()
     n_item = size(item_names, 1)
     for i in 1:n_item
@@ -34,10 +34,10 @@ function execute{T}(recommender::ContentRecommender, uv::SparseVector, k::Int, i
     sort(collect(d), by=tuple->last(tuple), rev=true)[1:k]
 end
 
-function predict(recommender::Recommender, uv::SparseVector, i::Int)
+function predict(recommender::Recommender, uv::AbstractVector, i::Int)
     error("predict is not implemented for recommender type $(typeof(recommender))")
 end
 
-function ranking(recommender::Recommender, uv::SparseVector, i::Int)
+function ranking(recommender::Recommender, uv::AbstractVector, i::Int)
     predict(recommender, uv, i)
 end

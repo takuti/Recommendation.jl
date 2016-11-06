@@ -1,9 +1,9 @@
 export MostPopular
 
 immutable MostPopular <: Recommender
-    m::SparseMatrixCSC
+    m::AbstractMatrix
 end
 
 function ranking(recommender::MostPopular, u::Int, i::Int)
-    nnz(recommender.m[:, i])
+    countnz(recommender.m[:, i])
 end

@@ -1,10 +1,10 @@
 export ItemMean
 
 immutable ItemMean <: Recommender
-    m::SparseMatrixCSC
+    m::AbstractMatrix
 end
 
 function predict(recommender::ItemMean, u::Int, i::Int)
     v = recommender.m[:, i]
-    sum(v) / nnz(v)
+    sum(v) / countnz(v)
 end
