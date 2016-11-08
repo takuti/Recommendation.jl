@@ -7,12 +7,12 @@ immutable ItemKNN <: Recommender
 end
 
 ItemKNN(m::AbstractMatrix, k::Int;
-        similarity="pearson", is_normalized_cosine::Bool=false) = begin
+        similarity="pearson", is_adjusted_cosine::Bool=false) = begin
 
     if similarity == "pearson"
         sim = MatrixUtils.pearson_correlation(m, 2)
     elseif similarity == "cosine"
-        sim = MatrixUtils.cosine_similarity(m, 2, is_normalized_cosine)
+        sim = MatrixUtils.cosine_similarity(m, 2, is_adjusted_cosine)
     end
 
     ItemKNN(m, sim, k)

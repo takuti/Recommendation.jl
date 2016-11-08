@@ -28,13 +28,13 @@ function pearson_correlation(mat::AbstractMatrix, axis::Int=1)
     corr
 end
 
-function cosine_similarity(mat::AbstractMatrix, axis::Int=1, is_normalized::Bool=false)
+function cosine_similarity(mat::AbstractMatrix, axis::Int=1, is_adjusted::Bool=false)
     m = (axis == 1) ? mat' : copy(mat)
 
     n_row, n_col = size(m)
     sim = zeros(n_col, n_col)
 
-    if is_normalized
+    if is_adjusted
         # subtract mean
         for ri in 1:n_row
             indices = !isnan(m[ri, :])

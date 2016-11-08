@@ -15,7 +15,7 @@ function test_item_knn()
     @test rec[3] == ("item5" => 2.0)
     @test rec[4] == ("item6" => 1.0)
 
-    recommender = ItemKNN(sparse(m), 1, similarity="cosine", is_normalized_cosine=true);
+    recommender = ItemKNN(sparse(m), 1, similarity="cosine", is_adjusted_cosine=true);
     @test_approx_eq_eps recommender.sim[1, 2] 0.174 1e-3
     @test_approx_eq_eps recommender.sim[5, 6] 0.039 1e-3
 

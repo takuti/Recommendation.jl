@@ -15,7 +15,7 @@ function test_user_knn()
     @test rec[2] == ("item5" => 3.0)
     @test rec[3] == ("item6" => 2.0)
 
-    recommender = UserKNN(sparse(m), 1, similarity="pearson", is_normalized_pred=true);
+    recommender = UserKNN(sparse(m), 1, similarity="pearson", is_normalized=true);
 
     @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
     @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3

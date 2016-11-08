@@ -4,20 +4,20 @@ immutable UserKNN <: Recommender
     m::AbstractMatrix
     sim::AbstractMatrix
     k::Int
-    is_normalized_pred::Bool
+    is_normalized::Bool
 end
 
 UserKNN(m::AbstractMatrix, k::Int;
-        similarity="pearson", is_normalized_cosine::Bool=false,
-        is_normalized_pred::Bool=false) = begin
+        similarity="pearson", is_adjusted_cosine::Bool=false,
+        is_normalized::Bool=false) = begin
 
     if similarity == "pearson"
         sim = MatrixUtils.pearson_correlation(m, 1)
     elseif similarity == "cosine"
-        sim = MatrixUtils.cosine_similarity(m, 1, is_normalized_cosine)
+        sim = MatrixUtils.cosine_similarity(m, 1, is_adjusted_cosine)
     end
 
-    UserKNN(m, sim, k, is_normalized_pred)
+    UserKNN(m, sim, k, is_normalized)
 end
 
 function predict(recommender::UserKNN, u::Int, i::Int)
@@ -34,7 +34,7 @@ function predict(recommender::UserKNN, u::Int, i::Int)
         if isnan(r); continue; end
 
         r_ = 0
-        if recommender.is_normalized_pred
+        if recommender.is_normalized
             jj = !isnan(v_near)
             r_ = mean(v_near[jj])
         end
@@ -44,7 +44,7 @@ function predict(recommender::UserKNN, u::Int, i::Int)
     end
 
     pred = (denom == 0) ? 0 : numer / denom
-    if recommender.is_normalized_pred
+    if recommender.is_normalized
         ii = !isnan(recommender.m[u, :])
         pred += mean(recommender.m[u, ii])
     end
