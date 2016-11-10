@@ -12,6 +12,7 @@ include("model/tf_idf.jl")
 include("model/user_knn.jl")
 include("model/item_knn.jl")
 include("model/svd.jl")
+include("model/mf.jl")
 
 include("util/measures.jl")
 include("util/matrix.jl")
