@@ -12,5 +12,6 @@ include("baseline/test_co_occurrence.jl")
 include("model/test_tf_idf.jl")
 include("model/test_user_knn.jl")
 include("model/test_item_knn.jl")
+include("model/test_svd.jl")
 
 include("util/test_measures.jl")
