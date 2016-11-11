@@ -1,6 +1,6 @@
 module Recommendation
 
-include("recommender.jl")
+include("base_recommender.jl")
 
 include("baseline/user_mean.jl")
 include("baseline/item_mean.jl")
