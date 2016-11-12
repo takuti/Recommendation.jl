@@ -33,16 +33,16 @@ function build(recommender::MF;
             r = recommender.da.R[u, i]
             if isnan(r); continue; end
 
-            uv, iv = P[u], Q[i]
+            uv, iv = P[u, :], Q[i, :]
 
             err = r - dot(uv, iv)
             if abs(err) >= eps; is_converged = false; end
 
             grad = -2 * (err * iv - reg * uv)
-            P[u] = uv - learning_rate * grad
+            P[u, :] = uv - learning_rate * grad
 
             grad = -2 * (err * uv - reg * iv)
-            Q[i] = iv - learning_rate * grad
+            Q[i, :] = iv - learning_rate * grad
         end
 
         if is_converged; break; end;
