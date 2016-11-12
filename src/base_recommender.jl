@@ -21,23 +21,3 @@ end
 function ranking(recommender::Recommender, u::Int, i::Int)
     predict(recommender, u, i)
 end
-
-abstract ContentRecommender <: Recommender
-
-function execute{T}(recommender::ContentRecommender, uv::AbstractVector, k::Int, item_names::AbstractVector{T})
-    d = Dict{T,Float64}()
-    n_item = size(item_names, 1)
-    for i in 1:n_item
-        score = ranking(recommender, uv, i)
-        d[item_names[i]] = score
-    end
-    sort(collect(d), by=tuple->last(tuple), rev=true)[1:k]
-end
-
-function predict(recommender::Recommender, uv::AbstractVector, i::Int)
-    error("predict is not implemented for recommender type $(typeof(recommender))")
-end
-
-function ranking(recommender::Recommender, uv::AbstractVector, i::Int)
-    predict(recommender, uv, i)
-end
