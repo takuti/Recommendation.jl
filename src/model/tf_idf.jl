@@ -6,8 +6,8 @@ immutable TFIDF <: Recommender
     idf::AbstractMatrix # 1 x attribute
 end
 
-function predict(recommender::TFIDF, u::Int, i::Int)
-    uv = recommender.da.user_attributes[u]
-    profile = recommender.da.R' * uv # attribute x 1
-    ((recommender.da.R .* recommender.idf) * profile)[i]
+function predict(rec::TFIDF, u::Int, i::Int)
+    uv = rec.da.user_attributes[u]
+    profile = rec.da.R' * uv # attribute x 1
+    ((rec.da.R .* rec.idf) * profile)[i]
 end

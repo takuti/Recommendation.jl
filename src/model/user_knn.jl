@@ -12,10 +12,10 @@ UserKNN(da::DataAccessor, k::Int; is_normalized::Bool=false) = begin
     UserKNN(da, zeros(n_user, n_user), k, is_normalized)
 end
 
-function build(recommender::UserKNN)
+function build(rec::UserKNN)
     # Pearson correlation
 
-    R = copy(recommender.da.R)
+    R = copy(rec.da.R)
 
     n_row = size(R, 1)
 
@@ -31,27 +31,27 @@ function build(recommender::UserKNN)
             denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
 
             c = numer / denom
-            recommender.sim[ri, rj] = c
-            if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
+            rec.sim[ri, rj] = c
+            if (ri != rj); rec.sim[rj, ri] = c; end # symmetric
         end
     end
 end
 
-function predict(recommender::UserKNN, u::Int, i::Int)
+function predict(rec::UserKNN, u::Int, i::Int)
     numer = denom = 0
 
-    pairs = collect(zip(1:size(recommender.da.R)[1], recommender.sim[u, :]))
+    pairs = collect(zip(1:size(rec.da.R)[1], rec.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(rec.k + 1)]
 
     for (u_near, w) in ordered_pairs
-        v_near = recommender.da.R[u_near, :]
+        v_near = rec.da.R[u_near, :]
 
         r = v_near[i]
         if isnan(r); continue; end
 
         r_ = 0
-        if recommender.is_normalized
+        if rec.is_normalized
             jj = !isnan(v_near)
             r_ = mean(v_near[jj])
         end
@@ -61,9 +61,9 @@ function predict(recommender::UserKNN, u::Int, i::Int)
     end
 
     pred = (denom == 0) ? 0 : numer / denom
-    if recommender.is_normalized
-        ii = !isnan(recommender.da.R[u, :])
-        pred += mean(recommender.da.R[u, ii])
+    if rec.is_normalized
+        ii = !isnan(rec.da.R[u, :])
+        pred += mean(rec.da.R[u, ii])
     end
     pred
 end

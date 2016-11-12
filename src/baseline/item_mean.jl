@@ -10,15 +10,15 @@ ItemMean(da::DataAccessor) = begin
     ItemMean(da, zeros(n_item))
 end
 
-function build(recommender::ItemMean)
-    n_item = size(recommender.da.R, 2)
+function build(rec::ItemMean)
+    n_item = size(rec.da.R, 2)
 
     for i in 1:n_item
-        v = recommender.da.R[:, i]
-        recommender.scores[i] = sum(v) / countnz(v)
+        v = rec.da.R[:, i]
+        rec.scores[i] = sum(v) / countnz(v)
     end
 end
 
-function predict(recommender::ItemMean, u::Int, i::Int)
-    recommender.scores[i]
+function predict(rec::ItemMean, u::Int, i::Int)
+    rec.scores[i]
 end

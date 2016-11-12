@@ -10,14 +10,14 @@ MostPopular(da::DataAccessor) = begin
     MostPopular(da, zeros(n_item))
 end
 
-function build(recommender::MostPopular)
-    n_item = size(recommender.da.R, 2)
+function build(rec::MostPopular)
+    n_item = size(rec.da.R, 2)
 
     for i in 1:n_item
-        recommender.scores[i] = countnz(recommender.da.R[:, i])
+        rec.scores[i] = countnz(rec.da.R[:, i])
     end
 end
 
-function ranking(recommender::MostPopular, u::Int, i::Int)
-    recommender.scores[i]
+function ranking(rec::MostPopular, u::Int, i::Int)
+    rec.scores[i]
 end

@@ -11,15 +11,15 @@ ThresholdPercentage(da::DataAccessor, th::Number) = begin
     ThresholdPercentage(da, th, zeros(n_item))
 end
 
-function build(recommender::ThresholdPercentage)
-    n_item = size(recommender.da.R, 2)
+function build(rec::ThresholdPercentage)
+    n_item = size(rec.da.R, 2)
 
     for i in 1:n_item
-        v = recommender.da.R[:, i]
-        recommender.scores[i] = length(v[v .>= recommender.th]) / countnz(v) * 100.0
+        v = rec.da.R[:, i]
+        rec.scores[i] = length(v[v .>= rec.th]) / countnz(v) * 100.0
     end
 end
 
-function ranking(recommender::ThresholdPercentage, u::Int, i::Int)
-    recommender.scores[i]
+function ranking(rec::ThresholdPercentage, u::Int, i::Int)
+    rec.scores[i]
 end
