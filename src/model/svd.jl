@@ -1,21 +1,32 @@
 export SVD
 
+typealias Parameters Dict{Symbol,Any}
+
 immutable SVD <: Recommender
     da::DataAccessor
-    U::AbstractMatrix
-    S::AbstractVector
-    V::AbstractMatrix
+    params::Parameters
     k::Int
 end
 
 SVD(da::DataAccessor, k::Int) = begin
-    # NaNs are filled by zeros for now
-    da.R[isnan(da.R)] = 0
+    n_user, n_item = size(da.R)
+    params = Dict(:U => zeros(n_user, k),
+                  :S => zeros(k),
+                  :V => zeros(n_item, k))
+    SVD(da, params, k)
+end
 
-    res = svds(da.R, nsv=k)[1]
-    SVD(da, res.U, res.S, res.Vt, k)
+function build(recommender::SVD)
+    # NaNs are filled by zeros for now
+    R = copy(recommender.da.R)
+    R[isnan(R)] = 0
+
+    res = svds(R, nsv=recommender.k)[1]
+    recommender.params[:U] = res.U
+    recommender.params[:S] = res.S
+    recommender.params[:V] = res.Vt
 end
 
 function predict(recommender::SVD, u::Int, i::Int)
-    dot(recommender.U[u, :] .* recommender.S, recommender.V[i, :])
+    dot(recommender.params[:U][u, :] .* recommender.params[:S], recommender.params[:V][i, :])
 end
