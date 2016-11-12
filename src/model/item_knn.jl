@@ -6,16 +6,42 @@ immutable ItemKNN <: Recommender
     k::Int
 end
 
-ItemKNN(da::DataAccessor, k::Int;
-        similarity="pearson", is_adjusted_cosine::Bool=false) = begin
+ItemKNN(da::DataAccessor, k::Int) = begin
+    n_item = size(da.R, 2)
+    ItemKNN(da, zeros(n_item, n_item), k)
+end
 
-    if similarity == "pearson"
-        sim = MatrixUtils.pearson_correlation(da.R, 2)
-    elseif similarity == "cosine"
-        sim = MatrixUtils.cosine_similarity(da.R, 2, is_adjusted_cosine)
+function build(recommender::ItemKNN; is_adjusted_cosine::Bool=false)
+    # cosine similarity
+
+    R = copy(recommender.da.R)
+    n_row, n_col = size(R)
+
+    if is_adjusted_cosine
+        # subtract mean
+        for ri in 1:n_row
+            indices = !isnan(R[ri, :])
+            vmean = mean(R[ri, indices])
+            R[ri, indices] -= vmean
+        end
     end
 
-    ItemKNN(da, sim, k)
+    # unlike pearson correlation, matrix can be filled by zeros for cosine similarity
+    R[isnan(R)] = 0
+
+    # compute L2 nrom of each column
+    norms = sqrt(sum(R.^2, 1))
+
+    for ci in 1:n_col
+        for cj in ci:n_col
+            numer = dot(R[:, ci], R[:, cj])
+            denom = norms[ci] * norms[cj]
+            s = numer / denom
+
+            recommender.sim[ci, cj] = s
+            if (ci != cj); recommender.sim[cj, ci] = s; end
+        end
+    end
 end
 
 function predict(recommender::ItemKNN, u::Int, i::Int)

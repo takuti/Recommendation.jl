@@ -16,6 +16,5 @@ include("model/svd.jl")
 include("model/mf.jl")
 
 include("util/measures.jl")
-include("util/matrix.jl")
 
 end # module

@@ -7,16 +7,17 @@ immutable ThresholdPercentage <: Recommender
 end
 
 ThresholdPercentage(da::DataAccessor, th::Number) = begin
-    n_user, n_item = size(da.R)
+    n_item = size(da.R, 2)
+    ThresholdPercentage(da, th, zeros(n_item))
+end
 
-    scores = zeros(n_item)
+function build(recommender::ThresholdPercentage)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        v = da.R[:, i]
-        scores[i] = length(v[v .>= th]) / countnz(v) * 100.0
+        v = recommender.da.R[:, i]
+        recommender.scores[i] = length(v[v .>= recommender.th]) / countnz(v) * 100.0
     end
-
-    ThresholdPercentage(da, th, scores)
 end
 
 function ranking(recommender::ThresholdPercentage, u::Int, i::Int)

@@ -47,6 +47,9 @@ MF(da::DataAccessor, k::Int;
     MF(da, R_approx, P, Q, k)
 end
 
+function build(recommender::MF)
+end
+
 function predict(recommender::MF, u::Int, i::Int)
     recommender.R_approx[u, i]
 end

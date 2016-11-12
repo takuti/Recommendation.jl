@@ -1,7 +1,11 @@
 export Recommender, ContentRecommender
-export execute, predict, ranking
+export build, execute, predict, ranking
 
 abstract Recommender
+
+function build(recommender::Recommender; kwargs...)
+    error("build is not implemented for recommender type $(typeof(recommender))")
+end
 
 function execute{T}(recommender::Recommender, u::Int, k::Int, item_names::AbstractVector{T})
     d = Dict{T,Float64}()

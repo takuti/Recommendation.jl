@@ -3,6 +3,7 @@ function test_threshold_percentage()
 
     da = DataAccessor(sparse([1 2 3; 4 5 6]))
     recommender = ThresholdPercentage(da, 2)
+    build(recommender)
     @test ranking(recommender, 1, 1) == 50.0
     @test ranking(recommender, 1, 2) == 100.0
 end

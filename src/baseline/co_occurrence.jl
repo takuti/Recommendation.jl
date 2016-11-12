@@ -7,20 +7,21 @@ immutable CoOccurrence <: Recommender
 end
 
 CoOccurrence(da::DataAccessor, i_ref::Int) = begin
-    n_user, n_item = size(da.R)
+    n_item = size(da.R, 2)
+    CoOccurrence(da, i_ref, zeros(n_item))
+end
 
-    v_ref = da.R[:, i_ref]
+function build(recommender::CoOccurrence)
+    n_item = size(recommender.da.R, 2)
+
+    v_ref = recommender.da.R[:, recommender.i_ref]
     c = countnz(v_ref)
 
-    scores = zeros(n_item)
-
     for i in 1:n_item
-        v = da.R[:, i]
+        v = recommender.da.R[:, i]
         cc = length(v_ref[(v_ref .> 0) & (v .> 0)])
-        scores[i] = cc / c * 100.0
+        recommender.scores[i] = cc / c * 100.0
     end
-
-    CoOccurrence(da, i_ref, scores)
 end
 
 function ranking(recommender::CoOccurrence, u::Int, i::Int)

@@ -6,7 +6,8 @@ function test_user_knn()
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
 
-    recommender = UserKNN(da, 1, similarity="pearson");
+    recommender = UserKNN(da, 1)
+    build(recommender)
 
     @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
     @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3
@@ -16,7 +17,8 @@ function test_user_knn()
     @test rec[2] == ("item5" => 3.0)
     @test rec[3] == ("item6" => 2.0)
 
-    recommender = UserKNN(da, 1, similarity="pearson", is_normalized=true);
+    recommender = UserKNN(da, 1, is_normalized=true);
+    build(recommender)
 
     @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
     @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3

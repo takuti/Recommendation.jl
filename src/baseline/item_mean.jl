@@ -6,16 +6,17 @@ immutable ItemMean <: Recommender
 end
 
 ItemMean(da::DataAccessor) = begin
-    n_user, n_item = size(da.R)
+    n_item = size(da.R, 2)
+    ItemMean(da, zeros(n_item))
+end
 
-    scores = zeros(n_item)
+function build(recommender::ItemMean)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        v = da.R[:, i]
-        scores[i] = sum(v) / countnz(v)
+        v = recommender.da.R[:, i]
+        recommender.scores[i] = sum(v) / countnz(v)
     end
-
-    ItemMean(da, scores)
 end
 
 function predict(recommender::ItemMean, u::Int, i::Int)

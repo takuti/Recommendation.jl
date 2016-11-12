@@ -6,15 +6,16 @@ immutable MostPopular <: Recommender
 end
 
 MostPopular(da::DataAccessor) = begin
-    n_user, n_item = size(da.R)
+    n_item = size(da.R, 2)
+    MostPopular(da, zeros(n_item))
+end
 
-    scores = zeros(n_item)
+function build(recommender::MostPopular)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        scores[i] = countnz(da.R[:, i])
+        recommender.scores[i] = countnz(recommender.da.R[:, i])
     end
-
-    MostPopular(da, scores)
 end
 
 function ranking(recommender::MostPopular, u::Int, i::Int)

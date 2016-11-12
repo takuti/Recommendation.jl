@@ -7,17 +7,34 @@ immutable UserKNN <: Recommender
     is_normalized::Bool
 end
 
-UserKNN(da::DataAccessor, k::Int;
-        similarity="pearson", is_adjusted_cosine::Bool=false,
-        is_normalized::Bool=false) = begin
+UserKNN(da::DataAccessor, k::Int; is_normalized::Bool=false) = begin
+    n_user = size(da.R, 1)
+    UserKNN(da, zeros(n_user, n_user), k, is_normalized)
+end
 
-    if similarity == "pearson"
-        sim = MatrixUtils.pearson_correlation(da.R, 1)
-    elseif similarity == "cosine"
-        sim = MatrixUtils.cosine_similarity(da.R, 1, is_adjusted_cosine)
+function build(recommender::UserKNN)
+    # Pearson correlation
+
+    R = copy(recommender.da.R)
+
+    n_row = size(R, 1)
+
+    for ri in 1:n_row
+        for rj in ri:n_row
+            # pairwise correlation (i.e., ignore NaNs)
+            ij = !isnan(R[ri, :]) & !isnan(R[rj, :])
+
+            vi = R[ri, :] - mean(R[ri, ij])
+            vj = R[rj, :] - mean(R[rj, ij])
+
+            numer = dot(vi[ij], vj[ij])
+            denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
+
+            c = numer / denom
+            recommender.sim[ri, rj] = c
+            if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
+        end
     end
-
-    UserKNN(da, sim, k, is_normalized)
 end
 
 function predict(recommender::UserKNN, u::Int, i::Int)

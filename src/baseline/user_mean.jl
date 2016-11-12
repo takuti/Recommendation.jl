@@ -6,16 +6,17 @@ immutable UserMean <: Recommender
 end
 
 UserMean(da::DataAccessor) = begin
-    n_user, n_item = size(da.R)
+    n_user = size(da.R, 1)
+    UserMean(da, zeros(n_user))
+end
 
-    scores = zeros(n_user)
+function build(recommender::UserMean)
+    n_user = size(recommender.da.R, 1)
 
     for u in 1:n_user
-        v = da.R[u, :]
-        scores[u] = sum(v) / countnz(v)
+        v = recommender.da.R[u, :]
+        recommender.scores[u] = sum(v) / countnz(v)
     end
-
-    UserMean(da, scores)
 end
 
 function predict(recommender::UserMean, u::Int, i::Int)
