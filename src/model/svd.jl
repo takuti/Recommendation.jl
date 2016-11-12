@@ -2,7 +2,6 @@ export SVD
 
 immutable SVD <: Recommender
     da::DataAccessor
-    R_approx::AbstractMatrix
     U::AbstractMatrix
     S::AbstractVector
     V::AbstractMatrix
@@ -14,11 +13,9 @@ SVD(da::DataAccessor, k::Int) = begin
     da.R[isnan(da.R)] = 0
 
     res = svds(da.R, nsv=k)[1]
-    R_approx = res.U * diagm(res.S) * res.Vt'
-
-    SVD(da, R_approx, res.U, res.S, res.Vt, k)
+    SVD(da, res.U, res.S, res.Vt, k)
 end
 
 function predict(recommender::SVD, u::Int, i::Int)
-    recommender.R_approx[u, i]
+    dot(recommender.U[u, :] .* recommender.S, recommender.V[i, :])
 end

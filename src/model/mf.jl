@@ -2,7 +2,6 @@ export MF
 
 immutable MF <: Recommender
     da::DataAccessor
-    R_approx::AbstractMatrix
     P::AbstractMatrix
     Q::AbstractMatrix
     k::Int
@@ -43,13 +42,9 @@ MF(da::DataAccessor, k::Int;
         if is_converged; break; end;
     end
 
-    R_approx = P * Q'
-    MF(da, R_approx, P, Q, k)
-end
-
-function build(recommender::MF)
+    MF(da, P, Q, k)
 end
 
 function predict(recommender::MF, u::Int, i::Int)
-    recommender.R_approx[u, i]
+    dot(recommender.P[u, :], recommender.Q[i, :])
 end
