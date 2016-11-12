@@ -12,6 +12,9 @@ function test_data_accessor()
     @test size(da.R) == (5, 10)
     @test da.user_attributes[1] == [1, 2, 3, 4, 5]
     @test da.item_attributes[5] == [2, 4, 8, 16, 32]
+
+    da = DataAccessor(sparse([1 0 0; 4 5 0]))
+    @test size(da.R) == (2, 3)
 end
 
 test_data_accessor()

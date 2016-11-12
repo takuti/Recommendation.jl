@@ -19,6 +19,22 @@ DataAccessor(events::Array{Event,1}, n_user::Int, n_item::Int) = begin
     DataAccessor(events, R, Dict(), Dict())
 end
 
+DataAccessor(R::AbstractMatrix) = begin
+    n_user, n_item = size(R)
+    events = Array{Event,1}()
+
+    for user in 1:n_user
+        for item in 1:n_item
+            r = R[user, item]
+            if !isnan(r) && r != 0
+                append!(events, [Event(user, item, r)])
+            end
+        end
+    end
+
+    DataAccessor(events, R, Dict(), Dict())
+end
+
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
     R = spzeros(n_user, n_item)
     for event in events
