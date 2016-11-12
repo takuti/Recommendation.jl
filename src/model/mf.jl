@@ -25,11 +25,12 @@ MF(da::DataAccessor, k::Int;
 
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
-            if isnan(da.R[u, i]); continue; end
+            r = da.R[u, i]
+            if isnan(r); continue; end
 
             uv, iv = P[u], Q[i]
 
-            err = da.R[u, i] - dot(uv, iv)
+            err = r - dot(uv, iv)
             if abs(err) >= eps; is_converged = false; end
 
             grad = -2 * (err * iv - reg * uv)
