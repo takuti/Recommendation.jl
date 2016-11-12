@@ -4,9 +4,9 @@ function test_mf()
     m = [NaN 3 NaN 1 2 1 NaN 4
          1 2 NaN NaN 3 2 NaN 3
          NaN 2 3 3 NaN 5 NaN 1]
-    sm = sparse(m)
+    da = DataAccessor(m)
 
-    recommender = MF(sm, 2, learning_rate=15e-4, max_iter=100)
+    recommender = MF(da, 2, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommantion list should be same as CF/SVD-based recommender
     rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])

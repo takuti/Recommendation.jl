@@ -1,22 +1,22 @@
 export ThresholdPercentage
 
 immutable ThresholdPercentage <: Recommender
-    m::AbstractMatrix
+    da::DataAccessor
     th::Number
     scores::AbstractVector
 end
 
-ThresholdPercentage(m::AbstractMatrix, th::Number) = begin
-    n_user, n_item = size(m)
+ThresholdPercentage(da::DataAccessor, th::Number) = begin
+    n_user, n_item = size(da.R)
 
     scores = zeros(n_item)
 
     for i in 1:n_item
-        v = m[:, i]
+        v = da.R[:, i]
         scores[i] = length(v[v .>= th]) / countnz(v) * 100.0
     end
 
-    ThresholdPercentage(m, th, scores)
+    ThresholdPercentage(da, th, scores)
 end
 
 function ranking(recommender::ThresholdPercentage, u::Int, i::Int)

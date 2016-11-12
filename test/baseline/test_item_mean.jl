@@ -1,7 +1,8 @@
 function test_user_mean()
     println("-- Testing UserMean recommender")
 
-    recommender = UserMean(sparse([1 2 3; 4 5 6]))
+    da = DataAccessor(sparse([1 2 3; 4 5 6]))
+    recommender = UserMean(da)
     actual = predict(recommender, 1, 1)
 
     @test actual == 2.0

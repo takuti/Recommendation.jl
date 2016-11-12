@@ -1,21 +1,21 @@
 export UserMean
 
 immutable UserMean <: Recommender
-    m::AbstractMatrix
+    da::DataAccessor
     scores::AbstractVector
 end
 
-UserMean(m::AbstractMatrix) = begin
-    n_user, n_item = size(m)
+UserMean(da::DataAccessor) = begin
+    n_user, n_item = size(da.R)
 
     scores = zeros(n_user)
 
     for u in 1:n_user
-        v = m[u, :]
+        v = da.R[u, :]
         scores[u] = sum(v) / countnz(v)
     end
 
-    UserMean(m, scores)
+    UserMean(da, scores)
 end
 
 function predict(recommender::UserMean, u::Int, i::Int)

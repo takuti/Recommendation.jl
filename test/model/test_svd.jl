@@ -4,9 +4,9 @@ function test_svd()
     m = [NaN 3 NaN 1 2 1 NaN 4
          1 2 NaN NaN 3 2 NaN 3
          NaN 2 3 3 NaN 5 NaN 1]
-    sm = sparse(m)
+    da = DataAccessor(m)
 
-    recommender = SVD(sm, 2)
+    recommender = SVD(da, 2)
 
     # dimensionality reduction should preserve user-user/item-item similarities
     # i.e., recommendation list should be same as ItemKNN

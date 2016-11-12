@@ -1,26 +1,26 @@
 export CoOccurrence
 
 immutable CoOccurrence <: Recommender
-    m::AbstractMatrix
+    da::DataAccessor
     i_ref::Int
     scores::AbstractVector
 end
 
-CoOccurrence(m::AbstractMatrix, i_ref::Int) = begin
-    n_user, n_item = size(m)
+CoOccurrence(da::DataAccessor, i_ref::Int) = begin
+    n_user, n_item = size(da.R)
 
-    v_ref = m[:, i_ref]
+    v_ref = da.R[:, i_ref]
     c = countnz(v_ref)
 
     scores = zeros(n_item)
 
     for i in 1:n_item
-        v = m[:, i]
+        v = da.R[:, i]
         cc = length(v_ref[(v_ref .> 0) & (v .> 0)])
         scores[i] = cc / c * 100.0
     end
 
-    CoOccurrence(m, i_ref, scores)
+    CoOccurrence(da, i_ref, scores)
 end
 
 function ranking(recommender::CoOccurrence, u::Int, i::Int)

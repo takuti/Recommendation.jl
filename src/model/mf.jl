@@ -1,18 +1,18 @@
 export MF
 
 immutable MF <: Recommender
-    m::AbstractMatrix
-    m_approx::AbstractMatrix
+    da::DataAccessor
+    R_approx::AbstractMatrix
     P::AbstractMatrix
     Q::AbstractMatrix
     k::Int
 end
 
-MF(m::AbstractMatrix, k::Int;
+MF(da::DataAccessor, k::Int;
    reg::Float64=1e-3, learning_rate::Float64=1e-3,
    eps::Float64=1e-3, max_iter::Int=100) = begin
 
-    n_user, n_item = size(m)
+    n_user, n_item = size(da.R)
 
     # initialize with small values
     # (random is also possible)
@@ -25,11 +25,11 @@ MF(m::AbstractMatrix, k::Int;
 
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
-            if isnan(m[u, i]); continue; end
+            if isnan(da.R[u, i]); continue; end
 
             uv, iv = P[u], Q[i]
 
-            err = m[u, i] - dot(uv, iv)
+            err = da.R[u, i] - dot(uv, iv)
             if abs(err) >= eps; is_converged = false; end
 
             grad = -2 * (err * iv - reg * uv)
@@ -42,10 +42,10 @@ MF(m::AbstractMatrix, k::Int;
         if is_converged; break; end;
     end
 
-    m_approx = P * Q'
-    MF(m, m_approx, P, Q, k)
+    R_approx = P * Q'
+    MF(da, R_approx, P, Q, k)
 end
 
 function predict(recommender::MF, u::Int, i::Int)
-    recommender.m_approx[u, i]
+    recommender.R_approx[u, i]
 end

@@ -1,21 +1,21 @@
 export ItemMean
 
 immutable ItemMean <: Recommender
-    m::AbstractMatrix
+    da::DataAccessor
     scores::AbstractVector
 end
 
-ItemMean(m::AbstractMatrix) = begin
-    n_user, n_item = size(m)
+ItemMean(da::DataAccessor) = begin
+    n_user, n_item = size(da.R)
 
     scores = zeros(n_item)
 
     for i in 1:n_item
-        v = m[:, i]
+        v = da.R[:, i]
         scores[i] = sum(v) / countnz(v)
     end
 
-    ItemMean(m, scores)
+    ItemMean(da, scores)
 end
 
 function predict(recommender::ItemMean, u::Int, i::Int)
