@@ -2,6 +2,7 @@ using Recommendation
 using Base.Test
 
 include("test_base_recommender.jl")
+include("test_data_accessor.jl")
 
 include("baseline/test_user_mean.jl")
 include("baseline/test_item_mean.jl")
