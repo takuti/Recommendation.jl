@@ -10,9 +10,9 @@ end
 
 SVD(da::DataAccessor, k::Int) = begin
     n_user, n_item = size(da.R)
-    params = Dict(:U => zeros(n_user, k),
-                  :S => zeros(k),
-                  :V => zeros(n_item, k))
+    params = Parameters(:U => zeros(n_user, k),
+                        :S => zeros(k),
+                        :V => zeros(n_item, k))
     SVD(da, params, k)
 end
 

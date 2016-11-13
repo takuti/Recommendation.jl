@@ -10,7 +10,7 @@ end
 
 MF(da::DataAccessor, k::Int) = begin
     n_user, n_item = size(da.R)
-    params = Dict(:P => zeros(n_user, k), :Q => zeros(n_item, k))
+    params = Parameters(:P => zeros(n_user, k), :Q => zeros(n_item, k))
     MF(da, params, k)
 end
 
