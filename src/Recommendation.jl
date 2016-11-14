@@ -1,5 +1,7 @@
 module Recommendation
 
+include("types.jl")
+
 include("base_recommender.jl")
 include("data_accessor.jl")
 

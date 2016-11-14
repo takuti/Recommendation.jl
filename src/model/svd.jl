@@ -1,7 +1,5 @@
 export SVD
 
-typealias Parameters Dict{Symbol,Any}
-
 immutable SVD <: Recommender
     da::DataAccessor
     params::Parameters

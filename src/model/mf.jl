@@ -1,7 +1,5 @@
 export MF
 
-typealias Parameters Dict{Symbol,Any}
-
 immutable MF <: Recommender
     da::DataAccessor
     params::Parameters

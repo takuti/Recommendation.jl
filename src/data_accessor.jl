@@ -1,11 +1,5 @@
-export Event, DataAccessor
+export DataAccessor
 export create_matrix, set_user_attribute, set_item_attribute
-
-type Event
-    user::Int
-    item::Int
-    value::Float64 # e.g. rating, 0/1
-end
 
 immutable DataAccessor
     events::Array{Event,1}
