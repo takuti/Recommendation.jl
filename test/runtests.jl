@@ -16,4 +16,6 @@ include("model/test_item_knn.jl")
 include("model/test_svd.jl")
 include("model/test_mf.jl")
 
+include("metric/test_accuracy.jl")
+
 include("util/test_measures.jl")
