@@ -18,7 +18,6 @@ include("model/svd.jl")
 include("model/mf.jl")
 
 include("metric/accuracy.jl")
-
-include("util/measures.jl")
+include("metric/ranking.jl")
 
 end # module

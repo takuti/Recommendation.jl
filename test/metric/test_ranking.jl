@@ -1,5 +1,5 @@
 function test_recall(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = Measures.recall(truth, recommend, k)
+    actual = RankingMetric.recall(truth, recommend, k)
     expected = 0.333
     eps = 0.001
 
@@ -7,7 +7,7 @@ function test_recall(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
 end
 
 function test_precision(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = Measures.precision(truth, recommend, k)
+    actual = RankingMetric.precision(truth, recommend, k)
     expected = 0.5
     eps = 0.001
 
@@ -15,7 +15,7 @@ function test_precision(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
 end
 
 function test_map(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = Measures.map(truth, recommend)
+    actual = RankingMetric.map(truth, recommend)
     expected = 0.756
     eps = 0.001
 
@@ -23,7 +23,7 @@ function test_map(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_auc(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = Measures.auc(truth, recommend)
+    actual = RankingMetric.auc(truth, recommend)
     expected = 0.667
     eps = 0.001
 
@@ -31,7 +31,7 @@ function test_auc(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_mrr(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = Measures.mrr(truth, recommend)
+    actual = RankingMetric.mrr(truth, recommend)
     expected = 1.0
     eps = 0.001
 
@@ -39,7 +39,7 @@ function test_mrr(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_mpr(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = Measures.mpr(truth, recommend)
+    actual = RankingMetric.mpr(truth, recommend)
     expected = 33.333
     eps = 0.001
 
@@ -47,14 +47,14 @@ function test_mpr(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_ndcg(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = Measures.ndcg(truth, recommend, k)
+    actual = RankingMetric.ndcg(truth, recommend, k)
     expected = 0.613
     eps = 0.001
 
     @test abs(actual - expected) < eps
 end
 
-println("-- Testing ranking measures")
+println("-- Testing ranking metrics")
 
 truth = [1, 2, 4]
 recommend = [1, 3, 2, 6, 4, 5]

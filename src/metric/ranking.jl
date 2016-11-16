@@ -1,6 +1,6 @@
-export Measures
+export RankingMetric
 
-module Measures
+module RankingMetric
 
 function count_true_positive{T}(truth::Array{T}, recommend::Array{T})
     tp = 0
@@ -88,4 +88,4 @@ function ndcg{T}(truth::Array{T}, recommend::Array{T}, k::Int)
     dcg / idcg
 end
 
-end # module Measures
+end # module RankingMetric
