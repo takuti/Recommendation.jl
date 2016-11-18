@@ -1,9 +1,9 @@
 function test_rmse(truth::AbstractVector, prediction::AbstractVector)
-    @test AccuracyMetric.rmse(truth, prediction) == 3.0
+    @test measure(RMSE(), truth, prediction) == 3.0
 end
 
 function test_mae(truth::AbstractVector, prediction::AbstractVector)
-    @test AccuracyMetric.mae(truth, prediction) == 3.0
+    @test measure(MAE(), truth, prediction) == 3.0
 end
 
 println("-- Testing accuracy metrics")

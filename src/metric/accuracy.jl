@@ -1,15 +1,13 @@
-export AccuracyMetric
-
-module AccuracyMetric
+export RMSE, MAE
 
 # Root Mean Squared Error
-function rmse(truth::AbstractVector, prediction::AbstractVector)
+immutable RMSE <: AccuracyMetric end
+function measure(metric::RMSE, truth::AbstractVector, prediction::AbstractVector)
     sqrt(sum((truth - prediction).^2) / length(truth))
 end
 
 # Mean Absolute Error
-function mae(truth::AbstractVector, prediction::AbstractVector)
+immutable MAE <: AccuracyMetric end
+function measure(metric::MAE, truth::AbstractVector, prediction::AbstractVector)
     sum(abs(truth - prediction)) / length(truth)
 end
-
-end # module AccuracyMetric

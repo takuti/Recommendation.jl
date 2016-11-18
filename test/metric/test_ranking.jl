@@ -1,5 +1,5 @@
 function test_recall(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = RankingMetric.recall(truth, recommend, k)
+    actual = measure(Recall(), truth, recommend, k)
     expected = 0.333
     eps = 0.001
 
@@ -7,7 +7,7 @@ function test_recall(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
 end
 
 function test_precision(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = RankingMetric.precision(truth, recommend, k)
+    actual = measure(Precision(), truth, recommend, k)
     expected = 0.5
     eps = 0.001
 
@@ -15,7 +15,7 @@ function test_precision(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
 end
 
 function test_map(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = RankingMetric.map(truth, recommend)
+    actual = measure(MAP(), truth, recommend)
     expected = 0.756
     eps = 0.001
 
@@ -23,7 +23,7 @@ function test_map(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_auc(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = RankingMetric.auc(truth, recommend)
+    actual = measure(AUC(), truth, recommend)
     expected = 0.667
     eps = 0.001
 
@@ -31,7 +31,7 @@ function test_auc(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_mrr(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = RankingMetric.mrr(truth, recommend)
+    actual = measure(MRR(), truth, recommend)
     expected = 1.0
     eps = 0.001
 
@@ -39,7 +39,7 @@ function test_mrr(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_mpr(truth::Array{Int,1}, recommend::Array{Int,1})
-    actual = RankingMetric.mpr(truth, recommend)
+    actual = measure(MPR(), truth, recommend)
     expected = 33.333
     eps = 0.001
 
@@ -47,7 +47,7 @@ function test_mpr(truth::Array{Int,1}, recommend::Array{Int,1})
 end
 
 function test_ndcg(truth::Array{Int,1}, recommend::Array{Int,1}, k::Int)
-    actual = RankingMetric.ndcg(truth, recommend, k)
+    actual = measure(NDCG(), truth, recommend, k)
     expected = 0.613
     eps = 0.001
 

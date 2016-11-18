@@ -17,6 +17,7 @@ include("model/item_knn.jl")
 include("model/svd.jl")
 include("model/mf.jl")
 
+include("metric/base.jl")
 include("metric/accuracy.jl")
 include("metric/ranking.jl")
 

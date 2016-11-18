@@ -1,29 +1,20 @@
-export RankingMetric
-
-module RankingMetric
-
-function count_true_positive{T}(truth::Array{T}, recommend::Array{T})
-    tp = 0
-    for r in recommend
-        if findfirst(truth, r) != 0
-            tp += 1
-        end
-    end
-    tp
-end
+export Recall, Precision, MAP, AUC, MRR, MPR, NDCG
 
 # Recall@k
-function recall{T}(truth::Array{T}, recommend::Array{T}, k::Int)
+immutable Recall <: RankingMetric end
+function measure{T}(metric::Recall, truth::Array{T}, recommend::Array{T}, k::Int)
     count_true_positive(truth, recommend[1:k]) / length(truth)
 end
 
 # Precision@k
-function precision{T}(truth::Array{T}, recommend::Array{T}, k::Int)
+immutable Precision <: RankingMetric end
+function measure{T}(metric::Precision, truth::Array{T}, recommend::Array{T}, k::Int)
     count_true_positive(truth, recommend[1:k]) / k
 end
 
 # Mean Average Precision
-function map{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
+immutable MAP <: RankingMetric end
+function measure{T}(metric::MAP, truth::Array{T}, recommend::Array{T}, k::Int=0)
     tp = accum = 0
     n_recommend = length(recommend)
 
@@ -38,7 +29,8 @@ function map{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
 end
 
 # Area under the ROC curve
-function auc{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
+immutable AUC <: RankingMetric end
+function measure{T}(metric::AUC, truth::Array{T}, recommend::Array{T}, k::Int=0)
     tp = correct = 0
     for r in recommend
         if findfirst(truth, r) != 0
@@ -54,7 +46,8 @@ function auc{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
 end
 
 # Mean Reciprocal Rank
-function mrr{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
+immutable MRR <: RankingMetric end
+function measure{T}(metric::MRR, truth::Array{T}, recommend::Array{T}, k::Int=0)
     n_recommend = length(recommend)
     for n = 1:n_recommend
         if findfirst(truth, recommend[n]) != 0
@@ -65,7 +58,8 @@ function mrr{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
 end
 
 # Mean Percentile Rank
-function mpr{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
+immutable MPR <: RankingMetric end
+function measure{T}(metric::MPR, truth::Array{T}, recommend::Array{T}, k::Int=0)
     accum = 0
     n_recommend = length(recommend)
     for t in truth
@@ -76,7 +70,8 @@ function mpr{T}(truth::Array{T}, recommend::Array{T}, k::Int=0)
 end
 
 # Normalized Discounted Cumulative Gain
-function ndcg{T}(truth::Array{T}, recommend::Array{T}, k::Int)
+immutable NDCG <: RankingMetric end
+function measure{T}(metric::NDCG, truth::Array{T}, recommend::Array{T}, k::Int)
     dcg = idcg = 0
     for n = 1:k
         d = 1 / log2(n + 1)
@@ -87,5 +82,3 @@ function ndcg{T}(truth::Array{T}, recommend::Array{T}, k::Int)
     end
     dcg / idcg
 end
-
-end # module RankingMetric
