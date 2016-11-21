@@ -49,7 +49,7 @@ function test_tf_idf()
     uv2 = sparse(users[:, 2])
 
     n_doc = size(m, 1)
-    doc_names = [string("doc", i) for i in 1:20];
+    docs = [i for i in 1:20]
 
 
     # Case: basic
@@ -58,9 +58,9 @@ function test_tf_idf()
     set_user_attribute(da, 2, uv2)
 
     recommender = TFIDF(da, tf, ones(size(tf))) # do not use IDF
-    rec = execute(recommender, 1, n_doc, doc_names)
-    @test first(rec[2]) == "doc1"
-    @test first(rec[3]) == "doc12"
+    rec = execute(recommender, 1, n_doc, docs)
+    @test first(rec[2]) == 12
+    @test first(rec[3]) == 1
     @test last(rec[2]) == 4 && last(rec[3]) == 4
 
 
@@ -71,20 +71,20 @@ function test_tf_idf()
     set_user_attribute(da, 2, uv2)
 
     recommender = TFIDF(da, tf, ones(size(tf))) # do not use IDF
-    rec = execute(recommender, 1, n_doc, doc_names)
-    @test first(rec[5]) == "doc1"
+    rec = execute(recommender, 1, n_doc, docs)
+    @test first(rec[5]) == 1
     @test_approx_eq_eps last(rec[5]) 1.0090 1e-4
-    rec = execute(recommender, 2, n_doc, doc_names)
-    @test first(rec[10]) == "doc7"
+    rec = execute(recommender, 2, n_doc, docs)
+    @test first(rec[10]) == 7
     @test_approx_eq_eps last(rec[10]) 0.7444 1e-4
-    @test first(rec[11]) == "doc19"
+    @test first(rec[11]) == 19
     @test_approx_eq_eps last(rec[11]) 0.4834 1e-4
 
 
     # Case: normalized matrix & using IDF
     recommender = TFIDF(da, tf, idf)
-    rec = execute(recommender, 1, n_doc, doc_names)
-    @test first(rec[4]) == "doc1"
+    rec = execute(recommender, 1, n_doc, docs)
+    @test first(rec[4]) == 1
     @test_approx_eq_eps last(rec[4]) 0.2476 1e-4
 end
 

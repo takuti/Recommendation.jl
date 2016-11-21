@@ -11,22 +11,22 @@ function test_item_knn()
     @test_approx_eq_eps recommender.sim[1, 2] 0.485 1e-3
     @test_approx_eq_eps recommender.sim[5, 6] 0.405 1e-3
 
-    rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])
-    @test rec[1] == ("item8" => 4.0)
-    @test rec[2] == ("item2" => 3.0)
-    @test rec[3] == ("item5" => 2.0)
-    @test rec[4] == ("item6" => 1.0)
+    rec = execute(recommender, 1, 4, [i for i in 1:8])
+    @test rec[1] == (8 => 4.0)
+    @test rec[2] == (2 => 3.0)
+    @test rec[3] == (5 => 2.0)
+    @test rec[4] == (4 => 1.0)
 
     recommender = ItemKNN(da, 1)
     build(recommender, is_adjusted_cosine=true)
     @test_approx_eq_eps recommender.sim[1, 2] 0.174 1e-3
     @test_approx_eq_eps recommender.sim[5, 6] 0.039 1e-3
 
-    rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])
-    @test rec[1] == ("item8" => 4.0)
-    @test rec[2] == ("item2" => 3.0)
-    @test rec[3] == ("item5" => 2.0)
-    @test rec[4] == ("item6" => 1.0)
+    rec = execute(recommender, 1, 4, [i for i in 1:8])
+    @test rec[1] == (8 => 4.0)
+    @test rec[2] == (2 => 3.0)
+    @test rec[3] == (5 => 2.0)
+    @test rec[4] == (4 => 1.0)
 end
 
 test_item_knn()

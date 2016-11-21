@@ -12,10 +12,10 @@ function test_user_knn()
     @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
     @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3
 
-    rec = execute(recommender, 1, 3, ["item$(i)" for i in 1:8])
-    @test rec[1] == ("item8" => 3.0)
-    @test rec[2] == ("item5" => 3.0)
-    @test rec[3] == ("item6" => 2.0)
+    rec = execute(recommender, 1, 3, [i for i in 1:8])
+    @test rec[1] == (5 => 3.0)
+    @test rec[2] == (8 => 3.0)
+    @test rec[3] == (2 => 2.0)
 
     recommender = UserKNN(da, 1, is_normalized=true);
     build(recommender)
@@ -23,10 +23,10 @@ function test_user_knn()
     @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
     @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3
 
-    rec = execute(recommender, 1, 3, ["item$(i)" for i in 1:8])
-    @test rec[1] == ("item8" => 3.0)
-    @test rec[2] == ("item5" => 3.0)
-    @test rec[3] == ("item4" => 2.2)
+    rec = execute(recommender, 1, 3, [i for i in 1:8])
+    @test rec[1] == (5 => 3.0)
+    @test rec[2] == (8 => 3.0)
+    @test rec[3] == (7 => 2.2)
 end
 
 test_user_knn()

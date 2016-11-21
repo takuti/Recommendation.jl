@@ -18,13 +18,13 @@ function test_execute()
     da = DataAccessor(sparse([1 0 0; 4 5 0]))
     recommender = MostPopular(da)
     build(recommender)
-    pairs = execute(recommender, 1, 3, [:item1, :item2, :item3])
+    pairs = execute(recommender, 1, 3, [1, 2, 3])
 
-    @test first(pairs[1]) == :item1
+    @test first(pairs[1]) == 1
     @test last(pairs[1]) == 2
-    @test first(pairs[2]) == :item2
+    @test first(pairs[2]) == 2
     @test last(pairs[2]) == 1
-    @test first(pairs[3]) == :item3
+    @test first(pairs[3]) == 3
     @test last(pairs[3]) == 0
 end
 

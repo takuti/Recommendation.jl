@@ -10,8 +10,8 @@ function test_mf()
     build(recommender, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommantion list should be same as CF/SVD-based recommender
-    rec = execute(recommender, 1, 4, ["item$(i)" for i in 1:8])
-    @test Set([first(r) for r in rec]) == Set(["item2", "item5", "item6", "item8"])
+    rec = execute(recommender, 1, 4, [i for i in 1:8])
+    @test Set([first(r) for r in rec]) == Set([2, 5, 6, 8])
 end
 
 test_mf()
