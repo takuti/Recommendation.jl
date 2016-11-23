@@ -1,5 +1,5 @@
 export Recommender, ContentRecommender
-export build, execute, predict, ranking
+export build, recommend, predict, ranking
 
 abstract Recommender
 
@@ -7,7 +7,7 @@ function build(rec::Recommender; kwargs...)
     error("build is not implemented for recommender type $(typeof(rec))")
 end
 
-function execute(rec::Recommender, u::Int, k::Int, candidates::Array{Int})
+function recommend(rec::Recommender, u::Int, k::Int, candidates::Array{Int})
     d = Dict{Int,Float64}()
     for candidate in candidates
         score = ranking(rec, u, candidate)

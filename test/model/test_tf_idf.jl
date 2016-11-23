@@ -58,7 +58,7 @@ function test_tf_idf()
     set_user_attribute(da, 2, uv2)
 
     recommender = TFIDF(da, tf, ones(size(tf))) # do not use IDF
-    rec = execute(recommender, 1, n_doc, docs)
+    rec = recommend(recommender, 1, n_doc, docs)
     @test first(rec[2]) == 12
     @test first(rec[3]) == 1
     @test last(rec[2]) == 4 && last(rec[3]) == 4
@@ -71,10 +71,10 @@ function test_tf_idf()
     set_user_attribute(da, 2, uv2)
 
     recommender = TFIDF(da, tf, ones(size(tf))) # do not use IDF
-    rec = execute(recommender, 1, n_doc, docs)
+    rec = recommend(recommender, 1, n_doc, docs)
     @test first(rec[5]) == 1
     @test_approx_eq_eps last(rec[5]) 1.0090 1e-4
-    rec = execute(recommender, 2, n_doc, docs)
+    rec = recommend(recommender, 2, n_doc, docs)
     @test first(rec[10]) == 7
     @test_approx_eq_eps last(rec[10]) 0.7444 1e-4
     @test first(rec[11]) == 19
@@ -83,7 +83,7 @@ function test_tf_idf()
 
     # Case: normalized matrix & using IDF
     recommender = TFIDF(da, tf, idf)
-    rec = execute(recommender, 1, n_doc, docs)
+    rec = recommend(recommender, 1, n_doc, docs)
     @test first(rec[4]) == 1
     @test_approx_eq_eps last(rec[4]) 0.2476 1e-4
 end

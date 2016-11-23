@@ -11,7 +11,7 @@ function test_svd()
 
     # dimensionality reduction should preserve user-user/item-item similarities
     # i.e., recommendation list should be same as ItemKNN
-    rec = execute(recommender, 1, 4, [i for i in 1:8])
+    rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test first(rec[1]) == 8
     @test first(rec[2]) == 2
     @test first(rec[3]) == 5

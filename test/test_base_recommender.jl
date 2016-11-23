@@ -11,14 +11,14 @@ function test_not_implemented_error()
     @test_throws ErrorException ranking(recommender, 1, 1)
 end
 
-function test_execute()
+function test_recommend()
     println("-- Testing recommender execution")
 
     # non-personalized (MostPopular) recommendation for 3 items
     da = DataAccessor(sparse([1 0 0; 4 5 0]))
     recommender = MostPopular(da)
     build(recommender)
-    pairs = execute(recommender, 1, 3, [1, 2, 3])
+    pairs = recommend(recommender, 1, 3, [1, 2, 3])
 
     @test first(pairs[1]) == 1
     @test last(pairs[1]) == 2
@@ -29,4 +29,4 @@ function test_execute()
 end
 
 test_not_implemented_error()
-test_execute()
+test_recommend()
