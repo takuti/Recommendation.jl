@@ -11,14 +11,14 @@ end
 
 abstract RankingMetric <: Metric
 
-function measure{T}(metric::RankingMetric, truth::Array{T}, rec::Array{T}, k::Int)
+function measure{T}(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Int)
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 
-function count_true_positive{T}(truth::Array{T}, rec::Array{T})
+function count_true_positive{T}(truth::Array{T}, pred::Array{T})
     tp = 0
-    for r in rec
-        if findfirst(truth, r) != 0
+    for item in pred
+        if findfirst(truth, item) != 0
             tp += 1
         end
     end
