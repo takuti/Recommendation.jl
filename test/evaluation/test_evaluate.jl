@@ -6,6 +6,7 @@ function test_evaluate()
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
     recommender = MF(da, 2)
+    build(recommender)
 
     truth_m = [1 3 4 1 2 1 2 4
                1 2 4 1 3 2 2 3

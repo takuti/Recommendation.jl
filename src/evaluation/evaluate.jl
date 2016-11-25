@@ -1,13 +1,6 @@
 export evaluate
 
-function evaluate(rec::Recommender, truth_da::DataAccessor,
-                  metric::AccuracyMetric)
-
-    # if the recommender has not been built yet, build here
-    if !haskey(rec.states, :is_built) || !rec.states[:is_built]
-        build(rec)
-    end
-
+function validate_size(rec::Recommender, truth_da::DataAccessor)
     n_rec_user, n_rec_item = size(rec.da.R)
     n_truth_user, n_truth_item = size(truth_da.R)
 
@@ -17,16 +10,24 @@ function evaluate(rec::Recommender, truth_da::DataAccessor,
         error("number of items is mismatched: (recommenre, truth) = ($(n_rec_item), $(n_truth_item)")
     end
 
+    n_truth_user, n_truth_item
+end
+
+function evaluate(rec::Recommender, truth_da::DataAccessor,
+                  metric::AccuracyMetric)
+    check_build_status(rec)
+    n_user, n_item = validate_size(rec, truth_da)
+
     accum = 0.0
 
-    for u in 1:n_truth_user
-        pred = zeros(n_truth_item)
-        for i in 1:n_truth_item
+    for u in 1:n_user
+        pred = zeros(n_item)
+        for i in 1:n_item
             pred[i] = predict(rec, u, i)
         end
         accum += measure(metric, truth_da.R[u, :], pred)
     end
 
     # return average RMSE over the all target users
-    accum / n_truth_user
+    accum / n_user
 end
