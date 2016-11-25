@@ -18,3 +18,5 @@ include("model/test_mf.jl")
 
 include("metric/test_accuracy.jl")
 include("metric/test_ranking.jl")
+
+include("evaluation/test_evaluate.jl")

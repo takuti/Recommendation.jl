@@ -21,4 +21,6 @@ include("metric/base.jl")
 include("metric/accuracy.jl")
 include("metric/ranking.jl")
 
+include("evaluation/evaluate.jl")
+
 end # module
