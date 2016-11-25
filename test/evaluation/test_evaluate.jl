@@ -1,5 +1,5 @@
-function test_evaluate()
-    println("-- Testing evaluate function")
+function test_evaluate_explicit()
+    println("-- Testing evaluate function for explicit feedback")
 
     m = [NaN 3 NaN 1 2 1 NaN 4
          1 2 NaN NaN 3 2 NaN 3
@@ -17,4 +17,24 @@ function test_evaluate()
     @test evaluate(recommender, truth_da, RMSE()) < 2.5
 end
 
-test_evaluate()
+function test_evaluate_implicit()
+    println("-- Testing evaluate function for implicit feedback")
+
+    m = [NaN 1 NaN 0 0 0 NaN 1
+         0 0 NaN NaN 1 0 NaN 1
+         NaN 0 1 1 NaN 1 NaN 0]
+    da = DataAccessor(m)
+    recommender = MF(da, 2)
+    build(recommender)
+
+    truth_m = [0 1 1 0 0 0 0 1
+               0 0 1 0 1 0 0 1
+               1 0 1 1 1 1 0 0]
+    truth_da = DataAccessor(truth_m)
+
+    # average error should be less than or equal to 0.5 in the [0, 1] scale
+    @test evaluate(recommender, truth_da, Recall(), 4) <= 0.5
+end
+
+test_evaluate_explicit()
+test_evaluate_implicit()

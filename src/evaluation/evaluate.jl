@@ -31,3 +31,22 @@ function evaluate(rec::Recommender, truth_da::DataAccessor,
     # return average RMSE over the all target users
     accum / n_user
 end
+
+function evaluate(rec::Recommender, truth_da::DataAccessor,
+                  metric::RankingMetric, k::Int)
+    check_build_status(rec)
+    n_user, n_item = validate_size(rec, truth_da)
+
+    accum = 0.0
+
+    candidates = Array(1:n_item)
+    for u in 1:n_user
+        truth = [first(t) for t in sort(collect(zip(candidates, truth_da.R[u, :])), by=t->last(t), rev=true)]
+        recos = recommend(rec, u, k, candidates)
+        pred = [first(t) for t in sort(recos, by=t->last(t), rev=true)]
+        accum += measure(metric, truth, pred, k)
+    end
+
+    # return average RMSE over the all target users
+    accum / n_user
+end
