@@ -4,6 +4,7 @@ immutable SVD <: Recommender
     da::DataAccessor
     params::Parameters
     k::Int
+    states::States
 end
 
 SVD(da::DataAccessor, k::Int) = begin
@@ -11,7 +12,7 @@ SVD(da::DataAccessor, k::Int) = begin
     params = Parameters(:U => zeros(n_user, k),
                         :S => zeros(k),
                         :V => zeros(n_item, k))
-    SVD(da, params, k)
+    SVD(da, params, k, States(:is_built => false))
 end
 
 function build(rec::SVD)
@@ -23,8 +24,11 @@ function build(rec::SVD)
     rec.params[:U] = res.U
     rec.params[:S] = res.S
     rec.params[:V] = res.Vt
+
+    rec.states[:is_built] = true
 end
 
 function predict(rec::SVD, u::Int, i::Int)
+    check_build_status(rec)
     dot(rec.params[:U][u, :] .* rec.params[:S], rec.params[:V][i, :])
 end

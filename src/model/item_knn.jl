@@ -4,11 +4,12 @@ immutable ItemKNN <: Recommender
     da::DataAccessor
     sim::AbstractMatrix
     k::Int
+    states::States
 end
 
 ItemKNN(da::DataAccessor, k::Int) = begin
     n_item = size(da.R, 2)
-    ItemKNN(da, zeros(n_item, n_item), k)
+    ItemKNN(da, zeros(n_item, n_item), k, States(:is_built => false))
 end
 
 function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
@@ -42,9 +43,13 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
             if (ci != cj); rec.sim[cj, ci] = s; end
         end
     end
+
+    rec.states[:is_built] = true
 end
 
 function predict(rec::ItemKNN, u::Int, i::Int)
+    check_build_status(rec)
+
     numer = denom = 0
 
     # negative similarities are filtered

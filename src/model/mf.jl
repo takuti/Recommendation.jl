@@ -4,12 +4,13 @@ immutable MF <: Recommender
     da::DataAccessor
     params::Parameters
     k::Int
+    states::States
 end
 
 MF(da::DataAccessor, k::Int) = begin
     n_user, n_item = size(da.R)
     params = Parameters(:P => zeros(n_user, k), :Q => zeros(n_item, k))
-    MF(da, params, k)
+    MF(da, params, k, States(:is_built => false))
 end
 
 function build(rec::MF;
@@ -48,8 +49,11 @@ function build(rec::MF;
 
     rec.params[:P] = P
     rec.params[:Q] = Q
+
+    rec.states[:is_built] = true
 end
 
 function predict(rec::MF, u::Int, i::Int)
+    check_build_status(rec)
     dot(rec.params[:P][u, :], rec.params[:Q][i, :])
 end

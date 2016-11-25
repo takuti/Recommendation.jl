@@ -11,6 +11,18 @@ function test_not_implemented_error()
     @test_throws ErrorException ranking(recommender, 1, 1)
 end
 
+function test_not_build_error()
+    println("-- Testing recommender not built case")
+
+    # non-personalized (MostPopular) recommendation for 3 items
+    da = DataAccessor(sparse([1 0 0; 4 5 0]))
+    recommender = MostPopular(da)
+
+    # build(recommender) <- should be called before recommend()
+
+    @test_throws ErrorException recommend(recommender, 1, 3, [1, 2, 3])
+end
+
 function test_recommend()
     println("-- Testing recommender execution")
 
@@ -28,5 +40,6 @@ function test_recommend()
     @test last(pairs[3]) == 0
 end
 
+test_not_build_error()
 test_not_implemented_error()
 test_recommend()

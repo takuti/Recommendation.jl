@@ -3,11 +3,12 @@ export MostPopular
 immutable MostPopular <: Recommender
     da::DataAccessor
     scores::AbstractVector
+    states::States
 end
 
 MostPopular(da::DataAccessor) = begin
     n_item = size(da.R, 2)
-    MostPopular(da, zeros(n_item))
+    MostPopular(da, zeros(n_item), States(:is_built => false))
 end
 
 function build(rec::MostPopular)
@@ -16,8 +17,11 @@ function build(rec::MostPopular)
     for i in 1:n_item
         rec.scores[i] = countnz(rec.da.R[:, i])
     end
+
+    rec.states[:is_built] = true
 end
 
 function ranking(rec::MostPopular, u::Int, i::Int)
+    check_build_status(rec)
     rec.scores[i]
 end

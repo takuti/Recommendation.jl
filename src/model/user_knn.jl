@@ -5,11 +5,13 @@ immutable UserKNN <: Recommender
     sim::AbstractMatrix
     k::Int
     is_normalized::Bool
+    states::States
 end
 
 UserKNN(da::DataAccessor, k::Int; is_normalized::Bool=false) = begin
     n_user = size(da.R, 1)
-    UserKNN(da, zeros(n_user, n_user), k, is_normalized)
+    UserKNN(da, zeros(n_user, n_user), k, is_normalized,
+            States(:is_built => false))
 end
 
 function build(rec::UserKNN)
@@ -35,9 +37,13 @@ function build(rec::UserKNN)
             if (ri != rj); rec.sim[rj, ri] = c; end # symmetric
         end
     end
+
+    rec.states[:is_built] = true
 end
 
 function predict(rec::UserKNN, u::Int, i::Int)
+    check_build_status(rec)
+
     numer = denom = 0
 
     pairs = collect(zip(1:size(rec.da.R)[1], rec.sim[u, :]))

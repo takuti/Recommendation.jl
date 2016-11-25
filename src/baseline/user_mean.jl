@@ -3,11 +3,12 @@ export UserMean
 immutable UserMean <: Recommender
     da::DataAccessor
     scores::AbstractVector
+    states::States
 end
 
 UserMean(da::DataAccessor) = begin
     n_user = size(da.R, 1)
-    UserMean(da, zeros(n_user))
+    UserMean(da, zeros(n_user), States(:is_built => false))
 end
 
 function build(rec::UserMean)
@@ -17,8 +18,11 @@ function build(rec::UserMean)
         v = rec.da.R[u, :]
         rec.scores[u] = sum(v) / countnz(v)
     end
+
+    rec.states[:is_built] = true
 end
 
 function predict(rec::UserMean, u::Int, i::Int)
+    check_build_status(rec)
     rec.scores[u]
 end
