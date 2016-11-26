@@ -32,7 +32,8 @@ end
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
     R = spzeros(n_user, n_item)
     for event in events
-        R[event.user, event.item] = event.value
+        # accumulate for implicit feedback events
+        R[event.user, event.item] += event.value
     end
     R
 end
