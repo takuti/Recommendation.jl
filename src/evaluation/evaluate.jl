@@ -28,7 +28,7 @@ function evaluate(rec::Recommender, truth_da::DataAccessor,
         accum += measure(metric, truth_da.R[u, :], pred)
     end
 
-    # return average RMSE over the all target users
+    # return average accuracy over the all target users
     accum / n_user
 end
 
@@ -47,6 +47,6 @@ function evaluate(rec::Recommender, truth_da::DataAccessor,
         accum += measure(metric, truth, pred, k)
     end
 
-    # return average RMSE over the all target users
+    # return average accuracy over the all target users
     accum / n_user
 end
