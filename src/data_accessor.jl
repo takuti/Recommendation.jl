@@ -30,8 +30,12 @@ DataAccessor(R::AbstractMatrix) = begin
 end
 
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
-    R = spzeros(n_user, n_item)
+    R = ones(n_user, n_item) * NaN
     for event in events
+        if isnan(R[event.user, event.item])
+            R[event.user, event.item] = 0
+        end
+
         # accumulate for implicit feedback events
         R[event.user, event.item] += event.value
     end
