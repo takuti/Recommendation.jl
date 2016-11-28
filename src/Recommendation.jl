@@ -22,5 +22,6 @@ include("metric/accuracy.jl")
 include("metric/ranking.jl")
 
 include("evaluation/evaluate.jl")
+include("evaluation/cross_validation.jl")
 
 end # module
