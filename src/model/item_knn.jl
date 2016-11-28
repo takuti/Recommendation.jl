@@ -2,14 +2,15 @@ export ItemKNN
 
 immutable ItemKNN <: Recommender
     da::DataAccessor
+    hyperparams::Parameters
     sim::AbstractMatrix
-    k::Int
     states::States
 end
 
-ItemKNN(da::DataAccessor, k::Int) = begin
+ItemKNN(da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 5)) = begin
     n_item = size(da.R, 2)
-    ItemKNN(da, zeros(n_item, n_item), k, States(:is_built => false))
+    ItemKNN(da, hyperparams, zeros(n_item, n_item), States(:is_built => false))
 end
 
 function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
@@ -54,7 +55,7 @@ function predict(rec::ItemKNN, u::Int, i::Int)
 
     # negative similarities are filtered
     pairs = collect(zip(1:size(rec.da.R)[2], max(rec.sim[i, :], 0)))
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.k]
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.hyperparams[:k]]
 
     for (j, s) in ordered_pairs
         r = rec.da.R[u, j]

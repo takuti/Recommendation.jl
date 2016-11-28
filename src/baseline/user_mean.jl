@@ -6,7 +6,7 @@ immutable UserMean <: Recommender
     states::States
 end
 
-UserMean(da::DataAccessor) = begin
+UserMean(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
     n_user = size(da.R, 1)
     UserMean(da, zeros(n_user), States(:is_built => false))
 end

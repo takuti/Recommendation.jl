@@ -6,7 +6,7 @@ immutable ItemMean <: Recommender
     states::States
 end
 
-ItemMean(da::DataAccessor) = begin
+ItemMean(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
     n_item = size(da.R, 2)
     ItemMean(da, zeros(n_item), States(:is_built => false))
 end

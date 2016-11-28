@@ -2,15 +2,17 @@ export UserKNN
 
 immutable UserKNN <: Recommender
     da::DataAccessor
+    hyperparams::Parameters
     sim::AbstractMatrix
-    k::Int
     is_normalized::Bool
     states::States
 end
 
-UserKNN(da::DataAccessor, k::Int; is_normalized::Bool=false) = begin
+UserKNN(da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 5);
+        is_normalized::Bool=false) = begin
     n_user = size(da.R, 1)
-    UserKNN(da, zeros(n_user, n_user), k, is_normalized,
+    UserKNN(da, hyperparams, zeros(n_user, n_user), is_normalized,
             States(:is_built => false))
 end
 
@@ -48,7 +50,7 @@ function predict(rec::UserKNN, u::Int, i::Int)
 
     pairs = collect(zip(1:size(rec.da.R)[1], rec.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(rec.k + 1)]
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(rec.hyperparams[:k] + 1)]
 
     for (u_near, w) in ordered_pairs
         v_near = rec.da.R[u_near, :]

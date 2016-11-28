@@ -14,7 +14,7 @@ function validate_size(rec::Recommender, truth_da::DataAccessor)
 end
 
 function evaluate(rec::Recommender, truth_da::DataAccessor,
-                  metric::AccuracyMetric)
+                  metric::AccuracyMetric, k::Int=0)
     check_build_status(rec)
     n_user, n_item = validate_size(rec, truth_da)
 
@@ -33,7 +33,7 @@ function evaluate(rec::Recommender, truth_da::DataAccessor,
 end
 
 function evaluate(rec::Recommender, truth_da::DataAccessor,
-                  metric::RankingMetric, k::Int)
+                  metric::RankingMetric, k::Int=0)
     check_build_status(rec)
     n_user, n_item = validate_size(rec, truth_da)
 

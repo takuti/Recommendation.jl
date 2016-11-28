@@ -2,17 +2,18 @@ export SVD
 
 immutable SVD <: Recommender
     da::DataAccessor
+    hyperparams::Parameters
     params::Parameters
-    k::Int
     states::States
 end
 
-SVD(da::DataAccessor, k::Int) = begin
+SVD(da::DataAccessor,
+    hyperparams::Parameters=Parameters(:k => 20)) = begin
     n_user, n_item = size(da.R)
-    params = Parameters(:U => zeros(n_user, k),
-                        :S => zeros(k),
-                        :V => zeros(n_item, k))
-    SVD(da, params, k, States(:is_built => false))
+    params = Parameters(:U => zeros(n_user, hyperparams[:k]),
+                        :S => zeros(hyperparams[:k]),
+                        :V => zeros(n_item, hyperparams[:k]))
+    SVD(da, hyperparams, params, States(:is_built => false))
 end
 
 function build(rec::SVD)
@@ -20,7 +21,7 @@ function build(rec::SVD)
     R = copy(rec.da.R)
     R[isnan(R)] = 0
 
-    res = svds(R, nsv=rec.k)[1]
+    res = svds(R, nsv=rec.hyperparams[:k])[1]
     rec.params[:U] = res.U
     rec.params[:S] = res.S
     rec.params[:V] = res.Vt

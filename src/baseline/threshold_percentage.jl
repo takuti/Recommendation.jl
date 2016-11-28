@@ -2,14 +2,15 @@ export ThresholdPercentage
 
 immutable ThresholdPercentage <: Recommender
     da::DataAccessor
-    th::Number
+    hyperparams::Parameters
     scores::AbstractVector
     states::States
 end
 
-ThresholdPercentage(da::DataAccessor, th::Number) = begin
+ThresholdPercentage(da::DataAccessor,
+                    hyperparams::Parameters=Parameters(:th => 2.5)) = begin
     n_item = size(da.R, 2)
-    ThresholdPercentage(da, th, zeros(n_item), States(:is_built => false))
+    ThresholdPercentage(da, hyperparams, zeros(n_item), States(:is_built => false))
 end
 
 function build(rec::ThresholdPercentage)
@@ -17,7 +18,7 @@ function build(rec::ThresholdPercentage)
 
     for i in 1:n_item
         v = rec.da.R[:, i]
-        rec.scores[i] = length(v[v .>= rec.th]) / countnz(v) * 100.0
+        rec.scores[i] = length(v[v .>= rec.hyperparams[:th]]) / countnz(v) * 100.0
     end
 
     rec.states[:is_built] = true

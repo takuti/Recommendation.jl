@@ -6,7 +6,7 @@ immutable MostPopular <: Recommender
     states::States
 end
 
-MostPopular(da::DataAccessor) = begin
+MostPopular(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
     n_item = size(da.R, 2)
     MostPopular(da, zeros(n_item), States(:is_built => false))
 end

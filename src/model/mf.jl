@@ -2,15 +2,19 @@ export MF
 
 immutable MF <: Recommender
     da::DataAccessor
+    hyperparams::Parameters
     params::Parameters
-    k::Int
     states::States
 end
 
-MF(da::DataAccessor, k::Int) = begin
+MF(da::DataAccessor,
+   hyperparams::Parameters=Parameters(:k => 20)) = begin
     n_user, n_item = size(da.R)
-    params = Parameters(:P => zeros(n_user, k), :Q => zeros(n_item, k))
-    MF(da, params, k, States(:is_built => false))
+    P = zeros(n_user, hyperparams[:k])
+    Q = zeros(n_item, hyperparams[:k])
+    params = Parameters(:P => P, :Q => Q)
+
+    MF(da, hyperparams, params, States(:is_built => false))
 end
 
 function build(rec::MF;
@@ -20,8 +24,8 @@ function build(rec::MF;
 
     # initialize with small values
     # (random is also possible)
-    P = ones(n_user, rec.k) * 0.1
-    Q = ones(n_item, rec.k) * 0.1
+    P = ones(n_user, rec.hyperparams[:k]) * 0.1
+    Q = ones(n_item, rec.hyperparams[:k]) * 0.1
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter

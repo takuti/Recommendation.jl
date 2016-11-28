@@ -2,20 +2,21 @@ export CoOccurrence
 
 immutable CoOccurrence <: Recommender
     da::DataAccessor
-    i_ref::Int
+    hyperparams::Parameters
     scores::AbstractVector
     states::States
 end
 
-CoOccurrence(da::DataAccessor, i_ref::Int) = begin
+CoOccurrence(da::DataAccessor,
+             hyperparams::Parameters=Parameters(:i_ref => 1)) = begin
     n_item = size(da.R, 2)
-    CoOccurrence(da, i_ref, zeros(n_item), States(:is_built => false))
+    CoOccurrence(da, hyperparams, zeros(n_item), States(:is_built => false))
 end
 
 function build(rec::CoOccurrence)
     n_item = size(rec.da.R, 2)
 
-    v_ref = rec.da.R[:, rec.i_ref]
+    v_ref = rec.da.R[:, rec.hyperparams[:i_ref]]
     c = countnz(v_ref)
 
     for i in 1:n_item

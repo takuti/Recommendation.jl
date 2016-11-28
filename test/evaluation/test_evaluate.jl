@@ -5,7 +5,7 @@ function test_evaluate_explicit()
          1 2 NaN NaN 3 2 NaN 3
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
-    recommender = MF(da, 2)
+    recommender = MF(da, Parameters(:k => 2))
     build(recommender)
 
     truth_m = [1 3 4 1 2 1 2 4
@@ -24,7 +24,7 @@ function test_evaluate_implicit()
          0 0 NaN NaN 1 0 NaN 1
          NaN 0 1 1 NaN 1 NaN 0]
     da = DataAccessor(m)
-    recommender = MF(da, 2)
+    recommender = MF(da, Parameters(:k => 2))
     build(recommender)
 
     truth_m = [0 1 1 0 0 0 0 1
