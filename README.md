@@ -28,8 +28,8 @@ da = DataAccessor(sparse([1 0 0; 4 5 0]))
 or set of events:
 
 ```julia
-constant n_user = 5
-constant n_item = 10
+const n_user = 5
+const n_item = 10
 
 events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
 
