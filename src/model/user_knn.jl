@@ -26,7 +26,7 @@ function build(rec::UserKNN)
     for ri in 1:n_row
         for rj in ri:n_row
             # pairwise correlation (i.e., ignore NaNs)
-            ij = !isnan(R[ri, :]) & !isnan(R[rj, :])
+            ij = !isnan.(R[ri, :]) & !isnan.(R[rj, :])
 
             vi = R[ri, :] - mean(R[ri, ij])
             vj = R[rj, :] - mean(R[rj, ij])
@@ -60,7 +60,7 @@ function predict(rec::UserKNN, u::Int, i::Int)
 
         r_ = 0
         if rec.is_normalized
-            jj = !isnan(v_near)
+            jj = !isnan.(v_near)
             r_ = mean(v_near[jj])
         end
 
@@ -70,7 +70,7 @@ function predict(rec::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if rec.is_normalized
-        ii = !isnan(rec.da.R[u, :])
+        ii = !isnan.(rec.da.R[u, :])
         pred += mean(rec.da.R[u, ii])
     end
     pred

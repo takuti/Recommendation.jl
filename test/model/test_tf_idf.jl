@@ -65,7 +65,7 @@ function test_tf_idf()
 
 
     # Case: normalized matrix
-    m_normalized = m ./ sqrt(sum(m.^2, 2))
+    m_normalized = m ./ sqrt.(sum(m.^2, 2))
     da = DataAccessor(m_normalized)
     set_user_attribute(da, 1, uv1)
     set_user_attribute(da, 2, uv2)

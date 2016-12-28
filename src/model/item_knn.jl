@@ -22,17 +22,17 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     if is_adjusted_cosine
         # subtract mean
         for ri in 1:n_row
-            indices = !isnan(R[ri, :])
+            indices = !isnan.(R[ri, :])
             vmean = mean(R[ri, indices])
             R[ri, indices] -= vmean
         end
     end
 
     # unlike pearson correlation, matrix can be filled by zeros for cosine similarity
-    R[isnan(R)] = 0
+    R[isnan.(R)] = 0
 
     # compute L2 nrom of each column
-    norms = sqrt(sum(R.^2, 1))
+    norms = sqrt.(sum(R.^2, 1))
 
     for ci in 1:n_col
         for cj in ci:n_col
@@ -54,7 +54,7 @@ function predict(rec::ItemKNN, u::Int, i::Int)
     numer = denom = 0
 
     # negative similarities are filtered
-    pairs = collect(zip(1:size(rec.da.R)[2], max(rec.sim[i, :], 0)))
+    pairs = collect(zip(1:size(rec.da.R)[2], max.(rec.sim[i, :], 0)))
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.hyperparams[:k]]
 
     for (j, s) in ordered_pairs
