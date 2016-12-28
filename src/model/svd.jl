@@ -19,7 +19,7 @@ end
 function build(rec::SVD)
     # NaNs are filled by zeros for now
     R = copy(rec.da.R)
-    R[isnan(R)] = 0
+    R[isnan.(R)] = 0
 
     res = svds(R, nsv=rec.hyperparams[:k])[1]
     rec.params[:U] = res.U

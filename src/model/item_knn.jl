@@ -45,6 +45,9 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
         end
     end
 
+    # NaN similarities are converted into zeros
+    rec.sim[isnan.(rec.sim)] = 0
+
     rec.states[:is_built] = true
 end
 
