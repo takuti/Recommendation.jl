@@ -4,6 +4,34 @@
 
 **Recommendation.jl** is a Julia package for building recommender systems. This package is highly flexible thanks to independent *data accessor* and *recommender* implementations; that is, you can easily use the package on your own data and algorithms.
 
+This package supports the following features:
+
+- Recommendation
+  - Baseline (non-personalized) recommenders based on:
+    - Most frequently co-occurred items (CoOccurrence)
+    - Most popular items (MostPopular)
+    - Percentage of ratings which are greater than a certain threshold value (ThresholdPercentage)
+    - Global user/item mean rating (UserMean, ItemMean)
+  - Personalized recommenders
+    - Item-based collaborative filtering (ItemKNN)
+    - User-based collaborative filtering (UserKNN)
+    - Singular Value Decomposition (SVD)
+    - Matrix Factorization (MF)
+    - Content-based recommendation using TF-IDF scoring (TFIDF)
+- Evaluation
+  - 5-fold cross validation
+  - Rating metric
+    - Root Mean Squared Error (RMSE)
+    - Mean Absolute Error (MAE)
+  - Ranking metric
+    - Recall
+    - Precision
+    - Mean Average Precision (MAP)
+    - Area Under the ROC curve (AUC)
+    - Mean Reciprocal Rank (MRR)
+    - Mean Percentile Rank (MPR)
+    - Normalized Discounted Cumulative Gain (NDCG)
+
 ## Installation
 
 This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
