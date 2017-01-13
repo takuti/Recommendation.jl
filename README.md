@@ -6,9 +6,11 @@
 
 ## Installation
 
+This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
+
 ```sh
 $ julia
-julia> Pkg.clone("git@github.com:takuti/Recommendation.jl.git")
+julia> Pkg.add("Recommendation")
 ```
 
 ## Usage
