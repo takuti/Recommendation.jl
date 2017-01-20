@@ -32,6 +32,8 @@ This package supports the following features:
     - Mean Percentile Rank (MPR)
     - Normalized Discounted Cumulative Gain (NDCG)
 
+For more information, you can refer to my [article](http://takuti.me/note/recommendation-julia/).
+
 ## Installation
 
 This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
