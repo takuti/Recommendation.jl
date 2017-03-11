@@ -22,7 +22,7 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     if is_adjusted_cosine
         # subtract mean
         for ri in 1:n_row
-            indices = !isnan.(R[ri, :])
+            indices = broadcast(!isnan, R[ri, :])
             vmean = mean(R[ri, indices])
             R[ri, indices] -= vmean
         end

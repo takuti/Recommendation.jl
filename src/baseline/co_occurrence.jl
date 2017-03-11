@@ -21,7 +21,7 @@ function build(rec::CoOccurrence)
 
     for i in 1:n_item
         v = rec.da.R[:, i]
-        cc = length(v_ref[(v_ref .> 0) & (v .> 0)])
+        cc = length(v_ref[(v_ref .> 0) .& (v .> 0)])
         rec.scores[i] = cc / c * 100.0
     end
 

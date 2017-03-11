@@ -1,7 +1,9 @@
+using Compat
+
 export Recommender, ContentRecommender
 export check_build_status, build, recommend, predict, ranking
 
-abstract Recommender
+@compat abstract type Recommender end
 
 function check_build_status(rec::Recommender)
     if !haskey(rec.states, :is_built) || !rec.states[:is_built]

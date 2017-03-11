@@ -8,8 +8,8 @@ function test_item_knn()
 
     recommender = ItemKNN(da, Parameters(:k => 1))
     build(recommender)
-    @test_approx_eq_eps recommender.sim[1, 2] 0.485 1e-3
-    @test_approx_eq_eps recommender.sim[5, 6] 0.405 1e-3
+    @test isapprox(recommender.sim[1, 2], 0.485, atol=1e-3)
+    @test isapprox(recommender.sim[5, 6], 0.405, atol=1e-3)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test rec[1] == (8 => 4.0)
@@ -19,8 +19,8 @@ function test_item_knn()
 
     recommender = ItemKNN(da, Parameters(:k => 1))
     build(recommender, is_adjusted_cosine=true)
-    @test_approx_eq_eps recommender.sim[1, 2] 0.174 1e-3
-    @test_approx_eq_eps recommender.sim[5, 6] 0.039 1e-3
+    @test isapprox(recommender.sim[1, 2], 0.174, atol=1e-3)
+    @test isapprox(recommender.sim[5, 6], 0.039, atol=1e-3)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test rec[1] == (8 => 4.0)

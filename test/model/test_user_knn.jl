@@ -9,8 +9,8 @@ function test_user_knn()
     recommender = UserKNN(da, Parameters(:k => 1))
     build(recommender)
 
-    @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
-    @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3
+    @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)
+    @test isapprox(recommender.sim[2, 3], -0.693, atol=1e-3)
 
     rec = recommend(recommender, 1, 3, [i for i in 1:8])
     @test rec[1] == (5 => 3.0)
@@ -20,8 +20,8 @@ function test_user_knn()
     recommender = UserKNN(da, Parameters(:k => 1), is_normalized=true);
     build(recommender)
 
-    @test_approx_eq_eps recommender.sim[1, 2] 0.447 1e-3
-    @test_approx_eq_eps recommender.sim[2, 3] -0.693 1e-3
+    @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)
+    @test isapprox(recommender.sim[2, 3], -0.693, atol=1e-3)
 
     rec = recommend(recommender, 1, 3, [i for i in 1:8])
     @test rec[1] == (5 => 3.0)

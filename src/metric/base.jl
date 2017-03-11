@@ -1,15 +1,17 @@
+using Compat
+
 export Metric, AccuracyMetric, RankingMetric
 export measure, count_true_positive
 
-abstract Metric
+@compat abstract type Metric end
 
-abstract AccuracyMetric <: Metric
+@compat abstract type AccuracyMetric <: Metric end
 
 function measure(metric::AccuracyMetric, truth::AbstractVector, pred::AbstractVector)
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 
-abstract RankingMetric <: Metric
+@compat abstract type RankingMetric <: Metric end
 
 function measure{T}(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Int)
     error("measure is not implemented for metric type $(typeof(metric))")

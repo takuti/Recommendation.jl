@@ -73,19 +73,19 @@ function test_tf_idf()
     recommender = TFIDF(da, tf, ones(size(tf))) # do not use IDF
     rec = recommend(recommender, 1, n_doc, docs)
     @test first(rec[5]) == 1
-    @test_approx_eq_eps last(rec[5]) 1.0090 1e-4
+    @test isapprox(last(rec[5]), 1.0090, atol=1e-4)
     rec = recommend(recommender, 2, n_doc, docs)
     @test first(rec[10]) == 7
-    @test_approx_eq_eps last(rec[10]) 0.7444 1e-4
+    @test isapprox(last(rec[10]), 0.7444, atol=1e-4)
     @test first(rec[11]) == 19
-    @test_approx_eq_eps last(rec[11]) 0.4834 1e-4
+    @test isapprox(last(rec[11]), 0.4834, atol=1e-4)
 
 
     # Case: normalized matrix & using IDF
     recommender = TFIDF(da, tf, idf)
     rec = recommend(recommender, 1, n_doc, docs)
     @test first(rec[4]) == 1
-    @test_approx_eq_eps last(rec[4]) 0.2476 1e-4
+    @test isapprox(last(rec[4]), 0.2476, atol=1e-4)
 end
 
 test_tf_idf()

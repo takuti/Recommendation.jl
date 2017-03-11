@@ -24,7 +24,11 @@ function build(rec::SVD)
     res = svds(R, nsv=rec.hyperparams[:k])[1]
     rec.params[:U] = res.U
     rec.params[:S] = res.S
-    rec.params[:V] = res.Vt
+    if size(res.Vt)[1] == size(res.S)[1] # whether V is transposed
+        rec.params[:V] = res.Vt' # v0.6
+    else
+        rec.params[:V] = res.Vt # v0.5
+    end
 
     rec.states[:is_built] = true
 end
