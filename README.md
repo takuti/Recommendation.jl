@@ -32,7 +32,7 @@ This package supports the following features:
     - Mean Percentile Rank (MPR)
     - Normalized Discounted Cumulative Gain (NDCG)
 
-For more information, you can refer to my [article](http://takuti.me/note/recommendation-julia/).
+For more information, you can refer to [my article](http://takuti.me/note/recommendation-julia/).
 
 ## Installation
 
