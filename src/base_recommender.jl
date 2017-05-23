@@ -1,5 +1,3 @@
-using Compat
-
 export Recommender, ContentRecommender
 export check_build_status, build, recommend, predict, ranking
 

@@ -1,5 +1,3 @@
-using Compat
-
 export Metric, AccuracyMetric, RankingMetric
 export measure, count_true_positive
 

@@ -1,5 +1,7 @@
 module Recommendation
 
+using Compat
+
 include("types.jl")
 
 include("base_recommender.jl")
