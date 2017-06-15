@@ -22,18 +22,14 @@ function build(rec::SVD)
     R[isnan.(R)] = 0
 
     res = svdfact(R)
-    rec.params[:U] = res.U[:, 1:rec.hyperparams[:k]]
-    rec.params[:S] = res.S[1:rec.hyperparams[:k]]
-    if size(res.Vt)[1] == size(res.S)[1] # whether V is transposed
-        rec.params[:V] = res.Vt'[:, 1:rec.hyperparams[:k]] # v0.6
-    else
-        rec.params[:V] = res.Vt[:, 1:rec.hyperparams[:k]] # v0.5
-    end
+    rec.params[:U] = res[:U][:, 1:rec.hyperparams[:k]]
+    rec.params[:S] = res[:S][1:rec.hyperparams[:k]]
+    rec.params[:Vt] = res[:Vt][1:rec.hyperparams[:k], :]
 
     rec.states[:is_built] = true
 end
 
 function predict(rec::SVD, u::Int, i::Int)
     check_build_status(rec)
-    dot(rec.params[:U][u, :] .* rec.params[:S], rec.params[:V][i, :])
+    dot(rec.params[:U][u, :] .* rec.params[:S], rec.params[:Vt][:, i])
 end
