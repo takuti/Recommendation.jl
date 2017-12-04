@@ -31,7 +31,7 @@ function test_auc(truth::Array{Int,1}, pred::Array{Int,1})
 end
 
 function test_mrr(truth::Array{Int,1}, pred::Array{Int,1})
-    actual = measure(MRR(), truth, pred)
+    actual = measure(ReciprocalRank(), truth, pred)
     expected = 1.0
     eps = 0.001
 

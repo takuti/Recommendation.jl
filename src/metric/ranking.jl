@@ -45,9 +45,9 @@ function measure{T}(metric::AUC, truth::Array{T}, pred::Array{T}, k::Int=0)
     correct / pairs
 end
 
-# Mean Reciprocal Rank
-immutable MRR <: RankingMetric end
-function measure{T}(metric::MRR, truth::Array{T}, pred::Array{T}, k::Int=0)
+# Reciprocal Rank
+immutable ReciprocalRank <: RankingMetric end
+function measure{T}(metric::ReciprocalRank, truth::Array{T}, pred::Array{T}, k::Int=0)
     n_pred = length(pred)
     for n = 1:n_pred
         if findfirst(truth, pred[n]) != 0
