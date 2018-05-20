@@ -1,6 +1,6 @@
 # Recommendation.jl
 
-[![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl)
+[![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.6.svg)](http://pkg.julialang.org/detail/Recommendation) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.7.svg)](http://pkg.julialang.org/detail/Recommendation) [![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl)
 
 **Recommendation.jl** is a Julia package for building recommender systems. Thanks to independent *data accessor* and *recommender* implementations, this package enables you to build recommendation systems on your own data and algorithms.
 
