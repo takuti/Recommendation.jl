@@ -1,6 +1,6 @@
 export ItemKNN
 
-immutable ItemKNN <: Recommender
+struct ItemKNN <: Recommender
     da::DataAccessor
     hyperparams::Parameters
     sim::AbstractMatrix
@@ -24,15 +24,15 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
         for ri in 1:n_row
             indices = broadcast(!isnan, R[ri, :])
             vmean = mean(R[ri, indices])
-            R[ri, indices] -= vmean
+            R[ri, indices] .-= vmean
         end
     end
 
     # unlike pearson correlation, matrix can be filled by zeros for cosine similarity
-    R[isnan.(R)] = 0
+    R[isnan.(R)] .= 0
 
     # compute L2 nrom of each column
-    norms = sqrt.(sum(R.^2, 1))
+    norms = sqrt.(Compat.sum(R.^2, dims=1))
 
     for ci in 1:n_col
         for cj in ci:n_col
@@ -46,7 +46,7 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     end
 
     # NaN similarities are converted into zeros
-    rec.sim[isnan.(rec.sim)] = 0
+    rec.sim[isnan.(rec.sim)] .= 0
 
     rec.states[:is_built] = true
 end

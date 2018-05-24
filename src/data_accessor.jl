@@ -1,7 +1,7 @@
 export DataAccessor
 export create_matrix, set_user_attribute, set_item_attribute
 
-immutable DataAccessor
+struct DataAccessor
     events::Array{Event,1}
     R::AbstractMatrix
     user_attributes::Dict{Int,Any} # user => attributes e.g. vector

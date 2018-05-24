@@ -1,6 +1,6 @@
 export CoOccurrence
 
-immutable CoOccurrence <: Recommender
+struct CoOccurrence <: Recommender
     da::DataAccessor
     hyperparams::Parameters
     scores::AbstractVector
@@ -17,7 +17,7 @@ function build(rec::CoOccurrence)
     n_item = size(rec.da.R, 2)
 
     v_ref = rec.da.R[:, rec.hyperparams[:i_ref]]
-    c = countnz(v_ref)
+    c = count(!iszero, v_ref)
 
     for i in 1:n_item
         v = rec.da.R[:, i]

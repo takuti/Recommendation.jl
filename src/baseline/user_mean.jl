@@ -1,6 +1,6 @@
 export UserMean
 
-immutable UserMean <: Recommender
+struct UserMean <: Recommender
     da::DataAccessor
     scores::AbstractVector
     states::States
@@ -16,7 +16,7 @@ function build(rec::UserMean)
 
     for u in 1:n_user
         v = rec.da.R[u, :]
-        rec.scores[u] = sum(v) / countnz(v)
+        rec.scores[u] = sum(v) / count(!iszero, v)
     end
 
     rec.states[:is_built] = true

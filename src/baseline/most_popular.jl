@@ -1,6 +1,6 @@
 export MostPopular
 
-immutable MostPopular <: Recommender
+struct MostPopular <: Recommender
     da::DataAccessor
     scores::AbstractVector
     states::States
@@ -15,7 +15,7 @@ function build(rec::MostPopular)
     n_item = size(rec.da.R, 2)
 
     for i in 1:n_item
-        rec.scores[i] = countnz(rec.da.R[:, i])
+        rec.scores[i] = count(!iszero, rec.da.R[:, i])
     end
 
     rec.states[:is_built] = true

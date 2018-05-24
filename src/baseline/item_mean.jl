@@ -1,6 +1,6 @@
 export ItemMean
 
-immutable ItemMean <: Recommender
+struct ItemMean <: Recommender
     da::DataAccessor
     scores::AbstractVector
     states::States
@@ -16,7 +16,7 @@ function build(rec::ItemMean)
 
     for i in 1:n_item
         v = rec.da.R[:, i]
-        rec.scores[i] = sum(v) / countnz(v)
+        rec.scores[i] = sum(v) / count(!iszero, v)
     end
 
     rec.states[:is_built] = true

@@ -1,5 +1,6 @@
 module Recommendation
 
+using Compat.Random, Compat.LinearAlgebra
 using Compat
 
 include("types.jl")

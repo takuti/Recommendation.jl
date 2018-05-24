@@ -1,6 +1,6 @@
 export ThresholdPercentage
 
-immutable ThresholdPercentage <: Recommender
+struct ThresholdPercentage <: Recommender
     da::DataAccessor
     hyperparams::Parameters
     scores::AbstractVector
@@ -18,7 +18,7 @@ function build(rec::ThresholdPercentage)
 
     for i in 1:n_item
         v = rec.da.R[:, i]
-        rec.scores[i] = length(v[v .>= rec.hyperparams[:th]]) / countnz(v) * 100.0
+        rec.scores[i] = length(v[v .>= rec.hyperparams[:th]]) / count(!iszero, v) * 100.0
     end
 
     rec.states[:is_built] = true

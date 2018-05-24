@@ -1,6 +1,6 @@
 export TFIDF
 
-immutable TFIDF <: Recommender
+struct TFIDF <: Recommender
     da::DataAccessor # document x attribute
     tf::AbstractMatrix # 1 x attribute
     idf::AbstractMatrix # 1 x attribute

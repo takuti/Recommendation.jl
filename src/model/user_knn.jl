@@ -1,6 +1,6 @@
 export UserKNN
 
-immutable UserKNN <: Recommender
+struct UserKNN <: Recommender
     da::DataAccessor
     hyperparams::Parameters
     sim::AbstractMatrix
@@ -28,8 +28,8 @@ function build(rec::UserKNN)
             # pairwise correlation (i.e., ignore NaNs)
             ij = broadcast(!isnan, R[ri, :]) .& broadcast(!isnan, R[rj, :])
 
-            vi = R[ri, :] - mean(R[ri, ij])
-            vj = R[rj, :] - mean(R[rj, ij])
+            vi = R[ri, :] .- mean(R[ri, ij])
+            vj = R[rj, :] .- mean(R[rj, ij])
 
             numer = dot(vi[ij], vj[ij])
             denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))

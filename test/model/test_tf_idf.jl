@@ -22,7 +22,7 @@ function test_tf_idf()
          0  1  1  0  1  0  1  0  0  1
          0  0  1  1  0  0  1  0  1  0]
 
-    tf = sum(m, 1)
+    tf = Compat.sum(m, dims=1)
     idf = 1 ./ tf
 
     users = [ 1  -1
@@ -65,7 +65,7 @@ function test_tf_idf()
 
 
     # Case: normalized matrix
-    m_normalized = m ./ sqrt.(sum(m.^2, 2))
+    m_normalized = m ./ sqrt.(Compat.sum(m.^2, dims=2))
     da = DataAccessor(m_normalized)
     set_user_attribute(da, 1, uv1)
     set_user_attribute(da, 2, uv2)

@@ -1,4 +1,4 @@
-immutable Foo <: Recommender
+struct Foo <: Recommender
     da::DataAccessor
 end
 

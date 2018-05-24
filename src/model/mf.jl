@@ -1,6 +1,6 @@
 export MF
 
-immutable MF <: Recommender
+struct MF <: Recommender
     da::DataAccessor
     hyperparams::Parameters
     params::Parameters
