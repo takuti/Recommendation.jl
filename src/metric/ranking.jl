@@ -1,4 +1,4 @@
-export Recall, Precision, MAP, AUC, MRR, MPR, NDCG
+export Recall, Precision, MAP, AUC, ReciprocalRank, MPR, NDCG
 
 # Recall@k
 immutable Recall <: RankingMetric end
