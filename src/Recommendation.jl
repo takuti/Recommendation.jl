@@ -3,6 +3,9 @@ module Recommendation
 using Compat.Random, Compat.LinearAlgebra
 using Compat
 
+import Statistics: mean
+import LinearAlgebra: svd
+
 include("types.jl")
 
 include("base_recommender.jl")

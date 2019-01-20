@@ -21,7 +21,7 @@ function build(rec::SVD)
     R = copy(rec.da.R)
     R[isnan.(R)] .= 0
 
-    res = svdfact(R)
+    res = svd(R)
     rec.params[:U] = res.U[:, 1:rec.hyperparams[:k]]
     rec.params[:S] = res.S[1:rec.hyperparams[:k]]
     rec.params[:Vt] = res.Vt[1:rec.hyperparams[:k], :]
