@@ -1,16 +1,21 @@
 language: julia
+
 os:
   - linux
   - osx
+
 julia:
   - 0.7
   - 1.0
   - nightly
+
 matrix:
   allow_failures:
-    julia: nightly
+  - julia: nightly
+
 notifications:
   email: false
+
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Recommendation"); Pkg.test("Recommendation"; coverage=true)'
