@@ -19,7 +19,7 @@ function measure(metric::MAP, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     n_pred = length(pred)
 
     for n = 1:n_pred
-        if Compat.findfirst(isequal(pred[n]), truth) != nothing
+        if findfirst(isequal(pred[n]), truth) != nothing
             tp += 1
             accum += tp / n
         end
@@ -33,7 +33,7 @@ struct AUC <: RankingMetric end
 function measure(metric::AUC, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     tp = correct = 0
     for r in pred
-        if Compat.findfirst(isequal(r), truth) != nothing
+        if findfirst(isequal(r), truth) != nothing
             # keep track number of tp placed before
             tp += 1
         else
@@ -50,7 +50,7 @@ struct ReciprocalRank <: RankingMetric end
 function measure(metric::ReciprocalRank, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     n_pred = length(pred)
     for n = 1:n_pred
-        if Compat.findfirst(isequal(pred[n]), truth) != nothing
+        if findfirst(isequal(pred[n]), truth) != nothing
             return 1 / n
         end
     end
@@ -63,7 +63,7 @@ function measure(metric::MPR, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     accum = 0
     n_pred = length(pred)
     for t in truth
-        r = (coalesce(Compat.findfirst(isequal(t), pred), 0) - 1) / n_pred
+        r = (coalesce(findfirst(isequal(t), pred), 0) - 1) / n_pred
         accum += r
     end
     accum * 100 / length(truth)
@@ -75,7 +75,7 @@ function measure(metric::NDCG, truth::Array{T}, pred::Array{T}, k::Int) where T
     dcg = idcg = 0
     for n = 1:k
         d = 1 / log2(n + 1)
-        if Compat.findfirst(isequal(pred[n]), truth) != nothing
+        if findfirst(isequal(pred[n]), truth) != nothing
             dcg += d
         end
         idcg += d

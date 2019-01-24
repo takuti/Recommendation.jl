@@ -32,7 +32,7 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     R[isnan.(R)] .= 0
 
     # compute L2 nrom of each column
-    norms = sqrt.(Compat.sum(R.^2, dims=1))
+    norms = sqrt.(sum(R.^2, dims=1))
 
     for ci in 1:n_col
         for cj in ci:n_col

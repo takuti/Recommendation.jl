@@ -1,5 +1,6 @@
 using Recommendation
-using Compat, Compat.Test, Compat.SparseArrays
+using Test
+using SparseArrays
 
 include("test_base_recommender.jl")
 include("test_data_accessor.jl")

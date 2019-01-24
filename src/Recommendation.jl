@@ -1,10 +1,11 @@
 module Recommendation
 
-using Compat.Random, Compat.LinearAlgebra
-using Compat
-
 import Statistics: mean
+
+using LinearAlgebra
 import LinearAlgebra: svd
+
+using Random
 
 include("types.jl")
 
