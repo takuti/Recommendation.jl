@@ -1,7 +1,8 @@
 using JLD
+using SparseArrays
 using Recommendation
 
-R = load("data/ml-1m.jld")["R"]
+R = load("data/ml-100k.jld")["R"]
 da = DataAccessor(R)
 
 recall = cross_validation(

@@ -1,16 +1,17 @@
 using JLD
+using SparseArrays
 
-const n_user = 6040
-const n_item = 3952
+const n_user = 943
+const n_item = 1682
 
 R = spzeros(n_user, n_item)
 
-open("ml-1m/ratings.dat", "r") do f
+open("ml-100k/u.data", "r") do f
     for line in eachline(f)
-        l = split(line, "::")
+        l = split(line, "\t")
         user, item, value = parse(Int, l[1]), parse(Int, l[2]), parse(Int, l[3])
         R[user, item] = value
     end
 end
 
-save("ml-1m.jld", "R", R)
+save("ml-100k.jld", "R", R)

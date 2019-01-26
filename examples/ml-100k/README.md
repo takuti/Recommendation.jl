@@ -6,5 +6,5 @@ Pkg.add("JLD")
 
 ```
 ./init.sh
-julia ml-1m.jl
+julia ml-100k.jl
 ```
