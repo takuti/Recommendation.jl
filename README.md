@@ -1,6 +1,6 @@
 # Recommendation.jl
 
-[![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.6.svg)](http://pkg.julialang.org/detail/Recommendation) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.7.svg)](http://pkg.julialang.org/detail/Recommendation) [![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl)
+[![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.5.svg)](http://pkg.julialang.org/detail/Recommendation) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.6.svg)](http://pkg.julialang.org/detail/Recommendation)
 
 **Recommendation.jl** is a Julia package for building recommender systems. Thanks to independent *data accessor* and *recommender* implementations, this package enables you to build recommendation systems on your own data and algorithms.
 
@@ -39,8 +39,7 @@ For more information, you can refer to [my article](http://takuti.me/note/recomm
 This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
 
 ```sh
-$ julia
-julia> Pkg.add("Recommendation")
+Pkg.add("Recommendation")
 ```
 
 ## Usage
@@ -54,6 +53,8 @@ using Recommendation
 First of all, you need to create a data accessor from a matrix:
 
 ```julia
+using SparseArrays
+
 da = DataAccessor(sparse([1 0 0; 4 5 0]))
 ```
 
