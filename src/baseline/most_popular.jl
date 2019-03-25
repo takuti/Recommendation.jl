@@ -6,6 +6,12 @@ struct MostPopular <: Recommender
     states::States
 end
 
+"""
+
+    MostPopular(da::DataAccessor)
+
+Recommend most popular items.
+"""
 MostPopular(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
     n_item = size(da.R, 2)
     MostPopular(da, zeros(n_item), States(:is_built => false))

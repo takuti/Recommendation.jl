@@ -6,6 +6,11 @@ struct ItemMean <: Recommender
     states::States
 end
 
+"""
+    ItemMean(da::DataAccessor)
+
+Recommend based on global item mean rating.
+"""
 ItemMean(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
     n_item = size(da.R, 2)
     ItemMean(da, zeros(n_item), States(:is_built => false))

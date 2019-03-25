@@ -7,6 +7,15 @@ struct TFIDF <: Recommender
     states::States
 end
 
+"""
+    TFIDF(
+        da::DataAccessor,
+        tf::AbstractMatrix,
+        idf::AbstractMatrix
+    )
+
+Content-based recommendation using TF-IDF scoring. TF and IDF matrix are respectively specified as `tf` and `idf`.
+"""
 TFIDF(da::DataAccessor, tf::AbstractMatrix, idf::AbstractMatrix) = begin
     # instanciate with dummy status (i.e., always true)
     TFIDF(da, tf, idf, States(:is_built => true))

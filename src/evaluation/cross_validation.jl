@@ -1,5 +1,17 @@
 export cross_validation
 
+"""
+    cross_validation(
+        rec_type::DataType,
+        hyperparams::Parameters,
+        da::DataAccessor,
+        n_fold::Int,
+        metric::Metric,
+        k::Int=0
+    )
+
+Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric` with `hyperparams`. For ranking metric, accuracy is measured by top-`k` recommendation.
+"""
 function cross_validation(rec_type::DataType, hyperparams::Parameters, da::DataAccessor,
                           n_fold::Int, metric::Metric, k::Int=0)
 

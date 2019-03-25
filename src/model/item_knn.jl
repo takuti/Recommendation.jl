@@ -7,6 +7,14 @@ struct ItemKNN <: Recommender
     states::States
 end
 
+"""
+    ItemKNN(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 5)
+    )
+
+Item-based collaborative filtering. `k` represents number of neighbors.
+"""
 ItemKNN(da::DataAccessor,
         hyperparams::Parameters=Parameters(:k => 5)) = begin
     n_item = size(da.R, 2)

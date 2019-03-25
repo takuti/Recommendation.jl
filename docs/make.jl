@@ -8,7 +8,13 @@ makedocs(
     linkcheck = !("skiplinks" in ARGS),
     pages = [
         "Home" => "index.md",
-        "getting_started.md",
+        "Getting Started" => "getting_started.md",
+        "Reference" => [
+            "baseline.md",
+            "cf.md",
+            "content_based.md",
+            "evaluation.md",
+        ],
     ],
 )
 

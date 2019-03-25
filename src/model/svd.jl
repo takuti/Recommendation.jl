@@ -7,6 +7,14 @@ struct SVD <: Recommender
     states::States
 end
 
+"""
+    SVD(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 20)
+    )
+
+Recommendation based on Singular Value Decomposition (SVD). Number of factors is configured by `k`.
+"""
 SVD(da::DataAccessor,
     hyperparams::Parameters=Parameters(:k => 20)) = begin
     n_user, n_item = size(da.R)

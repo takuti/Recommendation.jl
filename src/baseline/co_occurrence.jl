@@ -7,6 +7,15 @@ struct CoOccurrence <: Recommender
     states::States
 end
 
+"""
+
+    CoOccurrence(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:i_ref => 1)
+    )
+
+Recommend items which are most frequently co-occurred with a reference item `i_ref`.
+"""
 CoOccurrence(da::DataAccessor,
              hyperparams::Parameters=Parameters(:i_ref => 1)) = begin
     n_item = size(da.R, 2)

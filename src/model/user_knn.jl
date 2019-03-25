@@ -8,6 +8,15 @@ struct UserKNN <: Recommender
     states::States
 end
 
+"""
+    UserKNN(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 5),
+        is_normalized::Bool=false
+    )
+
+User-based collaborative filtering. `k` represents number of neighbors, and `is_normalized` specifies if weighted sum of neighbors' rating is normalized.
+"""
 UserKNN(da::DataAccessor,
         hyperparams::Parameters=Parameters(:k => 5);
         is_normalized::Bool=false) = begin

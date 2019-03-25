@@ -7,6 +7,15 @@ struct ThresholdPercentage <: Recommender
     states::States
 end
 
+"""
+
+    ThresholdPercentage(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:th => 2.5)
+    )
+
+Recommend based on percentage of ratings which are greater than a certain threshold value `th`.
+"""
 ThresholdPercentage(da::DataAccessor,
                     hyperparams::Parameters=Parameters(:th => 2.5)) = begin
     n_item = size(da.R, 2)

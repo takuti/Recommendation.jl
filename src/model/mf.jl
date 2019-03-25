@@ -7,6 +7,14 @@ struct MF <: Recommender
     states::States
 end
 
+"""
+    MF(
+        da::DataAccessor,
+        hyperparams::Parameters=Parameters(:k => 20)
+    )
+
+Recommendation based on Matrix Factorization (MF). Number of factors is configured by `k`.
+"""
 MF(da::DataAccessor,
    hyperparams::Parameters=Parameters(:k => 20)) = begin
     n_user, n_item = size(da.R)

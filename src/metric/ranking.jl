@@ -1,18 +1,50 @@
 export Recall, Precision, MAP, AUC, ReciprocalRank, MPR, NDCG
 
-# Recall@k
+"""
+    Recall
+
+Recall@k.
+
+    measure(
+        metric::Recall,
+        truth::Array{T},
+        pred::Array{T},
+        k::Int
+    )
+"""
 struct Recall <: RankingMetric end
 function measure(metric::Recall, truth::Array{T}, pred::Array{T}, k::Int) where T
     count_true_positive(truth, pred[1:k]) / length(truth)
 end
 
-# Precision@k
+"""
+    Precision
+
+Precision@k.
+
+    measure(
+        metric::Precision,
+        truth::Array{T},
+        pred::Array{T},
+        k::Int
+    )
+"""
 struct Precision <: RankingMetric end
 function measure(metric::Precision, truth::Array{T}, pred::Array{T}, k::Int) where T
     count_true_positive(truth, pred[1:k]) / k
 end
 
-# Mean Average Precision
+"""
+    MAE
+
+Mean Average Precision.
+
+    measure(
+        metric::MAP,
+        truth::Array{T},
+        pred::Array{T}
+    )
+"""
 struct MAP <: RankingMetric end
 function measure(metric::MAP, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     tp = accum = 0
@@ -28,7 +60,17 @@ function measure(metric::MAP, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     accum / length(truth)
 end
 
-# Area under the ROC curve
+"""
+    AUC
+
+Area Under the ROC Curve.
+
+    measure(
+        metric::AUC,
+        truth::Array{T},
+        pred::Array{T}
+    )
+"""
 struct AUC <: RankingMetric end
 function measure(metric::AUC, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     tp = correct = 0
@@ -45,7 +87,17 @@ function measure(metric::AUC, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     correct / pairs
 end
 
-# Reciprocal Rank
+"""
+    ReciprocalRank
+
+Reciprocal Rank.
+
+    measure(
+        metric::ReciprocalRank,
+        truth::Array{T},
+        pred::Array{T}
+    )
+"""
 struct ReciprocalRank <: RankingMetric end
 function measure(metric::ReciprocalRank, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     n_pred = length(pred)
@@ -57,7 +109,17 @@ function measure(metric::ReciprocalRank, truth::Array{T}, pred::Array{T}, k::Int
     return 0
 end
 
-# Mean Percentile Rank
+"""
+    MPR
+
+Mean Percentile Rank.
+
+    measure(
+        metric::MPR,
+        truth::Array{T},
+        pred::Array{T}
+    )
+"""
 struct MPR <: RankingMetric end
 function measure(metric::MPR, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     accum = 0
@@ -69,7 +131,18 @@ function measure(metric::MPR, truth::Array{T}, pred::Array{T}, k::Int=0) where T
     accum * 100 / length(truth)
 end
 
-# Normalized Discounted Cumulative Gain
+"""
+    NDCG
+
+Normalized Discounted Cumulative Gain.
+
+    measure(
+        metric::NDCG,
+        truth::Array{T},
+        pred::Array{T},
+        k::Int
+    )
+"""
 struct NDCG <: RankingMetric end
 function measure(metric::NDCG, truth::Array{T}, pred::Array{T}, k::Int) where T
     dcg = idcg = 0
