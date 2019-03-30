@@ -9,10 +9,11 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Getting Started" => "getting_started.md",
-        "Reference" => [
+        "References" => [
+            "notation.md",
             "baseline.md",
-            "cf.md",
-            "content_based.md",
+            "collaborative_filtering.md",
+            "content_based_filtering.md",
             "evaluation.md",
         ],
     ],
