@@ -35,7 +35,7 @@ function measure(metric::Precision, truth::Array{T}, pred::Array{T}, k::Int) whe
 end
 
 """
-    MAE
+    MAP
 
 Mean Average Precision.
 
