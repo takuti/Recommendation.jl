@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Recommendation.jl",
     "category": "section",
-    "text": "Recommendation.jl is a Julia package for building recommender systems. Thanks to independent data accessor and recommender implementations, this package enables you to build recommendation systems on your own data and algorithms.For more information, you can refer to my article."
+    "text": "Recommendation.jl is a Julia package for building recommender systems. The package allows you to quickly build and evaluate common recommendation models on your own data, by using one or more of the following functionalities:Non-Personalized Baselines that give unsophisticated, rule-based recommendation.\nCollaborative Filtering on either explicit or implicit user-item matrix.\nContent-Based Filtering by using the TF-IDF weighting technique.\nEvaluation based on a variety of rating and ranking metrics, with easy-to-use N-fold cross validation executor.Additionally, the package is highly extensible because data accessor, model, and recommendation module are fully separated and independent in the implementation. That is, you can develop and test your custom recommendation logic at ease.(Image: overview)"
 },
 
 {
