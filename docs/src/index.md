@@ -10,3 +10,7 @@
 Additionally, the package is highly extensible because *data accessor*, *model*, and *recommendation* module are fully separated and independent in the implementation. That is, you can develop and test your custom recommendation logic at ease.
 
 ![overview](./assets/images/overview.png)
+
+Following article describes motivation for building this package:
+
+- [Recommendation.jl: Building Recommender Systems in Julia | takuti.me](http://takuti.me/note/recommendation-julia/)

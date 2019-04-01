@@ -4,20 +4,21 @@
 
 **Recommendation.jl** is a Julia package for building recommender systems. 
 
-- [Recommendation.jl: Building Recommender Systems in Julia - takuti.me](http://takuti.me/note/recommendation-julia/)
-- [Documentation](https://takuti.github.io/Recommendation.jl/latest/)
+- [**Documentation**](https://takuti.github.io/Recommendation.jl/latest/)
 
 ## Installation
 
-This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
-
-```sh
-Pkg.add("Recommendation")
+```julia
+julia> using Pkg; Pkg.add("Recommendation")
 ```
 
 ## Usage
 
-This package contains `DataAccessor` and several fundamental recommendation techniques (e.g., non-personalized `MostPopular` recommender, `CF` and `MF`), and evaluation metrics such as `Recall`. All of them can be accessible by loading the package as follows:
+This package contains `DataAccessor` and several fundamental recommendation techniques (e.g., non-personalized `MostPopular` recommender, `CF` and `MF`), and evaluation metrics such as `Recall`: 
+
+<img src="docs/src/assets/images/overview.png" width="400px" alt="overview" />
+
+All of them can be accessible by loading the package as follows:
 
 ```julia
 using Recommendation
