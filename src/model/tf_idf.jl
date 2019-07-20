@@ -1,12 +1,5 @@
 export TFIDF
 
-struct TFIDF <: Recommender
-    da::DataAccessor # document x attribute
-    tf::AbstractMatrix # 1 x attribute
-    idf::AbstractMatrix # 1 x attribute
-    states::States
-end
-
 """
     TFIDF(
         da::DataAccessor,
@@ -34,9 +27,16 @@ Finally, each item-term pair is weighted by ``\\mathrm{tf}(t, i) \\cdot \\mathrm
 
 ![tfidf](./assets/images/tfidf.png)
 """
-TFIDF(da::DataAccessor, tf::AbstractMatrix, idf::AbstractMatrix) = begin
-    # instanciate with dummy status (i.e., always true)
-    TFIDF(da, tf, idf, States(:is_built => true))
+struct TFIDF <: Recommender
+    da::DataAccessor # document x attribute
+    tf::AbstractMatrix # 1 x attribute
+    idf::AbstractMatrix # 1 x attribute
+    states::States
+
+    function TFIDF(da::DataAccessor, tf::AbstractMatrix, idf::AbstractMatrix)
+        # instanciate with dummy status (i.e., always true)
+        new(da, tf, idf, States(:is_built => true))
+    end
 end
 
 function predict(rec::TFIDF, u::Int, i::Int)

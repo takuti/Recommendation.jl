@@ -1,12 +1,5 @@
 export MF
 
-struct MF <: Recommender
-    da::DataAccessor
-    hyperparams::Parameters
-    params::Parameters
-    states::States
-end
-
 """
     MF(
         da::DataAccessor,
@@ -23,14 +16,20 @@ MF solves the following minimization problem for a set of observed user-item int
 
 where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a factorized user and item vector, and ``\\lambda`` is a regularization parameter to avoid overfitting. An optimal solution will be found by stochastic gradient descent (SGD). Ultimately, we can predict missing values in ``R`` by just computing ``PQ^{\\mathrm{T}}``, and the prediction directly leads recommendation.
 """
-MF(da::DataAccessor,
-   hyperparams::Parameters=Parameters(:k => 20)) = begin
-    n_user, n_item = size(da.R)
-    P = zeros(n_user, hyperparams[:k])
-    Q = zeros(n_item, hyperparams[:k])
-    params = Parameters(:P => P, :Q => Q)
+struct MF <: Recommender
+    da::DataAccessor
+    hyperparams::Parameters
+    params::Parameters
+    states::States
 
-    MF(da, hyperparams, params, States(:is_built => false))
+    function MF(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 20))
+        n_user, n_item = size(da.R)
+        P = zeros(n_user, hyperparams[:k])
+        Q = zeros(n_item, hyperparams[:k])
+        params = Parameters(:P => P, :Q => Q)
+
+        new(da, hyperparams, params, States(:is_built => false))
+    end
 end
 
 function build(rec::MF;

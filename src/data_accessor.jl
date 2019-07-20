@@ -6,27 +6,27 @@ struct DataAccessor
     R::AbstractMatrix
     user_attributes::Dict{Int,Any} # user => attributes e.g. vector
     item_attributes::Dict{Int,Any} # item => attributes
-end
 
-DataAccessor(events::Array{Event,1}, n_user::Int, n_item::Int) = begin
-    R = create_matrix(events, n_user, n_item)
-    DataAccessor(events, R, Dict(), Dict())
-end
-
-DataAccessor(R::AbstractMatrix) = begin
-    n_user, n_item = size(R)
-    events = Array{Event,1}()
-
-    for user in 1:n_user
-        for item in 1:n_item
-            r = R[user, item]
-            if !isnan(r) && r != 0
-                append!(events, [Event(user, item, r)])
-            end
-        end
+    function DataAccessor(events::Array{Event,1}, n_user::Int, n_item::Int)
+        R = create_matrix(events, n_user, n_item)
+        new(events, R, Dict(), Dict())
     end
 
-    DataAccessor(events, R, Dict(), Dict())
+    function DataAccessor(R::AbstractMatrix)
+        n_user, n_item = size(R)
+        events = Array{Event,1}()
+
+        for user in 1:n_user
+            for item in 1:n_item
+                r = R[user, item]
+                if !isnan(r) && r != 0
+                    append!(events, [Event(user, item, r)])
+                end
+            end
+        end
+
+        new(events, R, Dict(), Dict())
+    end
 end
 
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)

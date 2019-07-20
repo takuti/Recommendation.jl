@@ -1,13 +1,5 @@
 export UserKNN
 
-struct UserKNN <: Recommender
-    da::DataAccessor
-    hyperparams::Parameters
-    sim::AbstractMatrix
-    is_normalized::Bool
-    states::States
-end
-
 """
     UserKNN(
         da::DataAccessor,
@@ -34,12 +26,17 @@ where ``\\sigma(t)`` denotes the ``t``-th nearest-neighborhood user. Ultimately,
 
 It should be noted that user-based CF is highly inefficient because gradually increasing massive users and their dynamic tastes require us to frequently recompute the similarities for every pairs of users.
 """
-UserKNN(da::DataAccessor,
-        hyperparams::Parameters=Parameters(:k => 5);
-        is_normalized::Bool=false) = begin
-    n_user = size(da.R, 1)
-    UserKNN(da, hyperparams, zeros(n_user, n_user), is_normalized,
-            States(:is_built => false))
+struct UserKNN <: Recommender
+    da::DataAccessor
+    hyperparams::Parameters
+    sim::AbstractMatrix
+    is_normalized::Bool
+    states::States
+
+    function UserKNN(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 5); is_normalized::Bool=false)
+        n_user = size(da.R, 1)
+        new(da, hyperparams, zeros(n_user, n_user), is_normalized, States(:is_built => false))
+    end
 end
 
 function build(rec::UserKNN)

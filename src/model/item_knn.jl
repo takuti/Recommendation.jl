@@ -1,12 +1,5 @@
 export ItemKNN
 
-struct ItemKNN <: Recommender
-    da::DataAccessor
-    hyperparams::Parameters
-    sim::AbstractMatrix
-    states::States
-end
-
 """
     ItemKNN(
         da::DataAccessor,
@@ -32,10 +25,16 @@ r_{u,i} = \\frac{\\sum^k_{t=1} s_{i,\\tau(t)} \\cdot r_{u,\\tau(t)} }{ \\sum^k_{
 
 In case that the number of items is smaller than users, item-based CF could be a more reasonable choice than the user-based approach.
 """
-ItemKNN(da::DataAccessor,
-        hyperparams::Parameters=Parameters(:k => 5)) = begin
-    n_item = size(da.R, 2)
-    ItemKNN(da, hyperparams, zeros(n_item, n_item), States(:is_built => false))
+struct ItemKNN <: Recommender
+    da::DataAccessor
+    hyperparams::Parameters
+    sim::AbstractMatrix
+    states::States
+
+    function ItemKNN(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 5))
+        n_item = size(da.R, 2)
+        new(da, hyperparams, zeros(n_item, n_item), States(:is_built => false))
+    end
 end
 
 function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)

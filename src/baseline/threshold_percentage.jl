@@ -1,12 +1,5 @@
 export ThresholdPercentage
 
-struct ThresholdPercentage <: Recommender
-    da::DataAccessor
-    hyperparams::Parameters
-    scores::AbstractVector
-    states::States
-end
-
 """
 
     ThresholdPercentage(
@@ -16,10 +9,16 @@ end
 
 Recommend based on percentage of ratings which are greater than a certain threshold value `th`.
 """
-ThresholdPercentage(da::DataAccessor,
-                    hyperparams::Parameters=Parameters(:th => 2.5)) = begin
-    n_item = size(da.R, 2)
-    ThresholdPercentage(da, hyperparams, zeros(n_item), States(:is_built => false))
+struct ThresholdPercentage <: Recommender
+    da::DataAccessor
+    hyperparams::Parameters
+    scores::AbstractVector
+    states::States
+
+    function ThresholdPercentage(da::DataAccessor, hyperparams::Parameters=Parameters(:th => 2.5))
+        n_item = size(da.R, 2)
+        new(da, hyperparams, zeros(n_item), States(:is_built => false))
+    end
 end
 
 function build(rec::ThresholdPercentage)

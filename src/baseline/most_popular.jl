@@ -1,20 +1,20 @@
 export MostPopular
 
-struct MostPopular <: Recommender
-    da::DataAccessor
-    scores::AbstractVector
-    states::States
-end
-
 """
 
     MostPopular(da::DataAccessor)
 
 Recommend most popular items.
 """
-MostPopular(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
-    n_item = size(da.R, 2)
-    MostPopular(da, zeros(n_item), States(:is_built => false))
+struct MostPopular <: Recommender
+    da::DataAccessor
+    scores::AbstractVector
+    states::States
+
+    function MostPopular(da::DataAccessor, hyperparams::Parameters=Parameters())
+        n_item = size(da.R, 2)
+        new(da, zeros(n_item), States(:is_built => false))
+    end
 end
 
 function build(rec::MostPopular)

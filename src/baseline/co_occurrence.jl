@@ -1,12 +1,5 @@
 export CoOccurrence
 
-struct CoOccurrence <: Recommender
-    da::DataAccessor
-    hyperparams::Parameters
-    scores::AbstractVector
-    states::States
-end
-
 """
 
     CoOccurrence(
@@ -16,10 +9,16 @@ end
 
 Recommend items which are most frequently co-occurred with a reference item `i_ref`.
 """
-CoOccurrence(da::DataAccessor,
-             hyperparams::Parameters=Parameters(:i_ref => 1)) = begin
-    n_item = size(da.R, 2)
-    CoOccurrence(da, hyperparams, zeros(n_item), States(:is_built => false))
+struct CoOccurrence <: Recommender
+    da::DataAccessor
+    hyperparams::Parameters
+    scores::AbstractVector
+    states::States
+
+    function CoOccurrence(da::DataAccessor, hyperparams::Parameters=Parameters(:i_ref => 1))
+        n_item = size(da.R, 2)
+        new(da, hyperparams, zeros(n_item), States(:is_built => false))
+    end
 end
 
 function build(rec::CoOccurrence)

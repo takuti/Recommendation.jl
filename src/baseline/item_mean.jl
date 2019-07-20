@@ -1,19 +1,19 @@
 export ItemMean
 
-struct ItemMean <: Recommender
-    da::DataAccessor
-    scores::AbstractVector
-    states::States
-end
-
 """
     ItemMean(da::DataAccessor)
 
 Recommend based on global item mean rating.
 """
-ItemMean(da::DataAccessor, hyperparams::Parameters=Parameters()) = begin
-    n_item = size(da.R, 2)
-    ItemMean(da, zeros(n_item), States(:is_built => false))
+struct ItemMean <: Recommender
+    da::DataAccessor
+    scores::AbstractVector
+    states::States
+
+    function ItemMean(da::DataAccessor, hyperparams::Parameters=Parameters())
+        n_item = size(da.R, 2)
+        new(da, zeros(n_item), States(:is_built => false))
+    end
 end
 
 function build(rec::ItemMean)
