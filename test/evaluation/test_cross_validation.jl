@@ -7,7 +7,7 @@ function test_cross_validation()
     da = DataAccessor(m)
 
     @test cross_validation(MF, Parameters(:k => 2), da, 5, # 5-fold
-                           Recall(), 4) <= 0.5
+                           Recall, 4) <= 0.5
 end
 
 test_cross_validation()

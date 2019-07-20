@@ -10,7 +10,7 @@ recall = cross_validation(
                           Parameters(), # Hyperparameters
                           da,           # Data Accessor
                           1,            # N-fold
-                          Recall(),     # Metric
+                          Recall,       # Metric
                           5             # Top-k
                          )
 println(recall)

@@ -2,18 +2,18 @@ export cross_validation
 
 """
     cross_validation(
-        rec_type::DataType,
+        rec_type::Type{T<:Recommender},
         hyperparams::Parameters,
         da::DataAccessor,
         n_fold::Int,
-        metric::Metric,
+        metric::Type{S<:Metric},
         k::Int=0
     )
 
 Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric` with `hyperparams`. For ranking metric, accuracy is measured by top-`k` recommendation.
 """
-function cross_validation(rec_type::DataType, hyperparams::Parameters, da::DataAccessor,
-                          n_fold::Int, metric::Metric, k::Int=0)
+function cross_validation(rec_type::Type{T}, hyperparams::Parameters, da::DataAccessor,
+                          n_fold::Int, metric::Type{S}, k::Int=0) where {T<:Recommender,S<:Metric}
 
     n_user, n_item = size(da.R)
 
@@ -36,7 +36,7 @@ function cross_validation(rec_type::DataType, hyperparams::Parameters, da::DataA
         rec = rec_type(train_da, hyperparams)
         build(rec)
 
-        accum += evaluate(rec, truth_da, metric, k)
+        accum += evaluate(rec, truth_da, metric(), k)
     end
 
     accum / n_fold
