@@ -1,10 +1,15 @@
 # Recommendation.jl
 
-[![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.5.svg)](http://pkg.julialang.org/detail/Recommendation) [![Recommendation](http://pkg.julialang.org/badges/Recommendation_0.6.svg)](http://pkg.julialang.org/detail/Recommendation)
+[![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl) 
+[![Coverage Status](https://coveralls.io/repos/github/takuti/Recommendation.jl/badge.svg?branch=master)](https://coveralls.io/github/takuti/Recommendation.jl?branch=master)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://takuti.github.io/Recommendation.jl/latest/)
 
-**Recommendation.jl** is a Julia package for building recommender systems. 
+**Recommendation.jl** is a minimal, customizable Julia package for building recommender systems. Pre-built basic functionalities include:
 
-- [**Documentation**](https://takuti.github.io/Recommendation.jl/latest/)
+- Non-personalized baselines that give unsophisticated, rule-based recommendation.
+- Collaborative filtering on either explicit or implicit user-item matrix.
+- Content-based filtering by using the TF-IDF weighting technique.
+- Evaluation based on a variety of rating and ranking metrics, with easy-to-use N-fold cross validation executor.
 
 ## Installation
 
@@ -81,3 +86,5 @@ candidates = [i for i in 1:n_item] # all items
 
 recommend(recommender, u, k, candidates)
 ```
+
+See [**documentation**](https://takuti.github.io/Recommendation.jl/latest/) for the details.
