@@ -1,4 +1,4 @@
-export Recommender, ContentRecommender
+export Recommender
 export check_build_status, build, recommend, predict, ranking
 
 abstract type Recommender end
