@@ -16,18 +16,19 @@ struct SVD <: Recommender
     U::AbstractMatrix
     S::AbstractVector
     Vt::AbstractMatrix
-    states::States
 
     function SVD(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
-        U = zeros(n_user, k)
-        S = zeros(k)
-        Vt = zeros(k, n_item)
-        new(data, k, U, S, Vt, States(:built => false))
+        U = matrix(n_user, k)
+        S = vector(k)
+        Vt = matrix(k, n_item)
+        new(data, k, U, S, Vt)
     end
 end
 
 SVD(data::DataAccessor) = SVD(data, 20)
+
+isbuilt(recommender::SVD) = isfilled(recommender.U)
 
 function build!(recommender::SVD)
     # NaNs are filled by zeros for now
@@ -38,8 +39,6 @@ function build!(recommender::SVD)
     recommender.U[:] = res.U[:, 1:recommender.k]
     recommender.S[:] = res.S[1:recommender.k]
     recommender.Vt[:] = res.Vt[1:recommender.k, :]
-
-    recommender.states[:built] = true
 end
 
 function predict(recommender::SVD, u::Int, i::Int)

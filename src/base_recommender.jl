@@ -1,13 +1,15 @@
 export Recommender
-export check_build_status, build!, recommend, predict, ranking
+export isbuilt, check_build_status, build!, recommend, predict, ranking
 
 abstract type Recommender end
 
 function check_build_status(recommender::Recommender)
-    if !haskey(recommender.states, :built) || !recommender.states[:built]
+    if !isbuilt(recommender)
         error("Recommender $(typeof(recommender)) is not built before making recommendation")
     end
 end
+
+isbuilt(recommender::Recommender) = true
 
 function build!(recommender::Recommender; kwargs...)
     error("build! is not implemented for recommender type $(typeof(recommender))")

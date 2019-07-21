@@ -8,13 +8,14 @@ Recommend based on global item mean rating.
 struct ItemMean <: Recommender
     data::DataAccessor
     scores::AbstractVector
-    states::States
 
     function ItemMean(data::DataAccessor)
         n_item = size(data.R, 2)
-        new(data, zeros(n_item), States(:built => false))
+        new(data, vector(n_item))
     end
 end
+
+isbuilt(recommender::ItemMean) = isfilled(recommender.scores)
 
 function build!(recommender::ItemMean)
     n_item = size(recommender.data.R, 2)
@@ -23,8 +24,6 @@ function build!(recommender::ItemMean)
         v = recommender.data.R[:, i]
         recommender.scores[i] = sum(v) / count(!iszero, v)
     end
-
-    recommender.states[:built] = true
 end
 
 function predict(recommender::ItemMean, u::Int, i::Int)

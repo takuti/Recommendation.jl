@@ -13,13 +13,14 @@ struct ThresholdPercentage <: Recommender
     data::DataAccessor
     th::Float64
     scores::AbstractVector
-    states::States
 
     function ThresholdPercentage(data::DataAccessor, th::Float64)
         n_item = size(data.R, 2)
-        new(data, th, zeros(n_item), States(:built => false))
+        new(data, th, vector(n_item))
     end
 end
+
+isbuilt(recommender::ThresholdPercentage) = isfilled(recommender.scores)
 
 function build!(recommender::ThresholdPercentage)
     n_item = size(recommender.data.R, 2)
@@ -28,8 +29,6 @@ function build!(recommender::ThresholdPercentage)
         v = recommender.data.R[:, i]
         recommender.scores[i] = length(v[v .>= recommender.th]) / count(!iszero, v) * 100.0
     end
-
-    recommender.states[:built] = true
 end
 
 function ranking(recommender::ThresholdPercentage, u::Int, i::Int)

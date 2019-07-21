@@ -21,18 +21,19 @@ struct MF <: Recommender
     k::Int
     P::AbstractMatrix
     Q::AbstractMatrix
-    states::States
 
     function MF(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
-        P = zeros(n_user, k)
-        Q = zeros(n_item, k)
+        P = matrix(n_user, k)
+        Q = matrix(n_item, k)
 
-        new(data, k, P, Q, States(:built => false))
+        new(data, k, P, Q)
     end
 end
 
 MF(data::DataAccessor) = MF(data, 20)
+
+isbuilt(recommender::MF) = isfilled(recommender.P)
 
 function build!(recommender::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
@@ -70,8 +71,6 @@ function build!(recommender::MF;
 
     recommender.P[:] = P[:]
     recommender.Q[:] = Q[:]
-
-    recommender.states[:built] = true
 end
 
 function predict(recommender::MF, u::Int, i::Int)

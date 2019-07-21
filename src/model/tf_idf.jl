@@ -31,17 +31,14 @@ struct TFIDF <: Recommender
     data::DataAccessor # document x attribute
     tf::AbstractMatrix # 1 x attribute
     idf::AbstractMatrix # 1 x attribute
-    states::States
 
     function TFIDF(data::DataAccessor, tf::AbstractMatrix, idf::AbstractMatrix)
         # instanciate with dummy status (i.e., always true)
-        new(data, tf, idf, States(:built => true))
+        new(data, tf, idf)
     end
 end
 
 function predict(recommender::TFIDF, u::Int, i::Int)
-    check_build_status(recommender)
-
     uv = recommender.data.user_attributes[u]
     profile = recommender.data.R' * uv # attribute x 1
     ((recommender.data.R .* recommender.idf) * profile)[i]

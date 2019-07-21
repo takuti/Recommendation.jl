@@ -7,7 +7,7 @@ import LinearAlgebra: svd
 
 using Random
 
-include("types.jl")
+include("utils.jl")
 
 include("base_recommender.jl")
 include("data_accessor.jl")

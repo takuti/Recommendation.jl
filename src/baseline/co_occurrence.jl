@@ -13,13 +13,14 @@ struct CoOccurrence <: Recommender
     data::DataAccessor
     i_ref::Int
     scores::AbstractVector
-    states::States
 
     function CoOccurrence(data::DataAccessor, i_ref::Int)
         n_item = size(data.R, 2)
-        new(data, i_ref, zeros(n_item), States(:built => false))
+        new(data, i_ref, vector(n_item))
     end
 end
+
+isbuilt(recommender::CoOccurrence) = isfilled(recommender.scores)
 
 function build!(recommender::CoOccurrence)
     n_item = size(recommender.data.R, 2)
@@ -32,8 +33,6 @@ function build!(recommender::CoOccurrence)
         cc = length(v_ref[(v_ref .> 0) .& (v .> 0)])
         recommender.scores[i] = cc / c * 100.0
     end
-
-    recommender.states[:built] = true
 end
 
 function ranking(recommender::CoOccurrence, u::Int, i::Int)

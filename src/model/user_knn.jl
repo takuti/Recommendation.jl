@@ -31,16 +31,17 @@ struct UserKNN <: Recommender
     k::Int
     sim::AbstractMatrix
     normalize::Bool
-    states::States
 
     function UserKNN(data::DataAccessor, k::Int, normalize::Bool)
         n_user = size(data.R, 1)
-        new(data, k, zeros(n_user, n_user), normalize, States(:built => false))
+        new(data, k, matrix(n_user, n_user), normalize)
     end
 end
 
 UserKNN(data::DataAccessor, k::Int) = UserKNN(data, k, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
+
+isbuilt(recommender::UserKNN) = isfilled(recommender.sim)
 
 function build!(recommender::UserKNN)
     # Pearson correlation
@@ -65,8 +66,6 @@ function build!(recommender::UserKNN)
             if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
         end
     end
-
-    recommender.states[:built] = true
 end
 
 function predict(recommender::UserKNN, u::Int, i::Int)

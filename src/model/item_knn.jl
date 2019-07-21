@@ -29,15 +29,16 @@ struct ItemKNN <: Recommender
     data::DataAccessor
     k::Int
     sim::AbstractMatrix
-    states::States
 
     function ItemKNN(data::DataAccessor, k::Int)
         n_item = size(data.R, 2)
-        new(data, k, zeros(n_item, n_item), States(:built => false))
+        new(data, k, matrix(n_item, n_item))
     end
 end
 
 ItemKNN(data::DataAccessor) = ItemKNN(data, 5)
+
+isbuilt(recommender::ItemKNN) = isfilled(recommender.sim)
 
 function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
@@ -73,8 +74,6 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
 
     # NaN similarities are converted into zeros
     recommender.sim[isnan.(recommender.sim)] .= 0
-
-    recommender.states[:built] = true
 end
 
 function predict(recommender::ItemKNN, u::Int, i::Int)
