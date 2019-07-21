@@ -237,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Evaluation",
     "title": "Recommendation.cross_validation",
     "category": "function",
-    "text": "cross_validation(\n    rec_type::DataType,\n    hyperparams::Parameters,\n    da::DataAccessor,\n    n_fold::Int,\n    metric::Metric,\n    k::Int=0\n)\n\nConduct n_fold cross validation for a combination of recommender rec_type and metric metric with hyperparams. For ranking metric, accuracy is measured by top-k recommendation.\n\n\n\n\n\n"
+    "text": "cross_validation(\n    rec_type::Type{T<:Recommender},\n    hyperparams::Parameters,\n    da::DataAccessor,\n    n_fold::Int,\n    metric::Type{S<:Metric},\n    k::Int=0\n)\n\nConduct n_fold cross validation for a combination of recommender rec_type and metric metric with hyperparams. For ranking metric, accuracy is measured by top-k recommendation.\n\n\n\n\n\n"
 },
 
 {
