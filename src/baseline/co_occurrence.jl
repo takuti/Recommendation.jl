@@ -21,7 +21,7 @@ struct CoOccurrence <: Recommender
     end
 end
 
-function build(rec::CoOccurrence)
+function build!(rec::CoOccurrence)
     n_item = size(rec.da.R, 2)
 
     v_ref = rec.da.R[:, rec.i_ref]

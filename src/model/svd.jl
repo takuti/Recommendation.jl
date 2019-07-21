@@ -29,7 +29,7 @@ end
 
 SVD(da::DataAccessor) = SVD(da, 20)
 
-function build(rec::SVD)
+function build!(rec::SVD)
     # NaNs are filled by zeros for now
     R = copy(rec.da.R)
     R[isnan.(R)] .= 0

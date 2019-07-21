@@ -54,7 +54,7 @@ recommender = MostPopular(da)
 and building a recommendation engine should be easy:
 
 ```julia
-build(recommender)
+build!(recommender)
 ```
 
 Personalized recommenders sometimes require us to specify the hyperparameters:
@@ -69,7 +69,7 @@ help?> Recommendation.MF
 
 ```julia
 recommender = MF(da, 2)
-build(recommender, learning_rate=15e-4, max_iter=100)
+build!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 
 Once a recommendation engine has been built successfully, top-`k` recommendation for a user `u` with item candidates `candidates` is performed as follows:

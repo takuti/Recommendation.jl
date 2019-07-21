@@ -33,7 +33,7 @@ function cross_validation(n_fold::Int, metric::Type{<:Metric}, k::Int, rec_type:
 
         # get recommender from the specified data type
         rec = rec_type(train_da, rec_args...)
-        build(rec)
+        build!(rec)
 
         accum += evaluate(rec, truth_da, metric(), k)
     end

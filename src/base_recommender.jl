@@ -1,5 +1,5 @@
 export Recommender
-export check_build_status, build, recommend, predict, ranking
+export check_build_status, build!, recommend, predict, ranking
 
 abstract type Recommender end
 
@@ -9,8 +9,8 @@ function check_build_status(rec::Recommender)
     end
 end
 
-function build(rec::Recommender; kwargs...)
-    error("build is not implemented for recommender type $(typeof(rec))")
+function build!(rec::Recommender; kwargs...)
+    error("build! is not implemented for recommender type $(typeof(rec))")
 end
 
 function recommend(rec::Recommender, u::Int, k::Int, candidates::Array{Int})

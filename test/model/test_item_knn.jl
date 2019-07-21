@@ -7,7 +7,7 @@ function test_item_knn()
     da = DataAccessor(m)
 
     recommender = ItemKNN(da, 1)
-    build(recommender)
+    build!(recommender)
     @test isapprox(recommender.sim[1, 2], 0.485, atol=1e-3)
     @test isapprox(recommender.sim[5, 6], 0.405, atol=1e-3)
 
@@ -18,7 +18,7 @@ function test_item_knn()
     @test rec[4] == (4 => 1.0)
 
     recommender = ItemKNN(da, 1)
-    build(recommender, adjusted_cosine=true)
+    build!(recommender, adjusted_cosine=true)
     @test isapprox(recommender.sim[1, 2], 0.174, atol=1e-3)
     @test isapprox(recommender.sim[5, 6], 0.039, atol=1e-3)
 

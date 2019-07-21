@@ -42,7 +42,7 @@ end
 UserKNN(da::DataAccessor, k::Int) = UserKNN(da, k, false)
 UserKNN(da::DataAccessor) = UserKNN(da, 20, false)
 
-function build(rec::UserKNN)
+function build!(rec::UserKNN)
     # Pearson correlation
 
     R = copy(rec.da.R)

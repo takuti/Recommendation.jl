@@ -16,7 +16,7 @@ struct UserMean <: Recommender
     end
 end
 
-function build(rec::UserMean)
+function build!(rec::UserMean)
     n_user = size(rec.da.R, 1)
 
     for u in 1:n_user

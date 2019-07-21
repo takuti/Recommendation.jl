@@ -7,7 +7,7 @@ function test_mf()
     da = DataAccessor(m)
 
     recommender = MF(da, 2)
-    build(recommender, learning_rate=15e-4, max_iter=100)
+    build!(recommender, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommantion list should be same as CF/SVD-based recommender
     rec = recommend(recommender, 1, 4, [i for i in 1:8])

@@ -17,7 +17,7 @@ struct MostPopular <: Recommender
     end
 end
 
-function build(rec::MostPopular)
+function build!(rec::MostPopular)
     n_item = size(rec.da.R, 2)
 
     for i in 1:n_item

@@ -39,7 +39,7 @@ end
 
 ItemKNN(da::DataAccessor) = ItemKNN(da, 5)
 
-function build(rec::ItemKNN; adjusted_cosine::Bool=false)
+function build!(rec::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
 
     R = copy(rec.da.R)

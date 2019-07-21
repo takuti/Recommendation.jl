@@ -21,7 +21,7 @@ struct ThresholdPercentage <: Recommender
     end
 end
 
-function build(rec::ThresholdPercentage)
+function build!(rec::ThresholdPercentage)
     n_item = size(rec.da.R, 2)
 
     for i in 1:n_item

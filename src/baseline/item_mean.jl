@@ -16,7 +16,7 @@ struct ItemMean <: Recommender
     end
 end
 
-function build(rec::ItemMean)
+function build!(rec::ItemMean)
     n_item = size(rec.da.R, 2)
 
     for i in 1:n_item

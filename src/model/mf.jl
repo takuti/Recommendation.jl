@@ -34,7 +34,7 @@ end
 
 MF(da::DataAccessor) = MF(da, 20)
 
-function build(rec::MF;
+function build!(rec::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
                eps::Float64=1e-3, max_iter::Int=100)
     n_user, n_item = size(rec.da.R)
