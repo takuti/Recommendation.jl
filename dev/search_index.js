@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Getting Started",
     "title": "Installation",
     "category": "section",
-    "text": "This package is registered in METADATA.jl.Pkg.add(\"Recommendation\")"
+    "text": "This package is registered in METADATA.jl.julia> using Pkg; Pkg.add(\"Recommendation\")"
 },
 
 {
@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Getting Started",
     "title": "Usage",
     "category": "section",
-    "text": "This package contains DataAccessor and several fundamental recommendation techniques (e.g., non-personalized MostPopular recommender, CF and MF), and evaluation metrics such as Recall. All of them can be accessible by loading the package as follows:using RecommendationFirst of all, you need to create a data accessor from a matrix:using SparseArrays\n\nda = DataAccessor(sparse([1 0 0; 4 5 0]))or set of events:const n_user = 5\nconst n_item = 10\n\nevents = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]\n\nda = DataAccessor(events, n_user, n_item)where Event() is a composite type which represents a user-item interaction:type Event\n    user::Int\n    item::Int\n    value::Float64\nendNext, you can pass the data accessor to an arbitrary recommender as:recommender = MostPopular(da)and building a recommendation engine should be easy:build(recommender)Personalized recommenders sometimes require us to specify the hyperparameters:recommender = MF(da, Parameters(:k => 2))\nbuild(recommender, learning_rate=15e-4, max_iter=100)Once a recommendation engine has been built successfully, top-k recommendation for a user u with item candidates candidates is performed as follows:u = 4\nk = 2\ncandidates = [i for i in 1:n_item] # all items\n\nrecommend(recommender, u, k, candidates)"
+    "text": "This package contains DataAccessor and several fundamental recommendation techniques (e.g., non-personalized MostPopular recommender, CF and MF), and evaluation metrics such as Recall. All of them can be accessible by loading the package as follows:using RecommendationFirst of all, you need to create a data accessor from a matrix:using SparseArrays\n\ndata = DataAccessor(sparse([1 0 0; 4 5 0]))or set of events:n_user, n_item = 5, 10\n\nevents = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]\n\ndata = DataAccessor(events, n_user, n_item)where Event() is a composite type which represents a user-item interaction:type Event\n    user::Int\n    item::Int\n    value::Float64\nendNext, you can pass the data accessor to an arbitrary recommender as:recommender = MostPopular(data)and building a recommendation engine should be easy:build!(recommender)Personalized recommenders sometimes require us to specify the hyperparameters:help?> Recommendation.MF\n  MF(\n      data::DataAccessor,\n      k::Int\n  )recommender = MF(data, 2)\nbuild!(recommender, learning_rate=15e-4, max_iter=100)Once a recommendation engine has been built successfully, top-2 recommendation for a user 4 is performed as follows:# for user#4, pick top-2 from all items\nrecommend(recommender, 4, 2, collect(1:n_item))"
 },
 
 {
@@ -77,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Non-Personalized Baselines",
     "title": "Recommendation.CoOccurrence",
     "category": "type",
-    "text": "CoOccurrence(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:i_ref => 1)\n)\n\nRecommend items which are most frequently co-occurred with a reference item i_ref.\n\n\n\n\n\n"
+    "text": "CoOccurrence(\n    data::DataAccessor,\n    i_ref::Int\n)\n\nRecommend items which are most frequently co-occurred with a reference item i_ref.\n\n\n\n\n\n"
 },
 
 {
@@ -85,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Non-Personalized Baselines",
     "title": "Recommendation.MostPopular",
     "category": "type",
-    "text": "MostPopular(da::DataAccessor)\n\nRecommend most popular items.\n\n\n\n\n\n"
+    "text": "MostPopular(data::DataAccessor)\n\nRecommend most popular items.\n\n\n\n\n\n"
 },
 
 {
@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Non-Personalized Baselines",
     "title": "Recommendation.ThresholdPercentage",
     "category": "type",
-    "text": "ThresholdPercentage(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:th => 2.5)\n)\n\nRecommend based on percentage of ratings which are greater than a certain threshold value th.\n\n\n\n\n\n"
+    "text": "ThresholdPercentage(\n    data::DataAccessor,\n    th::Float64\n)\n\nRecommend based on percentage of ratings which are greater than a certain threshold value th.\n\n\n\n\n\n"
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Non-Personalized Baselines",
     "title": "Recommendation.UserMean",
     "category": "type",
-    "text": "UserMean(da::DataAccessor)\n\nRecommend based on global user mean rating.\n\n\n\n\n\n"
+    "text": "UserMean(data::DataAccessor)\n\nRecommend based on global user mean rating.\n\n\n\n\n\n"
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Non-Personalized Baselines",
     "title": "Recommendation.ItemMean",
     "category": "type",
-    "text": "ItemMean(da::DataAccessor)\n\nRecommend based on global item mean rating.\n\n\n\n\n\n"
+    "text": "ItemMean(data::DataAccessor)\n\nRecommend based on global item mean rating.\n\n\n\n\n\n"
 },
 
 {
@@ -141,7 +141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Collaborative Filtering",
     "title": "Recommendation.UserKNN",
     "category": "type",
-    "text": "UserKNN(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:k => 5),\n    is_normalized::Bool=false\n)\n\nUser-based CF using the Pearson correlation. k represents number of neighbors, and is_normalized specifies if weighted sum of neighbors\' rating is normalized.\n\nThe technique gives a weight to a user-user pair by the following equation:\n\ns_u v = frac sum_i in mathcalI^+_u cap v  (r_u i - overliner_u) (r_v i - overliner_v)\n sqrtsum_i in mathcalI^+_u cap v (r_ui - overliner_u)^2 sqrtsum_i in mathcalI^+_u cap v (r_v i - overliner_v)^2 \n\nwhere mathcalI^+_u cap v is a set of items which were observed by both user u and v, and r_u i indicates a (u i) element in R. Plus, overliner_u and overliner_v are respectively mean values of r_u i and r_v i over i in mathcalI^+_u cap v. By using the weights, user-based CF selects the top-k highest-weighted users (i.e., nearest neighbors) of a target user u, and predicts missing r_u i for i in mathcalI^-_u as:\n\nr_u i = overliner_u + fracsum^k_t=1 left(r_sigma(t) i - overliner_sigma(t)right) cdot s_usigma(t)  sum^k_t=1 s_usigma(t) \n\nwhere sigma(t) denotes the t-th nearest-neighborhood user. Ultimately, sorting items mathcalI^-_u by the predicted values enables us to make recommendation to a user u.\n\nIt should be noted that user-based CF is highly inefficient because gradually increasing massive users and their dynamic tastes require us to frequently recompute the similarities for every pairs of users.\n\n\n\n\n\n"
+    "text": "UserKNN(\n    data::DataAccessor,\n    k::Int,\n    normalize::Bool=false\n)\n\nUser-based CF using the Pearson correlation. k represents number of neighbors, and normalize specifies if weighted sum of neighbors\' rating is normalized.\n\nThe technique gives a weight to a user-user pair by the following equation:\n\ns_u v = frac sum_i in mathcalI^+_u cap v  (r_u i - overliner_u) (r_v i - overliner_v)\n sqrtsum_i in mathcalI^+_u cap v (r_ui - overliner_u)^2 sqrtsum_i in mathcalI^+_u cap v (r_v i - overliner_v)^2 \n\nwhere mathcalI^+_u cap v is a set of items which were observed by both user u and v, and r_u i indicates a (u i) element in R. Plus, overliner_u and overliner_v are respectively mean values of r_u i and r_v i over i in mathcalI^+_u cap v. By using the weights, user-based CF selects the top-k highest-weighted users (i.e., nearest neighbors) of a target user u, and predicts missing r_u i for i in mathcalI^-_u as:\n\nr_u i = overliner_u + fracsum^k_t=1 left(r_sigma(t) i - overliner_sigma(t)right) cdot s_usigma(t)  sum^k_t=1 s_usigma(t) \n\nwhere sigma(t) denotes the t-th nearest-neighborhood user. Ultimately, sorting items mathcalI^-_u by the predicted values enables us to make recommendation to a user u.\n\nIt should be noted that user-based CF is highly inefficient because gradually increasing massive users and their dynamic tastes require us to frequently recompute the similarities for every pairs of users.\n\n\n\n\n\n"
 },
 
 {
@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Collaborative Filtering",
     "title": "Recommendation.ItemKNN",
     "category": "type",
-    "text": "ItemKNN(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:k => 5)\n)\n\nItem-based CF that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. k represents number of neighbors.\n\nItem properties are relatively stable compared to the users\' tastes, and the number of items is generally smaller than the number of users. Hence, while user-based CF successfully captures the similarities of users\' complex tastes, modeling item-item concepts could be much more promising in terms of both scalability and overall accuracy.\n\nItem-based CF defines a similarity between an item i and j as:\n\ns_ij = frac sum_u in mathcalU_i cap j  (r_u i - overliner_i) (r_u j - overliner_j)\n sqrtsum_u in mathcalU_i cap j (r_ui - overliner_i)^2 sqrtsum_u in mathcalU_i cap j (r_u j - overliner_j)^2 \n\nwhere mathcalU_i cap j is a set of users that both of r_ui and r_u j are not missing, and overliner_i overliner_j are mean values of i-th and j-th column in R. Similarly to the user-based algorithm, for the t-th nearest-neighborhood item tau(t), prediction can be done by top-k weighted sum of target user\'s feedbacks:\n\nr_ui = fracsum^k_t=1 s_itau(t) cdot r_utau(t)  sum^k_t=1 s_itau(t) \n\nIn case that the number of items is smaller than users, item-based CF could be a more reasonable choice than the user-based approach.\n\n\n\n\n\n"
+    "text": "ItemKNN(\n    data::DataAccessor,\n    k::Int\n)\n\nItem-based CF that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. k represents number of neighbors.\n\nItem properties are relatively stable compared to the users\' tastes, and the number of items is generally smaller than the number of users. Hence, while user-based CF successfully captures the similarities of users\' complex tastes, modeling item-item concepts could be much more promising in terms of both scalability and overall accuracy.\n\nItem-based CF defines a similarity between an item i and j as:\n\ns_ij = frac sum_u in mathcalU_i cap j  (r_u i - overliner_i) (r_u j - overliner_j)\n sqrtsum_u in mathcalU_i cap j (r_ui - overliner_i)^2 sqrtsum_u in mathcalU_i cap j (r_u j - overliner_j)^2 \n\nwhere mathcalU_i cap j is a set of users that both of r_ui and r_u j are not missing, and overliner_i overliner_j are mean values of i-th and j-th column in R. Similarly to the user-based algorithm, for the t-th nearest-neighborhood item tau(t), prediction can be done by top-k weighted sum of target user\'s feedbacks:\n\nr_ui = fracsum^k_t=1 s_itau(t) cdot r_utau(t)  sum^k_t=1 s_itau(t) \n\nIn case that the number of items is smaller than users, item-based CF could be a more reasonable choice than the user-based approach.\n\n\n\n\n\n"
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Collaborative Filtering",
     "title": "Recommendation.SVD",
     "category": "type",
-    "text": "SVD(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:k => 20)\n)\n\nRecommendation based on SVD of a user-item matrix R in mathbbR^mathcalU times mathcalI, which was originally studied by Sarwar et al. Rank k is configured by k.\n\nIn a context of recommendation, U_k in mathbbR^mathcalU times k, V in mathbbR^mathcalI times k and Sigma in mathbbR^k times k are respectively seen as k user/item feature vectors and corresponding weights. The idea of low-rank approximation that discards lower singular values intuitively works as compression or denoising of the original matrix; that is, each element in a rank-k matrix A_k holds the best compressed (or denoised) value of the original element in A. Thus, R_k = mathrmSVD_k(R), the best rank-k approximation of R, captures as much as possible of underlying users\' preferences. Once R is decomposed into U Sigma and V, a (u i) element of R_k calculated by sum^k_j=1 sigma_j u_u j v_i j could be a prediction for the user-item pair.\n\n\n\n\n\n"
+    "text": "SVD(\n    data::DataAccessor,\n    k::Int\n)\n\nRecommendation based on SVD of a user-item matrix R in mathbbR^mathcalU times mathcalI, which was originally studied by Sarwar et al. Rank k is configured by k.\n\nIn a context of recommendation, U_k in mathbbR^mathcalU times k, V in mathbbR^mathcalI times k and Sigma in mathbbR^k times k are respectively seen as k user/item feature vectors and corresponding weights. The idea of low-rank approximation that discards lower singular values intuitively works as compression or denoising of the original matrix; that is, each element in a rank-k matrix A_k holds the best compressed (or denoised) value of the original element in A. Thus, R_k = mathrmSVD_k(R), the best rank-k approximation of R, captures as much as possible of underlying users\' preferences. Once R is decomposed into U Sigma and V, a (u i) element of R_k calculated by sum^k_j=1 sigma_j u_u j v_i j could be a prediction for the user-item pair.\n\n\n\n\n\n"
 },
 
 {
@@ -181,7 +181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Collaborative Filtering",
     "title": "Recommendation.MF",
     "category": "type",
-    "text": "MF(\n    da::DataAccessor,\n    hyperparams::Parameters=Parameters(:k => 20)\n)\n\nRecommendation based on matrix factorization (MF). Number of factors is configured by k.\n\nMF solves the following minimization problem for a set of observed user-item interactions mathcalS = (u i) in mathcalU times mathcalI:\n\nmin_P Q sum_(u i) in mathcalS left( r_ui - mathbfp_u^mathrmT mathbfq_i right)^2 + lambda  (mathbfp_u^2 + mathbfq_i^2)\n\nwhere mathbfp_u mathbfq_i in mathbbR^k are respectively a factorized user and item vector, and lambda is a regularization parameter to avoid overfitting. An optimal solution will be found by stochastic gradient descent (SGD). Ultimately, we can predict missing values in R by just computing PQ^mathrmT, and the prediction directly leads recommendation.\n\n\n\n\n\n"
+    "text": "MF(\n    data::DataAccessor,\n    k::Int\n)\n\nRecommendation based on matrix factorization (MF). Number of factors is configured by k.\n\nMF solves the following minimization problem for a set of observed user-item interactions mathcalS = (u i) in mathcalU times mathcalI:\n\nmin_P Q sum_(u i) in mathcalS left( r_ui - mathbfp_u^mathrmT mathbfq_i right)^2 + lambda  (mathbfp_u^2 + mathbfq_i^2)\n\nwhere mathbfp_u mathbfq_i in mathbbR^k are respectively a factorized user and item vector, and lambda is a regularization parameter to avoid overfitting. An optimal solution will be found by stochastic gradient descent (SGD). Ultimately, we can predict missing values in R by just computing PQ^mathrmT, and the prediction directly leads recommendation.\n\n\n\n\n\n"
 },
 
 {
@@ -205,7 +205,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Content-Based Filtering",
     "title": "Recommendation.TFIDF",
     "category": "type",
-    "text": "TFIDF(\n    da::DataAccessor,\n    tf::AbstractMatrix,\n    idf::AbstractMatrix\n)\n\nContent-based recommendation using TF-IDF scoring. TF and IDF matrix are respectively specified as tf and idf.\n\nMore concretely, each item is represented as a set of words, and the items are modeled by TF-IDF weighting of the words. The technique was initially used in information retrieval to model a document-word matrix. In case of our item-word matrices, for a given item i, term frequency (TF) for a term t is defined as:\n\nmathrmtf(t i) = fracn_tiN_i\n\nwhere n_ti denotes an (i t) element in I, and N_i is the total number of words that an item i contains. So, mathrmtf(t i) characterizes an item-term pair by normalized frequency of terms. Meanwhile, inverse document frequency (IDF) is computed over M items as:\n\nmathrmidf(t) = log fracMmathrmdf(t) + 1\n\nwhere mathrmdf(t) counts the number of items which associate with a term t. What mathrmidf(t) does is to decrease the effect of commonly used terms, because general words cannot characterize a specific item.\n\nFinally, each item-term pair is weighted by mathrmtf(t i) cdot mathrmidf(t) in the TF-IDF scheme. For instance, if we like to recommend web pages to users, we first need to parse sentences on a page and then construct a vector based on the frequency of each term as follows. Similarly, in case that a recommender is running on a folksonomic (i.e. social tagging) service, the frequency of tags corresponds to each dimension of a vector, and mathrmtf(t i) and mathrmidf(t) are finally calculated for each item-tag pair.\n\n(Image: tfidf)\n\n\n\n\n\n"
+    "text": "TFIDF(\n    data::DataAccessor,\n    tf::AbstractMatrix,\n    idf::AbstractMatrix\n)\n\nContent-based recommendation using TF-IDF scoring. TF and IDF matrix are respectively specified as tf and idf.\n\nMore concretely, each item is represented as a set of words, and the items are modeled by TF-IDF weighting of the words. The technique was initially used in information retrieval to model a document-word matrix. In case of our item-word matrices, for a given item i, term frequency (TF) for a term t is defined as:\n\nmathrmtf(t i) = fracn_tiN_i\n\nwhere n_ti denotes an (i t) element in I, and N_i is the total number of words that an item i contains. So, mathrmtf(t i) characterizes an item-term pair by normalized frequency of terms. Meanwhile, inverse document frequency (IDF) is computed over M items as:\n\nmathrmidf(t) = log fracMmathrmdf(t) + 1\n\nwhere mathrmdf(t) counts the number of items which associate with a term t. What mathrmidf(t) does is to decrease the effect of commonly used terms, because general words cannot characterize a specific item.\n\nFinally, each item-term pair is weighted by mathrmtf(t i) cdot mathrmidf(t) in the TF-IDF scheme. For instance, if we like to recommend web pages to users, we first need to parse sentences on a page and then construct a vector based on the frequency of each term as follows. Similarly, in case that a recommender is running on a folksonomic (i.e. social tagging) service, the frequency of tags corresponds to each dimension of a vector, and mathrmtf(t i) and mathrmidf(t) are finally calculated for each item-tag pair.\n\n(Image: tfidf)\n\n\n\n\n\n"
 },
 
 {
@@ -237,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Evaluation",
     "title": "Recommendation.cross_validation",
     "category": "function",
-    "text": "cross_validation(\n    rec_type::Type{T<:Recommender},\n    hyperparams::Parameters,\n    da::DataAccessor,\n    n_fold::Int,\n    metric::Type{S<:Metric},\n    k::Int=0\n)\n\nConduct n_fold cross validation for a combination of recommender rec_type and metric metric with hyperparams. For ranking metric, accuracy is measured by top-k recommendation.\n\n\n\n\n\n"
+    "text": "cross_validation(\n    n_fold::Int,\n    metric::Type{<:Metric},\n    k::Int,\n    recommender_type::Type{<:Recommender},\n    data::DataAccessor,\n    recommender_args...\n)\n\nConduct n_fold cross validation for a combination of recommender recommender_type and metric metric. A recommender is initialized with recommender_args. For ranking metric, accuracy is measured by top-k recommendation.\n\n\n\n\n\n"
 },
 
 {
