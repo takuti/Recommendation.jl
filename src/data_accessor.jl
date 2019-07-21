@@ -42,10 +42,10 @@ function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
     R
 end
 
-function set_user_attribute(da::DataAccessor, user::Int, attribute::AbstractVector)
-    da.user_attributes[user] = attribute
+function set_user_attribute(data::DataAccessor, user::Int, attribute::AbstractVector)
+    data.user_attributes[user] = attribute
 end
 
-function set_item_attribute(da::DataAccessor, item::Int, attribute::AbstractVector)
-    da.item_attributes[item] = attribute
+function set_item_attribute(data::DataAccessor, item::Int, attribute::AbstractVector)
+    data.item_attributes[item] = attribute
 end

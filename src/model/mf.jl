@@ -2,7 +2,7 @@ export MF
 
 """
     MF(
-        da::DataAccessor,
+        data::DataAccessor,
         k::Int
     )
 
@@ -17,27 +17,27 @@ MF solves the following minimization problem for a set of observed user-item int
 where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a factorized user and item vector, and ``\\lambda`` is a regularization parameter to avoid overfitting. An optimal solution will be found by stochastic gradient descent (SGD). Ultimately, we can predict missing values in ``R`` by just computing ``PQ^{\\mathrm{T}}``, and the prediction directly leads recommendation.
 """
 struct MF <: Recommender
-    da::DataAccessor
+    data::DataAccessor
     k::Int
     P::AbstractMatrix
     Q::AbstractMatrix
     states::States
 
-    function MF(da::DataAccessor, k::Int)
-        n_user, n_item = size(da.R)
+    function MF(data::DataAccessor, k::Int)
+        n_user, n_item = size(data.R)
         P = zeros(n_user, k)
         Q = zeros(n_item, k)
 
-        new(da, k, P, Q, States(:built => false))
+        new(data, k, P, Q, States(:built => false))
     end
 end
 
-MF(da::DataAccessor) = MF(da, 20)
+MF(data::DataAccessor) = MF(data, 20)
 
 function build!(recommender::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
                eps::Float64=1e-3, max_iter::Int=100)
-    n_user, n_item = size(recommender.da.R)
+    n_user, n_item = size(recommender.data.R)
 
     # initialize with small values
     # (random is also possible)
@@ -50,7 +50,7 @@ function build!(recommender::MF;
 
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
-            r = recommender.da.R[u, i]
+            r = recommender.data.R[u, i]
             if isnan(r); continue; end
 
             uv, iv = P[u, :], Q[i, :]

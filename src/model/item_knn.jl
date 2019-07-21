@@ -2,7 +2,7 @@ export ItemKNN
 
 """
     ItemKNN(
-        da::DataAccessor,
+        data::DataAccessor,
         k::Int
     )
 
@@ -26,23 +26,23 @@ r_{u,i} = \\frac{\\sum^k_{t=1} s_{i,\\tau(t)} \\cdot r_{u,\\tau(t)} }{ \\sum^k_{
 In case that the number of items is smaller than users, item-based CF could be a more reasonable choice than the user-based approach.
 """
 struct ItemKNN <: Recommender
-    da::DataAccessor
+    data::DataAccessor
     k::Int
     sim::AbstractMatrix
     states::States
 
-    function ItemKNN(da::DataAccessor, k::Int)
-        n_item = size(da.R, 2)
-        new(da, k, zeros(n_item, n_item), States(:built => false))
+    function ItemKNN(data::DataAccessor, k::Int)
+        n_item = size(data.R, 2)
+        new(data, k, zeros(n_item, n_item), States(:built => false))
     end
 end
 
-ItemKNN(da::DataAccessor) = ItemKNN(da, 5)
+ItemKNN(data::DataAccessor) = ItemKNN(data, 5)
 
 function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
 
-    R = copy(recommender.da.R)
+    R = copy(recommender.data.R)
     n_row, n_col = size(R)
 
     if adjusted_cosine
@@ -83,11 +83,11 @@ function predict(recommender::ItemKNN, u::Int, i::Int)
     numer = denom = 0
 
     # negative similarities are filtered
-    pairs = collect(zip(1:size(recommender.da.R)[2], max.(recommender.sim[i, :], 0)))
+    pairs = collect(zip(1:size(recommender.data.R)[2], max.(recommender.sim[i, :], 0)))
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
 
     for (j, s) in ordered_pairs
-        r = recommender.da.R[u, j]
+        r = recommender.data.R[u, j]
         if isnan(r); continue; end
 
         numer += s * r

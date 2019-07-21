@@ -21,7 +21,7 @@ First of all, you need to create a data accessor from a matrix:
 ```julia
 using SparseArrays
 
-da = DataAccessor(sparse([1 0 0; 4 5 0]))
+data = DataAccessor(sparse([1 0 0; 4 5 0]))
 ```
 
 or set of events:
@@ -32,7 +32,7 @@ const n_item = 10
 
 events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
 
-da = DataAccessor(events, n_user, n_item)
+data = DataAccessor(events, n_user, n_item)
 ```
 
 where `Event()` is a composite type which represents a user-item interaction:
@@ -48,7 +48,7 @@ end
 Next, you can pass the data accessor to an arbitrary recommender as:
 
 ```julia
-recommender = MostPopular(da)
+recommender = MostPopular(data)
 ```
 
 and building a recommendation engine should be easy:
@@ -62,13 +62,13 @@ Personalized recommenders sometimes require us to specify the hyperparameters:
 ```julia
 help?> Recommendation.MF
   MF(
-      da::DataAccessor,
+      data::DataAccessor,
       k::Int
   )
 ```
 
 ```julia
-recommender = MF(da, 2)
+recommender = MF(data, 2)
 build!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 

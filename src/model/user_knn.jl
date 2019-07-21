@@ -2,7 +2,7 @@ export UserKNN
 
 """
     UserKNN(
-        da::DataAccessor,
+        data::DataAccessor,
         k::Int,
         normalize::Bool=false
     )
@@ -27,25 +27,25 @@ where ``\\sigma(t)`` denotes the ``t``-th nearest-neighborhood user. Ultimately,
 It should be noted that user-based CF is highly inefficient because gradually increasing massive users and their dynamic tastes require us to frequently recompute the similarities for every pairs of users.
 """
 struct UserKNN <: Recommender
-    da::DataAccessor
+    data::DataAccessor
     k::Int
     sim::AbstractMatrix
     normalize::Bool
     states::States
 
-    function UserKNN(da::DataAccessor, k::Int, normalize::Bool)
-        n_user = size(da.R, 1)
-        new(da, k, zeros(n_user, n_user), normalize, States(:built => false))
+    function UserKNN(data::DataAccessor, k::Int, normalize::Bool)
+        n_user = size(data.R, 1)
+        new(data, k, zeros(n_user, n_user), normalize, States(:built => false))
     end
 end
 
-UserKNN(da::DataAccessor, k::Int) = UserKNN(da, k, false)
-UserKNN(da::DataAccessor) = UserKNN(da, 20, false)
+UserKNN(data::DataAccessor, k::Int) = UserKNN(data, k, false)
+UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
 function build!(recommender::UserKNN)
     # Pearson correlation
 
-    R = copy(recommender.da.R)
+    R = copy(recommender.data.R)
 
     n_row = size(R, 1)
 
@@ -74,12 +74,12 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     numer = denom = 0
 
-    pairs = collect(zip(1:size(recommender.da.R)[1], recommender.sim[u, :]))
+    pairs = collect(zip(1:size(recommender.data.R)[1], recommender.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
 
     for (u_near, w) in ordered_pairs
-        v_near = recommender.da.R[u_near, :]
+        v_near = recommender.data.R[u_near, :]
 
         r = v_near[i]
         if isnan(r); continue; end
@@ -96,8 +96,8 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(!isnan, recommender.da.R[u, :])
-        pred += mean(recommender.da.R[u, ii])
+        ii = broadcast(!isnan, recommender.data.R[u, :])
+        pred += mean(recommender.data.R[u, ii])
     end
     pred
 end

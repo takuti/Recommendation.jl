@@ -1,26 +1,26 @@
 export UserMean
 
 """
-    UserMean(da::DataAccessor)
+    UserMean(data::DataAccessor)
 
 Recommend based on global user mean rating.
 """
 struct UserMean <: Recommender
-    da::DataAccessor
+    data::DataAccessor
     scores::AbstractVector
     states::States
 
-    function UserMean(da::DataAccessor)
-        n_user = size(da.R, 1)
-        new(da, zeros(n_user), States(:built => false))
+    function UserMean(data::DataAccessor)
+        n_user = size(data.R, 1)
+        new(data, zeros(n_user), States(:built => false))
     end
 end
 
 function build!(recommender::UserMean)
-    n_user = size(recommender.da.R, 1)
+    n_user = size(recommender.data.R, 1)
 
     for u in 1:n_user
-        v = recommender.da.R[u, :]
+        v = recommender.data.R[u, :]
         recommender.scores[u] = sum(v) / count(!iszero, v)
     end
 

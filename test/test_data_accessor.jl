@@ -5,16 +5,16 @@ function test_data_accessor()
     n_user = 5
     n_item = 10
 
-    da = DataAccessor(events, n_user, n_item)
-    set_user_attribute(da, 1, [1, 2, 3, 4, 5])
-    set_item_attribute(da, 5, [2, 4, 8, 16, 32])
+    data = DataAccessor(events, n_user, n_item)
+    set_user_attribute(data, 1, [1, 2, 3, 4, 5])
+    set_item_attribute(data, 5, [2, 4, 8, 16, 32])
 
-    @test size(da.R) == (5, 10)
-    @test da.user_attributes[1] == [1, 2, 3, 4, 5]
-    @test da.item_attributes[5] == [2, 4, 8, 16, 32]
+    @test size(data.R) == (5, 10)
+    @test data.user_attributes[1] == [1, 2, 3, 4, 5]
+    @test data.item_attributes[5] == [2, 4, 8, 16, 32]
 
-    da = DataAccessor(sparse([1 0 0; 4 5 0]))
-    @test size(da.R) == (2, 3)
+    data = DataAccessor(sparse([1 0 0; 4 5 0]))
+    @test size(data.R) == (2, 3)
 end
 
 test_data_accessor()

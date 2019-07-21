@@ -4,9 +4,9 @@ function test_mf()
     m = [NaN 3 NaN 1 2 1 NaN 4
          1 2 NaN NaN 3 2 NaN 3
          NaN 2 3 3 NaN 5 NaN 1]
-    da = DataAccessor(m)
+    data = DataAccessor(m)
 
-    recommender = MF(da, 2)
+    recommender = MF(data, 2)
     build!(recommender, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommantion list should be same as CF/SVD-based recommender

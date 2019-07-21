@@ -2,26 +2,26 @@ export MostPopular
 
 """
 
-    MostPopular(da::DataAccessor)
+    MostPopular(data::DataAccessor)
 
 Recommend most popular items.
 """
 struct MostPopular <: Recommender
-    da::DataAccessor
+    data::DataAccessor
     scores::AbstractVector
     states::States
 
-    function MostPopular(da::DataAccessor)
-        n_item = size(da.R, 2)
-        new(da, zeros(n_item), States(:built => false))
+    function MostPopular(data::DataAccessor)
+        n_item = size(data.R, 2)
+        new(data, zeros(n_item), States(:built => false))
     end
 end
 
 function build!(recommender::MostPopular)
-    n_item = size(recommender.da.R, 2)
+    n_item = size(recommender.data.R, 2)
 
     for i in 1:n_item
-        recommender.scores[i] = count(!iszero, recommender.da.R[:, i])
+        recommender.scores[i] = count(!iszero, recommender.data.R[:, i])
     end
 
     recommender.states[:built] = true

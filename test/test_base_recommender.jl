@@ -1,11 +1,11 @@
 struct Foo <: Recommender
-    da::DataAccessor
+    data::DataAccessor
 end
 
 function test_not_implemented_error()
     println("-- Testing recommender not implemented case")
-    da = DataAccessor(sparse([1 2 3; 4 5 6]))
-    recommender = Foo(da)
+    data = DataAccessor(sparse([1 2 3; 4 5 6]))
+    recommender = Foo(data)
     @test_throws ErrorException build!(recommender)
     @test_throws ErrorException predict(recommender, 1, 1)
     @test_throws ErrorException ranking(recommender, 1, 1)
@@ -15,8 +15,8 @@ function test_not_build_error()
     println("-- Testing recommender not built case")
 
     # non-personalized (MostPopular) recommendation for 3 items
-    da = DataAccessor(sparse([1 0 0; 4 5 0]))
-    recommender = MostPopular(da)
+    data = DataAccessor(sparse([1 0 0; 4 5 0]))
+    recommender = MostPopular(data)
 
     # build!(recommender) <- should be called before recommend()
 
@@ -27,8 +27,8 @@ function test_recommend()
     println("-- Testing recommender execution")
 
     # non-personalized (MostPopular) recommendation for 3 items
-    da = DataAccessor(sparse([1 0 0; 4 5 0]))
-    recommender = MostPopular(da)
+    data = DataAccessor(sparse([1 0 0; 4 5 0]))
+    recommender = MostPopular(data)
     build!(recommender)
     pairs = recommend(recommender, 1, 3, [1, 2, 3])
 
