@@ -10,7 +10,7 @@ struct UserMean <: Recommender
     scores::AbstractVector
     states::States
 
-    function UserMean(da::DataAccessor, hyperparams::Parameters=Parameters())
+    function UserMean(da::DataAccessor)
         n_user = size(da.R, 1)
         new(da, zeros(n_user), States(:is_built => false))
     end

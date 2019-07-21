@@ -3,7 +3,7 @@ export SVD
 """
     SVD(
         da::DataAccessor,
-        hyperparams::Parameters=Parameters(:k => 20)
+        k::Int
     )
 
 Recommendation based on SVD of a user-item matrix ``R \\in \\mathbb{R}^{|\\mathcal{U}| \\times |\\mathcal{I}|}``, which was originally studied by [Sarwar et al.](http://files.grouplens.org/papers/webKDD00.pdf) Rank ``k`` is configured by `k`.
@@ -12,18 +12,22 @@ In a context of recommendation, ``U_k \\in \\mathbb{R}^{|\\mathcal{U}| \\times k
 """
 struct SVD <: Recommender
     da::DataAccessor
-    hyperparams::Parameters
-    params::Parameters
+    k::Int
+    U::AbstractMatrix
+    S::AbstractVector
+    Vt::AbstractMatrix
     states::States
 
-    function SVD(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 20))
+    function SVD(da::DataAccessor, k::Int)
         n_user, n_item = size(da.R)
-        params = Parameters(:U => zeros(n_user, hyperparams[:k]),
-                            :S => zeros(hyperparams[:k]),
-                            :V => zeros(n_item, hyperparams[:k]))
-        new(da, hyperparams, params, States(:is_built => false))
+        U = zeros(n_user, k)
+        S = zeros(k)
+        Vt = zeros(k, n_item)
+        new(da, k, U, S, Vt, States(:is_built => false))
     end
 end
+
+SVD(da::DataAccessor) = SVD(da, 20)
 
 function build(rec::SVD)
     # NaNs are filled by zeros for now
@@ -31,14 +35,14 @@ function build(rec::SVD)
     R[isnan.(R)] .= 0
 
     res = svd(R)
-    rec.params[:U] = res.U[:, 1:rec.hyperparams[:k]]
-    rec.params[:S] = res.S[1:rec.hyperparams[:k]]
-    rec.params[:Vt] = res.Vt[1:rec.hyperparams[:k], :]
+    rec.U[:] = res.U[:, 1:rec.k]
+    rec.S[:] = res.S[1:rec.k]
+    rec.Vt[:] = res.Vt[1:rec.k, :]
 
     rec.states[:is_built] = true
 end
 
 function predict(rec::SVD, u::Int, i::Int)
     check_build_status(rec)
-    dot(rec.params[:U][u, :] .* rec.params[:S], rec.params[:Vt][:, i])
+    dot(rec.U[u, :] .* rec.S, rec.Vt[:, i])
 end

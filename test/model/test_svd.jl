@@ -6,7 +6,7 @@ function test_svd()
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
 
-    recommender = SVD(da, Parameters(:k => 2))
+    recommender = SVD(da, 2)
     build(recommender)
 
     # dimensionality reduction should preserve user-user/item-item similarities

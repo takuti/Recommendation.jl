@@ -10,7 +10,7 @@ struct ItemMean <: Recommender
     scores::AbstractVector
     states::States
 
-    function ItemMean(da::DataAccessor, hyperparams::Parameters=Parameters())
+    function ItemMean(da::DataAccessor)
         n_item = size(da.R, 2)
         new(da, zeros(n_item), States(:is_built => false))
     end

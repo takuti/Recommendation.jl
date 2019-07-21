@@ -3,7 +3,7 @@ export MF
 """
     MF(
         da::DataAccessor,
-        hyperparams::Parameters=Parameters(:k => 20)
+        k::Int
     )
 
 Recommendation based on matrix factorization (MF). Number of factors is configured by `k`.
@@ -18,19 +18,21 @@ where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a fac
 """
 struct MF <: Recommender
     da::DataAccessor
-    hyperparams::Parameters
-    params::Parameters
+    k::Int
+    P::AbstractMatrix
+    Q::AbstractMatrix
     states::States
 
-    function MF(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 20))
+    function MF(da::DataAccessor, k::Int)
         n_user, n_item = size(da.R)
-        P = zeros(n_user, hyperparams[:k])
-        Q = zeros(n_item, hyperparams[:k])
-        params = Parameters(:P => P, :Q => Q)
+        P = zeros(n_user, k)
+        Q = zeros(n_item, k)
 
-        new(da, hyperparams, params, States(:is_built => false))
+        new(da, k, P, Q, States(:is_built => false))
     end
 end
+
+MF(da::DataAccessor) = MF(da, 20)
 
 function build(rec::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
@@ -39,8 +41,8 @@ function build(rec::MF;
 
     # initialize with small values
     # (random is also possible)
-    P = ones(n_user, rec.hyperparams[:k]) * 0.1
-    Q = ones(n_item, rec.hyperparams[:k]) * 0.1
+    P = ones(n_user, rec.k) * 0.1
+    Q = ones(n_item, rec.k) * 0.1
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter
@@ -66,13 +68,13 @@ function build(rec::MF;
         if is_converged; break; end;
     end
 
-    rec.params[:P] = P
-    rec.params[:Q] = Q
+    rec.P[:] = P[:]
+    rec.Q[:] = Q[:]
 
     rec.states[:is_built] = true
 end
 
 function predict(rec::MF, u::Int, i::Int)
     check_build_status(rec)
-    dot(rec.params[:P][u, :], rec.params[:Q][i, :])
+    dot(rec.P[u, :], rec.Q[i, :])
 end

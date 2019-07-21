@@ -11,7 +11,7 @@ struct MostPopular <: Recommender
     scores::AbstractVector
     states::States
 
-    function MostPopular(da::DataAccessor, hyperparams::Parameters=Parameters())
+    function MostPopular(da::DataAccessor)
         n_item = size(da.R, 2)
         new(da, zeros(n_item), States(:is_built => false))
     end

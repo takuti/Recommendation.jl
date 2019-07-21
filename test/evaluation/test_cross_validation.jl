@@ -6,8 +6,14 @@ function test_cross_validation()
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
 
-    @test cross_validation(MF, Parameters(:k => 2), da, 5, # 5-fold
-                           Recall, 4) <= 0.5
+    # 5-fold, top-4 recommendation with MF(da, 2)
+    @test cross_validation(5, Recall, 4, MF, da, 2) <= 0.5
+
+    # MostPopular(da)
+    @test cross_validation(5, Recall, 4, MostPopular, da) <= 0.5
+
+    # UserKNN(da, 2, true)
+    @test cross_validation(5, Recall, 4, UserKNN, da, 2, true) <= 0.5
 end
 
 test_cross_validation()

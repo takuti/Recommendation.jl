@@ -4,8 +4,8 @@
 
 This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
 
-```sh
-Pkg.add("Recommendation")
+```julia
+julia> using Pkg; Pkg.add("Recommendation")
 ```
 
 ## Usage
@@ -60,7 +60,15 @@ build(recommender)
 Personalized recommenders sometimes require us to specify the hyperparameters:
 
 ```julia
-recommender = MF(da, Parameters(:k => 2))
+help?> Recommendation.MF
+  MF(
+      da::DataAccessor,
+      k::Int
+  )
+```
+
+```julia
+recommender = MF(da, 2)
 build(recommender, learning_rate=15e-4, max_iter=100)
 ```
 

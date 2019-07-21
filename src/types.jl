@@ -1,7 +1,4 @@
-export Event, Parameters, States
-
-# model parameters
-const Parameters = Dict{Symbol,Any}
+export Event, States
 
 # recommenders' states e.g. `is_built`
 const States = Dict{Symbol,Any}

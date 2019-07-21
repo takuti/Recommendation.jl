@@ -6,7 +6,7 @@ function test_user_knn()
          NaN 2 3 3 NaN 5 NaN 1]
     da = DataAccessor(m)
 
-    recommender = UserKNN(da, Parameters(:k => 1))
+    recommender = UserKNN(da, 1)
     build(recommender)
 
     @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)
@@ -17,7 +17,7 @@ function test_user_knn()
     @test rec[2] == (8 => 3.0)
     @test rec[3] == (2 => 2.0)
 
-    recommender = UserKNN(da, Parameters(:k => 1), is_normalized=true);
+    recommender = UserKNN(da, 1, true)
     build(recommender)
 
     @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)

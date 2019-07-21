@@ -3,7 +3,7 @@ export ItemKNN
 """
     ItemKNN(
         da::DataAccessor,
-        hyperparams::Parameters=Parameters(:k => 5)
+        k::Int
     )
 
 [Item-based CF](https://dl.acm.org/citation.cfm?id=963776) that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. `k` represents number of neighbors.
@@ -27,15 +27,17 @@ In case that the number of items is smaller than users, item-based CF could be a
 """
 struct ItemKNN <: Recommender
     da::DataAccessor
-    hyperparams::Parameters
+    k::Int
     sim::AbstractMatrix
     states::States
 
-    function ItemKNN(da::DataAccessor, hyperparams::Parameters=Parameters(:k => 5))
+    function ItemKNN(da::DataAccessor, k::Int)
         n_item = size(da.R, 2)
-        new(da, hyperparams, zeros(n_item, n_item), States(:is_built => false))
+        new(da, k, zeros(n_item, n_item), States(:is_built => false))
     end
 end
+
+ItemKNN(da::DataAccessor) = ItemKNN(da, 5)
 
 function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     # cosine similarity
@@ -82,7 +84,7 @@ function predict(rec::ItemKNN, u::Int, i::Int)
 
     # negative similarities are filtered
     pairs = collect(zip(1:size(rec.da.R)[2], max.(rec.sim[i, :], 0)))
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.hyperparams[:k]]
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.k]
 
     for (j, s) in ordered_pairs
         r = rec.da.R[u, j]

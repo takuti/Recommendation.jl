@@ -2,18 +2,17 @@ export cross_validation
 
 """
     cross_validation(
-        rec_type::Type{T<:Recommender},
-        hyperparams::Parameters,
-        da::DataAccessor,
         n_fold::Int,
         metric::Type{S<:Metric},
-        k::Int=0
+        k::Int,
+        rec_type::Type{T<:Recommender},
+        da::DataAccessor,
+        rec_args...
     )
 
-Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric` with `hyperparams`. For ranking metric, accuracy is measured by top-`k` recommendation.
+Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric`. A recommender is initialized with `rec_args`. For ranking metric, accuracy is measured by top-`k` recommendation.
 """
-function cross_validation(rec_type::Type{T}, hyperparams::Parameters, da::DataAccessor,
-                          n_fold::Int, metric::Type{S}, k::Int=0) where {T<:Recommender,S<:Metric}
+function cross_validation(n_fold::Int, metric::Type{S}, k::Int, rec_type::Type{T}, da::DataAccessor, rec_args...) where {T<:Recommender,S<:Metric}
 
     n_user, n_item = size(da.R)
 
@@ -33,7 +32,7 @@ function cross_validation(rec_type::Type{T}, hyperparams::Parameters, da::DataAc
         train_da = DataAccessor(train_events, n_user, n_item)
 
         # get recommender from the specified data type
-        rec = rec_type(train_da, hyperparams)
+        rec = rec_type(train_da, rec_args...)
         build(rec)
 
         accum += evaluate(rec, truth_da, metric(), k)
