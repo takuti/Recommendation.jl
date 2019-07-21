@@ -33,19 +33,19 @@ struct ItemKNN <: Recommender
 
     function ItemKNN(da::DataAccessor, k::Int)
         n_item = size(da.R, 2)
-        new(da, k, zeros(n_item, n_item), States(:is_built => false))
+        new(da, k, zeros(n_item, n_item), States(:built => false))
     end
 end
 
 ItemKNN(da::DataAccessor) = ItemKNN(da, 5)
 
-function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
+function build(rec::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
 
     R = copy(rec.da.R)
     n_row, n_col = size(R)
 
-    if is_adjusted_cosine
+    if adjusted_cosine
         # subtract mean
         for ri in 1:n_row
             indices = broadcast(!isnan, R[ri, :])
@@ -74,7 +74,7 @@ function build(rec::ItemKNN; is_adjusted_cosine::Bool=false)
     # NaN similarities are converted into zeros
     rec.sim[isnan.(rec.sim)] .= 0
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::ItemKNN, u::Int, i::Int)

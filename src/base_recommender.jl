@@ -4,7 +4,7 @@ export check_build_status, build, recommend, predict, ranking
 abstract type Recommender end
 
 function check_build_status(rec::Recommender)
-    if !haskey(rec.states, :is_built) || !rec.states[:is_built]
+    if !haskey(rec.states, :built) || !rec.states[:built]
         error("Recommender $(typeof(rec)) is not built before making recommendation")
     end
 end

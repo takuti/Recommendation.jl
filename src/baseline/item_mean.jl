@@ -12,7 +12,7 @@ struct ItemMean <: Recommender
 
     function ItemMean(da::DataAccessor)
         n_item = size(da.R, 2)
-        new(da, zeros(n_item), States(:is_built => false))
+        new(da, zeros(n_item), States(:built => false))
     end
 end
 
@@ -24,7 +24,7 @@ function build(rec::ItemMean)
         rec.scores[i] = sum(v) / count(!iszero, v)
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::ItemMean, u::Int, i::Int)

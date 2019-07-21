@@ -1,6 +1,6 @@
 export Event, States
 
-# recommenders' states e.g. `is_built`
+# recommenders' states e.g. `built`
 const States = Dict{Symbol,Any}
 
 mutable struct Event

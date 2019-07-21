@@ -35,7 +35,7 @@ struct TFIDF <: Recommender
 
     function TFIDF(da::DataAccessor, tf::AbstractMatrix, idf::AbstractMatrix)
         # instanciate with dummy status (i.e., always true)
-        new(da, tf, idf, States(:is_built => true))
+        new(da, tf, idf, States(:built => true))
     end
 end
 

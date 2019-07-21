@@ -17,7 +17,7 @@ struct CoOccurrence <: Recommender
 
     function CoOccurrence(da::DataAccessor, i_ref::Int)
         n_item = size(da.R, 2)
-        new(da, i_ref, zeros(n_item), States(:is_built => false))
+        new(da, i_ref, zeros(n_item), States(:built => false))
     end
 end
 
@@ -33,7 +33,7 @@ function build(rec::CoOccurrence)
         rec.scores[i] = cc / c * 100.0
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function ranking(rec::CoOccurrence, u::Int, i::Int)

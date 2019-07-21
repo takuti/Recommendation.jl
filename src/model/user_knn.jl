@@ -35,7 +35,7 @@ struct UserKNN <: Recommender
 
     function UserKNN(da::DataAccessor, k::Int, normalize::Bool)
         n_user = size(da.R, 1)
-        new(da, k, zeros(n_user, n_user), normalize, States(:is_built => false))
+        new(da, k, zeros(n_user, n_user), normalize, States(:built => false))
     end
 end
 
@@ -66,7 +66,7 @@ function build(rec::UserKNN)
         end
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::UserKNN, u::Int, i::Int)

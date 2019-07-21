@@ -28,7 +28,7 @@ struct MF <: Recommender
         P = zeros(n_user, k)
         Q = zeros(n_item, k)
 
-        new(da, k, P, Q, States(:is_built => false))
+        new(da, k, P, Q, States(:built => false))
     end
 end
 
@@ -46,7 +46,7 @@ function build(rec::MF;
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter
-        is_converged = true
+        converged = true
 
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
@@ -56,7 +56,7 @@ function build(rec::MF;
             uv, iv = P[u, :], Q[i, :]
 
             err = r - dot(uv, iv)
-            if abs(err) >= eps; is_converged = false; end
+            if abs(err) >= eps; converged = false; end
 
             grad = -2 * (err * iv - reg * uv)
             P[u, :] = uv - learning_rate * grad
@@ -65,13 +65,13 @@ function build(rec::MF;
             Q[i, :] = iv - learning_rate * grad
         end
 
-        if is_converged; break; end;
+        if converged; break; end;
     end
 
     rec.P[:] = P[:]
     rec.Q[:] = Q[:]
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::MF, u::Int, i::Int)

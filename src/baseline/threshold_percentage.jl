@@ -17,7 +17,7 @@ struct ThresholdPercentage <: Recommender
 
     function ThresholdPercentage(da::DataAccessor, th::Float64)
         n_item = size(da.R, 2)
-        new(da, th, zeros(n_item), States(:is_built => false))
+        new(da, th, zeros(n_item), States(:built => false))
     end
 end
 
@@ -29,7 +29,7 @@ function build(rec::ThresholdPercentage)
         rec.scores[i] = length(v[v .>= rec.th]) / count(!iszero, v) * 100.0
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function ranking(rec::ThresholdPercentage, u::Int, i::Int)

@@ -23,7 +23,7 @@ struct SVD <: Recommender
         U = zeros(n_user, k)
         S = zeros(k)
         Vt = zeros(k, n_item)
-        new(da, k, U, S, Vt, States(:is_built => false))
+        new(da, k, U, S, Vt, States(:built => false))
     end
 end
 
@@ -39,7 +39,7 @@ function build(rec::SVD)
     rec.S[:] = res.S[1:rec.k]
     rec.Vt[:] = res.Vt[1:rec.k, :]
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::SVD, u::Int, i::Int)

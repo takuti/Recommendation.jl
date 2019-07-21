@@ -13,7 +13,7 @@ struct MostPopular <: Recommender
 
     function MostPopular(da::DataAccessor)
         n_item = size(da.R, 2)
-        new(da, zeros(n_item), States(:is_built => false))
+        new(da, zeros(n_item), States(:built => false))
     end
 end
 
@@ -24,7 +24,7 @@ function build(rec::MostPopular)
         rec.scores[i] = count(!iszero, rec.da.R[:, i])
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function ranking(rec::MostPopular, u::Int, i::Int)

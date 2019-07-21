@@ -12,7 +12,7 @@ struct UserMean <: Recommender
 
     function UserMean(da::DataAccessor)
         n_user = size(da.R, 1)
-        new(da, zeros(n_user), States(:is_built => false))
+        new(da, zeros(n_user), States(:built => false))
     end
 end
 
@@ -24,7 +24,7 @@ function build(rec::UserMean)
         rec.scores[u] = sum(v) / count(!iszero, v)
     end
 
-    rec.states[:is_built] = true
+    rec.states[:built] = true
 end
 
 function predict(rec::UserMean, u::Int, i::Int)
