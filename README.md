@@ -40,8 +40,7 @@ data = DataAccessor(sparse([1 0 0; 4 5 0]))
 or set of events:
 
 ```julia
-const n_user = 5
-const n_item = 10
+n_user, n_item = 5, 10
 
 events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
 
@@ -85,14 +84,11 @@ recommender = MF(data, 2)
 build!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 
-Once a recommendation engine has been built successfully, top-`k` recommendation for a user `u` with item candidates `candidates` is performed as follows:
+Once a recommendation engine has been built successfully, top-`2` recommendation for a user `4` is performed as follows:
 
 ```julia
-u = 4
-k = 2
-candidates = [i for i in 1:n_item] # all items
-
-recommend(recommender, u, k, candidates)
+# for user#4, pick top-2 from all items
+recommend(recommender, 4, 2, collect(1:n_item))
 ```
 
 See [**documentation**](https://takuti.github.io/Recommendation.jl/latest/) for the details.
