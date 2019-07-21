@@ -3,16 +3,16 @@ export cross_validation
 """
     cross_validation(
         n_fold::Int,
-        metric::Type{S<:Metric},
+        metric::Type{<:Metric},
         k::Int,
-        rec_type::Type{T<:Recommender},
+        rec_type::Type{<:Recommender},
         da::DataAccessor,
         rec_args...
     )
 
 Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric`. A recommender is initialized with `rec_args`. For ranking metric, accuracy is measured by top-`k` recommendation.
 """
-function cross_validation(n_fold::Int, metric::Type{S}, k::Int, rec_type::Type{T}, da::DataAccessor, rec_args...) where {T<:Recommender,S<:Metric}
+function cross_validation(n_fold::Int, metric::Type{<:Metric}, k::Int, rec_type::Type{<:Recommender}, da::DataAccessor, rec_args...)
 
     n_user, n_item = size(da.R)
 
