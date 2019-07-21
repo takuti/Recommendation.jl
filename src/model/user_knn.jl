@@ -4,10 +4,10 @@ export UserKNN
     UserKNN(
         da::DataAccessor,
         k::Int,
-        is_normalized::Bool=false
+        normalize::Bool=false
     )
 
-[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `k` represents number of neighbors, and `is_normalized` specifies if weighted sum of neighbors' rating is normalized.
+[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `k` represents number of neighbors, and `normalize` specifies if weighted sum of neighbors' rating is normalized.
 
 The technique gives a weight to a user-user pair by the following equation:
 
@@ -30,12 +30,12 @@ struct UserKNN <: Recommender
     da::DataAccessor
     k::Int
     sim::AbstractMatrix
-    is_normalized::Bool
+    normalize::Bool
     states::States
 
-    function UserKNN(da::DataAccessor, k::Int, is_normalized::Bool)
+    function UserKNN(da::DataAccessor, k::Int, normalize::Bool)
         n_user = size(da.R, 1)
-        new(da, k, zeros(n_user, n_user), is_normalized, States(:is_built => false))
+        new(da, k, zeros(n_user, n_user), normalize, States(:is_built => false))
     end
 end
 
@@ -85,7 +85,7 @@ function predict(rec::UserKNN, u::Int, i::Int)
         if isnan(r); continue; end
 
         r_ = 0
-        if rec.is_normalized
+        if rec.normalize
             jj = broadcast(!isnan, v_near)
             r_ = mean(v_near[jj])
         end
@@ -95,7 +95,7 @@ function predict(rec::UserKNN, u::Int, i::Int)
     end
 
     pred = (denom == 0) ? 0 : numer / denom
-    if rec.is_normalized
+    if rec.normalize
         ii = broadcast(!isnan, rec.da.R[u, :])
         pred += mean(rec.da.R[u, ii])
     end
