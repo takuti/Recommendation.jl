@@ -17,17 +17,17 @@ struct MostPopular <: Recommender
     end
 end
 
-function build!(rec::MostPopular)
-    n_item = size(rec.da.R, 2)
+function build!(recommender::MostPopular)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        rec.scores[i] = count(!iszero, rec.da.R[:, i])
+        recommender.scores[i] = count(!iszero, recommender.da.R[:, i])
     end
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function ranking(rec::MostPopular, u::Int, i::Int)
-    check_build_status(rec)
-    rec.scores[i]
+function ranking(recommender::MostPopular, u::Int, i::Int)
+    check_build_status(recommender)
+    recommender.scores[i]
 end

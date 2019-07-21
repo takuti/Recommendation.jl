@@ -42,10 +42,10 @@ end
 UserKNN(da::DataAccessor, k::Int) = UserKNN(da, k, false)
 UserKNN(da::DataAccessor) = UserKNN(da, 20, false)
 
-function build!(rec::UserKNN)
+function build!(recommender::UserKNN)
     # Pearson correlation
 
-    R = copy(rec.da.R)
+    R = copy(recommender.da.R)
 
     n_row = size(R, 1)
 
@@ -61,31 +61,31 @@ function build!(rec::UserKNN)
             denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
 
             c = numer / denom
-            rec.sim[ri, rj] = c
-            if (ri != rj); rec.sim[rj, ri] = c; end # symmetric
+            recommender.sim[ri, rj] = c
+            if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
         end
     end
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::UserKNN, u::Int, i::Int)
-    check_build_status(rec)
+function predict(recommender::UserKNN, u::Int, i::Int)
+    check_build_status(recommender)
 
     numer = denom = 0
 
-    pairs = collect(zip(1:size(rec.da.R)[1], rec.sim[u, :]))
+    pairs = collect(zip(1:size(recommender.da.R)[1], recommender.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(rec.k + 1)]
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
 
     for (u_near, w) in ordered_pairs
-        v_near = rec.da.R[u_near, :]
+        v_near = recommender.da.R[u_near, :]
 
         r = v_near[i]
         if isnan(r); continue; end
 
         r_ = 0
-        if rec.normalize
+        if recommender.normalize
             jj = broadcast(!isnan, v_near)
             r_ = mean(v_near[jj])
         end
@@ -95,9 +95,9 @@ function predict(rec::UserKNN, u::Int, i::Int)
     end
 
     pred = (denom == 0) ? 0 : numer / denom
-    if rec.normalize
-        ii = broadcast(!isnan, rec.da.R[u, :])
-        pred += mean(rec.da.R[u, ii])
+    if recommender.normalize
+        ii = broadcast(!isnan, recommender.da.R[u, :])
+        pred += mean(recommender.da.R[u, ii])
     end
     pred
 end

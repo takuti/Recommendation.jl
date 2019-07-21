@@ -21,18 +21,18 @@ struct ThresholdPercentage <: Recommender
     end
 end
 
-function build!(rec::ThresholdPercentage)
-    n_item = size(rec.da.R, 2)
+function build!(recommender::ThresholdPercentage)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        v = rec.da.R[:, i]
-        rec.scores[i] = length(v[v .>= rec.th]) / count(!iszero, v) * 100.0
+        v = recommender.da.R[:, i]
+        recommender.scores[i] = length(v[v .>= recommender.th]) / count(!iszero, v) * 100.0
     end
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function ranking(rec::ThresholdPercentage, u::Int, i::Int)
-    check_build_status(rec)
-    rec.scores[i]
+function ranking(recommender::ThresholdPercentage, u::Int, i::Int)
+    check_build_status(recommender)
+    recommender.scores[i]
 end

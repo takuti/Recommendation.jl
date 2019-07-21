@@ -39,10 +39,10 @@ struct TFIDF <: Recommender
     end
 end
 
-function predict(rec::TFIDF, u::Int, i::Int)
-    check_build_status(rec)
+function predict(recommender::TFIDF, u::Int, i::Int)
+    check_build_status(recommender)
 
-    uv = rec.da.user_attributes[u]
-    profile = rec.da.R' * uv # attribute x 1
-    ((rec.da.R .* rec.idf) * profile)[i]
+    uv = recommender.da.user_attributes[u]
+    profile = recommender.da.R' * uv # attribute x 1
+    ((recommender.da.R .* recommender.idf) * profile)[i]
 end

@@ -16,18 +16,18 @@ struct UserMean <: Recommender
     end
 end
 
-function build!(rec::UserMean)
-    n_user = size(rec.da.R, 1)
+function build!(recommender::UserMean)
+    n_user = size(recommender.da.R, 1)
 
     for u in 1:n_user
-        v = rec.da.R[u, :]
-        rec.scores[u] = sum(v) / count(!iszero, v)
+        v = recommender.da.R[u, :]
+        recommender.scores[u] = sum(v) / count(!iszero, v)
     end
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::UserMean, u::Int, i::Int)
-    check_build_status(rec)
-    rec.scores[u]
+function predict(recommender::UserMean, u::Int, i::Int)
+    check_build_status(recommender)
+    recommender.scores[u]
 end

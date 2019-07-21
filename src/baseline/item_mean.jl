@@ -16,18 +16,18 @@ struct ItemMean <: Recommender
     end
 end
 
-function build!(rec::ItemMean)
-    n_item = size(rec.da.R, 2)
+function build!(recommender::ItemMean)
+    n_item = size(recommender.da.R, 2)
 
     for i in 1:n_item
-        v = rec.da.R[:, i]
-        rec.scores[i] = sum(v) / count(!iszero, v)
+        v = recommender.da.R[:, i]
+        recommender.scores[i] = sum(v) / count(!iszero, v)
     end
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::ItemMean, u::Int, i::Int)
-    check_build_status(rec)
-    rec.scores[i]
+function predict(recommender::ItemMean, u::Int, i::Int)
+    check_build_status(recommender)
+    recommender.scores[i]
 end

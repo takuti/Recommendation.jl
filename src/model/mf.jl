@@ -34,15 +34,15 @@ end
 
 MF(da::DataAccessor) = MF(da, 20)
 
-function build!(rec::MF;
+function build!(recommender::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
                eps::Float64=1e-3, max_iter::Int=100)
-    n_user, n_item = size(rec.da.R)
+    n_user, n_item = size(recommender.da.R)
 
     # initialize with small values
     # (random is also possible)
-    P = ones(n_user, rec.k) * 0.1
-    Q = ones(n_item, rec.k) * 0.1
+    P = ones(n_user, recommender.k) * 0.1
+    Q = ones(n_item, recommender.k) * 0.1
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter
@@ -50,7 +50,7 @@ function build!(rec::MF;
 
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
-            r = rec.da.R[u, i]
+            r = recommender.da.R[u, i]
             if isnan(r); continue; end
 
             uv, iv = P[u, :], Q[i, :]
@@ -68,13 +68,13 @@ function build!(rec::MF;
         if converged; break; end;
     end
 
-    rec.P[:] = P[:]
-    rec.Q[:] = Q[:]
+    recommender.P[:] = P[:]
+    recommender.Q[:] = Q[:]
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::MF, u::Int, i::Int)
-    check_build_status(rec)
-    dot(rec.P[u, :], rec.Q[i, :])
+function predict(recommender::MF, u::Int, i::Int)
+    check_build_status(recommender)
+    dot(recommender.P[u, :], recommender.Q[i, :])
 end

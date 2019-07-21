@@ -39,10 +39,10 @@ end
 
 ItemKNN(da::DataAccessor) = ItemKNN(da, 5)
 
-function build!(rec::ItemKNN; adjusted_cosine::Bool=false)
+function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
 
-    R = copy(rec.da.R)
+    R = copy(recommender.da.R)
     n_row, n_col = size(R)
 
     if adjusted_cosine
@@ -66,28 +66,28 @@ function build!(rec::ItemKNN; adjusted_cosine::Bool=false)
             denom = norms[ci] * norms[cj]
             s = numer / denom
 
-            rec.sim[ci, cj] = s
-            if (ci != cj); rec.sim[cj, ci] = s; end
+            recommender.sim[ci, cj] = s
+            if (ci != cj); recommender.sim[cj, ci] = s; end
         end
     end
 
     # NaN similarities are converted into zeros
-    rec.sim[isnan.(rec.sim)] .= 0
+    recommender.sim[isnan.(recommender.sim)] .= 0
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::ItemKNN, u::Int, i::Int)
-    check_build_status(rec)
+function predict(recommender::ItemKNN, u::Int, i::Int)
+    check_build_status(recommender)
 
     numer = denom = 0
 
     # negative similarities are filtered
-    pairs = collect(zip(1:size(rec.da.R)[2], max.(rec.sim[i, :], 0)))
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:rec.k]
+    pairs = collect(zip(1:size(recommender.da.R)[2], max.(recommender.sim[i, :], 0)))
+    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
 
     for (j, s) in ordered_pairs
-        r = rec.da.R[u, j]
+        r = recommender.da.R[u, j]
         if isnan(r); continue; end
 
         numer += s * r

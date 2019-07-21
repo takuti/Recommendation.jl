@@ -5,14 +5,14 @@ export cross_validation
         n_fold::Int,
         metric::Type{<:Metric},
         k::Int,
-        rec_type::Type{<:Recommender},
+        recommender_type::Type{<:Recommender},
         da::DataAccessor,
-        rec_args...
+        recommender_args...
     )
 
-Conduct `n_fold` cross validation for a combination of recommender `rec_type` and metric `metric`. A recommender is initialized with `rec_args`. For ranking metric, accuracy is measured by top-`k` recommendation.
+Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and metric `metric`. A recommender is initialized with `recommender_args`. For ranking metric, accuracy is measured by top-`k` recommendation.
 """
-function cross_validation(n_fold::Int, metric::Type{<:Metric}, k::Int, rec_type::Type{<:Recommender}, da::DataAccessor, rec_args...)
+function cross_validation(n_fold::Int, metric::Type{<:Metric}, k::Int, recommender_type::Type{<:Recommender}, da::DataAccessor, recommender_args...)
 
     n_user, n_item = size(da.R)
 
@@ -32,10 +32,10 @@ function cross_validation(n_fold::Int, metric::Type{<:Metric}, k::Int, rec_type:
         train_da = DataAccessor(train_events, n_user, n_item)
 
         # get recommender from the specified data type
-        rec = rec_type(train_da, rec_args...)
-        build!(rec)
+        recommender = recommender_type(train_da, recommender_args...)
+        build!(recommender)
 
-        accum += evaluate(rec, truth_da, metric(), k)
+        accum += evaluate(recommender, truth_da, metric(), k)
     end
 
     accum / n_fold

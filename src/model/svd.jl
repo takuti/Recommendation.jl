@@ -29,20 +29,20 @@ end
 
 SVD(da::DataAccessor) = SVD(da, 20)
 
-function build!(rec::SVD)
+function build!(recommender::SVD)
     # NaNs are filled by zeros for now
-    R = copy(rec.da.R)
+    R = copy(recommender.da.R)
     R[isnan.(R)] .= 0
 
     res = svd(R)
-    rec.U[:] = res.U[:, 1:rec.k]
-    rec.S[:] = res.S[1:rec.k]
-    rec.Vt[:] = res.Vt[1:rec.k, :]
+    recommender.U[:] = res.U[:, 1:recommender.k]
+    recommender.S[:] = res.S[1:recommender.k]
+    recommender.Vt[:] = res.Vt[1:recommender.k, :]
 
-    rec.states[:built] = true
+    recommender.states[:built] = true
 end
 
-function predict(rec::SVD, u::Int, i::Int)
-    check_build_status(rec)
-    dot(rec.U[u, :] .* rec.S, rec.Vt[:, i])
+function predict(recommender::SVD, u::Int, i::Int)
+    check_build_status(recommender)
+    dot(recommender.U[u, :] .* recommender.S, recommender.Vt[:, i])
 end
