@@ -6,12 +6,12 @@ mutable struct Event
     value::Float64 # e.g. rating, 0/1
 end
 
-function matrix(m::Int, n::Int)
-    Array{Union{Nothing, Float64}}(nothing, m, n)
+function matrix(m::Int, n::Int, t::Type{<:Number}=Float64)
+    Array{Union{Nothing, t}}(nothing, m, n)
 end
 
-function vector(m::Int)
-    Array{Union{Nothing, Float64}}(nothing, m)
+function vector(m::Int, t::Type{<:Number}=Float64)
+    Array{Union{Nothing, t}}(nothing, m)
 end
 
 function isfilled(a::AbstractArray)
