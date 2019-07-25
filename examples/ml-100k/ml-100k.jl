@@ -8,7 +8,7 @@ data = DataAccessor(R)
 recall = cross_validation(
                           1,            # N-fold
                           Recall,       # Metric
-                          5             # Top-k
+                          5,            # Top-k
                           MostPopular,  # Recommender
                           data          # Data Accessor
                          )
