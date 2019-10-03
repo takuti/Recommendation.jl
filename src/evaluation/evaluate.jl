@@ -14,7 +14,7 @@ function validate_size(recommender::Recommender, truth_data::DataAccessor)
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::AccuracyMetric, k::Int=0)
+                  metric::AccuracyMetric)
     check_build_status(recommender)
     n_user, n_item = validate_size(recommender, truth_data)
 
