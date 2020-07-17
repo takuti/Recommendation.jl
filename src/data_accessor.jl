@@ -30,7 +30,7 @@ struct DataAccessor
 end
 
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
-    R = ones(n_user, n_item) * NaN
+    R = zeros(n_user, n_item)
     for event in events
         if isnan(R[event.user, event.item])
             R[event.user, event.item] = 0
