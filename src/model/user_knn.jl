@@ -61,7 +61,8 @@ function build!(recommender::UserKNN)
             numer = dot(vi[ij], vj[ij])
             denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
 
-            c = numer / denom
+            c = (denom == 0) ? 0 : (numer / denom)
+
             recommender.sim[ri, rj] = c
             if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
         end
