@@ -10,7 +10,7 @@ function test_cross_validation_accuracy()
     fold = 5
 
     # MF(data, 2)
-    @test cross_validation(fold, MAE, MF, data, 2) <= 0.5
+    @test cross_validation(fold, MAE, MF, data, 2) <= 2.5
 
     # UserMean(data)
     @test cross_validation(fold, MAE, UserMean, data) <= 2.5
@@ -19,7 +19,7 @@ function test_cross_validation_accuracy()
     @test cross_validation(fold, MAE, ItemMean, data) <= 2.5
 
     # UserKNN(data, 2, true)
-    @test cross_validation(fold, MAE, UserKNN, data, 2, true) <= 0.5
+    @test cross_validation(fold, MAE, UserKNN, data, 2, true) <= 2.5
 end
 
 function test_cross_validation_ranking()
