@@ -3,14 +3,14 @@ export cross_validation
 """
     cross_validation(
         n_fold::Int,
-        metric::Type{<:Metric},
+        metric::Type{<:RankingMetric},
         k::Int,
         recommender_type::Type{<:Recommender},
         data::DataAccessor,
         recommender_args...
     )
 
-Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and metric `metric`. A recommender is initialized with `recommender_args`. For ranking metric, accuracy is measured by top-`k` recommendation.
+Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and ranking metric `metric`. A recommender is initialized with `recommender_args` and runs top-`k` recommendation.
 """
 function cross_validation(n_fold::Int, metric::Type{<:RankingMetric}, k::Int, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
@@ -41,6 +41,17 @@ function cross_validation(n_fold::Int, metric::Type{<:RankingMetric}, k::Int, re
     accum / n_fold
 end
 
+"""
+    cross_validation(
+        n_fold::Int,
+        metric::Type{<:AccuracyMetric},
+        recommender_type::Type{<:Recommender},
+        data::DataAccessor,
+        recommender_args...
+    )
+
+Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args`.
+"""
 function cross_validation(n_fold::Int, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
     n_user, n_item = size(data.R)
