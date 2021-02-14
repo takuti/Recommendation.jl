@@ -59,8 +59,8 @@ function test_tf_idf()
 
     recommender = TFIDF(data, tf, ones(size(tf))) # do not use IDF
     rec = recommend(recommender, 1, n_doc, docs)
-    @test first(rec[2]) == 12
-    @test first(rec[3]) == 1
+    @test first(rec[2]) == 1
+    @test first(rec[3]) == 12
     @test last(rec[2]) == 4 && last(rec[3]) == 4
 
 
