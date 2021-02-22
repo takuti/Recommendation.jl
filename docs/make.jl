@@ -1,7 +1,9 @@
 using Documenter, Recommendation
 
 makedocs(
-    format = :html,
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true"
+    ),
     modules = [Recommendation],
     sitename = "Recommendation.jl",
     authors = "Takuya Kitazawa",
