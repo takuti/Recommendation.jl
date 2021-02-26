@@ -26,8 +26,7 @@ function build!(recommender::CoOccurrence)
     n_item = size(recommender.data.R, 2)
 
     v_ref = recommender.data.R[:, recommender.i_ref]
-    almost_zero = 1e-256 # to check if value is zero or undef
-    c = count(>(almost_zero), v_ref)
+    c = count(!isalmostzero, v_ref)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]

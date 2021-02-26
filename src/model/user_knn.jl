@@ -50,11 +50,10 @@ function build!(recommender::UserKNN)
 
     n_row = size(R, 1)
 
-    almost_zero = 1e-256 # to check if value is zero or undef
     for ri in 1:n_row
         for rj in ri:n_row
             # pairwise correlation (i.e., ignore NaNs)
-            ij = broadcast(>(almost_zero), R[ri, :]) .& broadcast(>(almost_zero), R[rj, :])
+            ij = broadcast(!isalmostzero, R[ri, :]) .& broadcast(!isalmostzero, R[rj, :])
 
             vi = R[ri, :] .- mean(R[ri, ij])
             vj = R[rj, :] .- mean(R[rj, ij])
@@ -79,16 +78,15 @@ function predict(recommender::UserKNN, u::Int, i::Int)
     # closest neighbor is always target user him/herself, so omit him/her
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
 
-    almost_zero = 1e-256 # to check if value is zero or undef
     for (u_near, w) in ordered_pairs
         v_near = recommender.data.R[u_near, :]
 
         r = v_near[i]
-        if r <= almost_zero; continue; end
+        if isalmostzero(r); continue; end
 
         r_ = 0
         if recommender.normalize
-            jj = broadcast(>(almost_zero), v_near)
+            jj = broadcast(!isalmostzero, v_near)
             r_ = mean(v_near[jj])
         end
 
@@ -98,7 +96,7 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(>(almost_zero), recommender.data.R[u, :])
+        ii = broadcast(!isalmostzero, recommender.data.R[u, :])
         m = mean(recommender.data.R[u, ii])
         pred += isnan(m) ? 0 : m
     end
