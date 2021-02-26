@@ -22,7 +22,7 @@ function build!(recommender::MostPopular)
     n_item = size(recommender.data.R, 2)
 
     for i in 1:n_item
-        recommender.scores[i] = count(!iszero, recommender.data.R[:, i])
+        recommender.scores[i] = count(!isalmostzero, recommender.data.R[:, i])
     end
 end
 

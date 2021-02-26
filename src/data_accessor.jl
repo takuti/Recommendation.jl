@@ -19,7 +19,9 @@ struct DataAccessor
         for user in 1:n_user
             for item in 1:n_item
                 r = R[user, item]
-                if !isnan(r) && r != 0
+                if isnan(r)
+                    R[user, item] = 0
+                elseif r != 0
                     append!(events, [Event(user, item, r)])
                 end
             end

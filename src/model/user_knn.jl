@@ -53,7 +53,7 @@ function build!(recommender::UserKNN)
     for ri in 1:n_row
         for rj in ri:n_row
             # pairwise correlation (i.e., ignore NaNs)
-            ij = broadcast(!isnan, R[ri, :]) .& broadcast(!isnan, R[rj, :])
+            ij = broadcast(!isalmostzero, R[ri, :]) .& broadcast(!isalmostzero, R[rj, :])
 
             vi = R[ri, :] .- mean(R[ri, ij])
             vj = R[rj, :] .- mean(R[rj, ij])
@@ -82,11 +82,11 @@ function predict(recommender::UserKNN, u::Int, i::Int)
         v_near = recommender.data.R[u_near, :]
 
         r = v_near[i]
-        if isnan(r); continue; end
+        if isalmostzero(r); continue; end
 
         r_ = 0
         if recommender.normalize
-            jj = broadcast(!isnan, v_near)
+            jj = broadcast(!isalmostzero, v_near)
             r_ = mean(v_near[jj])
         end
 
@@ -96,8 +96,9 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(!isnan, recommender.data.R[u, :])
-        pred += mean(recommender.data.R[u, ii])
+        ii = broadcast(!isalmostzero, recommender.data.R[u, :])
+        m = mean(recommender.data.R[u, ii])
+        pred += isnan(m) ? 0 : m
     end
     pred
 end
