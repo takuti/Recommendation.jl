@@ -35,7 +35,9 @@ function cross_validation(n_fold::Int, metric::Type{<:RankingMetric}, k::Int, re
         recommender = recommender_type(train_data, recommender_args...)
         build!(recommender)
 
-        accum += evaluate(recommender, truth_data, metric(), k)
+        accuracy = evaluate(recommender, truth_data, metric(), k)
+        if isnan(accuracy); continue; end
+        accum += accuracy
     end
 
     accum / n_fold
@@ -75,7 +77,9 @@ function cross_validation(n_fold::Int, metric::Type{<:AccuracyMetric}, recommend
         recommender = recommender_type(train_data, recommender_args...)
         build!(recommender)
 
-        accum += evaluate(recommender, truth_data, metric())
+        accuracy = evaluate(recommender, truth_data, metric())
+        if isnan(accuracy); continue; end
+        accum += accuracy
     end
 
     accum / n_fold
