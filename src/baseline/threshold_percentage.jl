@@ -25,9 +25,10 @@ isbuilt(recommender::ThresholdPercentage) = isfilled(recommender.scores)
 function build!(recommender::ThresholdPercentage)
     n_item = size(recommender.data.R, 2)
 
+    almost_zero = 1e-256 # to check if value is zero or undef
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        recommender.scores[i] = length(v[v .>= recommender.th]) / count(!iszero, v) * 100.0
+        recommender.scores[i] = length(v[v .>= recommender.th]) / count(>(almost_zero), v) * 100.0
     end
 end
 
