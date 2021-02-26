@@ -98,8 +98,9 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(!isnan, recommender.data.R[u, :])
-        pred += mean(recommender.data.R[u, ii])
+        ii = broadcast(>(almost_zero), recommender.data.R[u, :])
+        m = mean(recommender.data.R[u, ii])
+        pred += isnan(m) ? 0 : m
     end
     pred
 end
