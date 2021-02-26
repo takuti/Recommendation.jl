@@ -46,10 +46,11 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     R = copy(recommender.data.R)
     n_row, n_col = size(R)
 
+    almost_zero = 1e-256 # to check if value is zero or undef
     if adjusted_cosine
         # subtract mean
         for ri in 1:n_row
-            indices = broadcast(!isnan, R[ri, :])
+            indices = broadcast(>(almost_zero), R[ri, :])
             vmean = mean(R[ri, indices])
             R[ri, indices] .-= vmean
         end
@@ -85,9 +86,10 @@ function predict(recommender::ItemKNN, u::Int, i::Int)
     pairs = collect(zip(1:size(recommender.data.R)[2], max.(recommender.sim[i, :], 0)))
     ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
 
+    almost_zero = 1e-256 # to check if value is zero or undef
     for (j, s) in ordered_pairs
         r = recommender.data.R[u, j]
-        if isnan(r); continue; end
+        if r <= almost_zero; continue; end
 
         numer += s * r
         denom += s
