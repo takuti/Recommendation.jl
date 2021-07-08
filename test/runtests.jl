@@ -16,6 +16,7 @@ include("model/test_user_knn.jl")
 include("model/test_item_knn.jl")
 include("model/test_svd.jl")
 include("model/test_mf.jl")
+include("model/test_fm.jl")
 
 include("metric/test_accuracy.jl")
 include("metric/test_ranking.jl")

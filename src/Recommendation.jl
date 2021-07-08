@@ -23,6 +23,7 @@ include("model/user_knn.jl")
 include("model/item_knn.jl")
 include("model/svd.jl")
 include("model/mf.jl")
+include("model/fm.jl")
 
 include("metric/base.jl")
 include("metric/accuracy.jl")
