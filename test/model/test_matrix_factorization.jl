@@ -7,9 +7,9 @@ function run(recommender::Type{T}) where {T<:Recommender}
     recommender = recommender(data, 2)
     build!(recommender, learning_rate=15e-4, max_iter=100)
 
-    # top-4 recommantion list should be same as CF/SVD-based recommender
+    # top-4 recommended item set should be same as CF/SVD-based recommender
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
-    @test Set([first(r) for r in rec]) == Set([2, 5, 6, 8])
+    @test Set([item for (item, score) in rec]) == Set([2, 5, 6, 8])
 end
 
 function test_mf()

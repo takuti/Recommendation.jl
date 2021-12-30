@@ -31,6 +31,14 @@ struct MatrixFactorization <: Recommender
     end
 end
 
+"""
+    MF(
+        data::DataAccessor,
+        k::Int
+    )
+
+Alias of `MatrixFactorization`.
+"""
 const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)

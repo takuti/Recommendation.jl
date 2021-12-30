@@ -80,6 +80,7 @@ The initial MF technique was invented by [Funk](http://sifter.org/~simon/journal
 ![mf](./assets/images/mf.png)
 
 ```@docs
+MatrixFactorization
 MF
 ```
 
