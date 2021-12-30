@@ -22,7 +22,7 @@ include("model/tf_idf.jl")
 include("model/user_knn.jl")
 include("model/item_knn.jl")
 include("model/svd.jl")
-include("model/mf.jl")
+include("model/matrix_factorization.jl")
 
 include("metric/base.jl")
 include("metric/accuracy.jl")

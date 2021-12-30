@@ -15,7 +15,7 @@ include("model/test_tf_idf.jl")
 include("model/test_user_knn.jl")
 include("model/test_item_knn.jl")
 include("model/test_svd.jl")
-include("model/test_mf.jl")
+include("model/test_matrix_factorization.jl")
 
 include("metric/test_accuracy.jl")
 include("metric/test_ranking.jl")
