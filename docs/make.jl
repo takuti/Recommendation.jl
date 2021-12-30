@@ -15,6 +15,7 @@ makedocs(
             "notation.md",
             "baseline.md",
             "collaborative_filtering.md",
+            "factorization_machines.md",
             "content_based_filtering.md",
             "evaluation.md",
         ],

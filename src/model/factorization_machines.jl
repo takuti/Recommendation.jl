@@ -5,6 +5,10 @@ export FactorizationMachines
         data::DataAccessor,
         k::Int
     )
+
+Recommendation based on second-order factorization machines (FMs). Number of factors is configured by `k`.
+
+Learning FM requires a set of parameters ``\\Theta = \\{w_0, \\mathbf{w}, V\\}`` and a loss function ``\\ell(\\hat{y}(\\mathbf{x} \\mid \\Theta), y)``. Ultimately, the parameters can be optimized by stochastic gradient descent (SGD).
 """
 struct FactorizationMachines <: Recommender
     data::DataAccessor
