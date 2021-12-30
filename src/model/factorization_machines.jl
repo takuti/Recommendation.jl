@@ -14,7 +14,7 @@ struct FactorizationMachines <: Recommender
     data::DataAccessor
     p::Int
     k::Int
-    w0::Base.RefValue{Float64}
+    w0::Base.RefValue{Float64} # making mutable
     w::AbstractVector
     V::AbstractMatrix
 
@@ -94,7 +94,7 @@ function build!(recommender::FactorizationMachines;
         if converged; break; end;
     end
 
-    setindex!(recommender.w0, w0)
+    recommender.w0[] = w0
     recommender.w[:] = w[:]
     recommender.V[:] = V[:]
 end
@@ -114,5 +114,5 @@ function predict(recommender::FactorizationMachines, u::Int, i::Int)
              recommender.data.item_attributes[i])
 
     interaction = sum((recommender.V' * x).^2 - (recommender.V'.^2 * x.^2)) / 2.
-    getindex(recommender.w0) + dot(recommender.w, x) + interaction
+    recommender.w0[] + dot(recommender.w, x) + interaction
 end
