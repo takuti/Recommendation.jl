@@ -55,7 +55,9 @@ function build!(recommender::FactorizationMachines;
 
     w0 = 0.
     w = zeros(recommender.p)
-    V = rand(recommender.p, recommender.k)
+    # initialize with small values
+    # random is also possible like: V = rand(recommender.p, recommender.k)
+    V = ones(recommender.p, recommender.k) * 0.1
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter
