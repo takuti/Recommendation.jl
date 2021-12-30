@@ -1,5 +1,5 @@
 export DataAccessor
-export create_matrix, set_user_attribute, set_item_attribute
+export create_matrix, set_user_attribute, get_user_attribute, set_item_attribute, get_item_attribute
 
 struct DataAccessor
     events::Array{Event,1}
@@ -44,6 +44,14 @@ function set_user_attribute(data::DataAccessor, user::Int, attribute::AbstractVe
     data.user_attributes[user] = attribute
 end
 
+function get_user_attribute(data::DataAccessor, user::Int)
+    get(data.user_attributes, user, [])
+end
+
 function set_item_attribute(data::DataAccessor, item::Int, attribute::AbstractVector)
     data.item_attributes[item] = attribute
+end
+
+function get_item_attribute(data::DataAccessor, item::Int)
+    get(data.item_attributes, item, [])
 end

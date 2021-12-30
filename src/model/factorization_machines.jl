@@ -21,8 +21,16 @@ struct FactorizationMachines <: Recommender
     function FactorizationMachines(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
 
-        uv = collect(values(data.user_attributes))[1]
-        iv = collect(values(data.item_attributes))[1]
+        uv = []
+        user_vectors = collect(values(data.user_attributes))
+        if !isempty(user_vectors)
+            uv = user_vectors[1]
+        end
+        iv = []
+        item_vectors = collect(values(data.item_attributes))
+        if !isempty(item_vectors)
+            iv = item_vectors[1]
+        end
         p = n_user + n_item + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
@@ -65,8 +73,8 @@ function build!(recommender::FactorizationMachines;
             i_onehot[i] = 1.
 
             x = vcat(u_onehot, i_onehot,
-                     recommender.data.user_attributes[u],
-                     recommender.data.item_attributes[i])
+                     get_user_attribute(recommender.data, u),
+                     get_item_attribute(recommender.data, i))
 
             interaction = sum((V' * x).^2 - (V'.^2 * x.^2)) / 2.
             pred = w0 + dot(w, x) + interaction
@@ -110,8 +118,8 @@ function predict(recommender::FactorizationMachines, u::Int, i::Int)
     i_onehot[i] = 1.
 
     x = vcat(u_onehot, i_onehot,
-             recommender.data.user_attributes[u],
-             recommender.data.item_attributes[i])
+             get_user_attribute(recommender.data, u),
+             get_item_attribute(recommender.data, i))
 
     interaction = sum((recommender.V' * x).^2 - (recommender.V'.^2 * x.^2)) / 2.
     recommender.w0[] + dot(recommender.w, x) + interaction
