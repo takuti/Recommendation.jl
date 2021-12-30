@@ -19,7 +19,9 @@ struct DataAccessor
         for user in 1:n_user
             for item in 1:n_item
                 r = R[user, item]
-                if !isnan(r) && r != 0
+                if isnan(r)
+                    R[user, item] = 0
+                elseif r != 0
                     append!(events, [Event(user, item, r)])
                 end
             end
@@ -30,12 +32,8 @@ struct DataAccessor
 end
 
 function create_matrix(events::Array{Event,1}, n_user::Int, n_item::Int)
-    R = ones(n_user, n_item) * NaN
+    R = Matrix{Float64}(undef, n_user, n_item)
     for event in events
-        if isnan(R[event.user, event.item])
-            R[event.user, event.item] = 0
-        end
-
         # accumulate for implicit feedback events
         R[event.user, event.item] += event.value
     end

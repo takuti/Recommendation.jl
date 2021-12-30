@@ -22,7 +22,7 @@ function build!(recommender::UserMean)
 
     for u in 1:n_user
         v = recommender.data.R[u, :]
-        recommender.scores[u] = sum(v) / count(!iszero, v)
+        recommender.scores[u] = mean(v)
     end
 end
 

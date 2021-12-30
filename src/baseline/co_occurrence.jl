@@ -26,11 +26,11 @@ function build!(recommender::CoOccurrence)
     n_item = size(recommender.data.R, 2)
 
     v_ref = recommender.data.R[:, recommender.i_ref]
-    c = count(!iszero, v_ref)
+    c = count(!isalmostzero, v_ref)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        cc = length(v_ref[(v_ref .> 0) .& (v .> 0)])
+        cc = length(v_ref[(v_ref .> almost_zero) .& (v .> almost_zero)])
         recommender.scores[i] = cc / c * 100.0
     end
 end

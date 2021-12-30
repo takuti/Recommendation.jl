@@ -1,12 +1,12 @@
-export FM
+export FactorizationMachines
 
 """
-    FM(
+    FactorizationMachines(
         data::DataAccessor,
         k::Int
     )
 """
-struct FM <: Recommender
+struct FactorizationMachines <: Recommender
     data::DataAccessor
     p::Int
     k::Int
@@ -14,7 +14,7 @@ struct FM <: Recommender
     w::AbstractVector
     V::AbstractMatrix
 
-    function FM(data::DataAccessor, k::Int)
+    function FactorizationMachines(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
 
         uv = collect(values(data.user_attributes))[1]
@@ -29,11 +29,11 @@ struct FM <: Recommender
     end
 end
 
-FM(data::DataAccessor) = FM(data, 20)
+FactorizationMachines(data::DataAccessor) = FactorizationMachines(data, 20)
 
-isbuilt(recommender::FM) = isfilled(recommender.V)
+isbuilt(recommender::FactorizationMachines) = isfilled(recommender.V)
 
-function build!(recommender::FM;
+function build!(recommender::FactorizationMachines;
                reg_w0::Float64=1e-3,
                reg_w::Float64=1e-3,
                reg_V::Float64=1e-3,
@@ -95,7 +95,7 @@ function build!(recommender::FM;
     recommender.V[:] = V[:]
 end
 
-function predict(recommender::FM, u::Int, i::Int)
+function predict(recommender::FactorizationMachines, u::Int, i::Int)
     check_build_status(recommender)
     n_user, n_item = size(recommender.data.R)
 

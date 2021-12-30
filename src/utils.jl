@@ -1,4 +1,4 @@
-export Event, matrix, vector, isfilled
+export Event, matrix, vector, isfilled, almost_zero, isalmostzero
 
 mutable struct Event
     user::Int
@@ -16,4 +16,10 @@ end
 
 function isfilled(a::AbstractArray)
     nothing ∉ Set(a)
+end
+
+almost_zero = 1e-256 # including `undef`
+
+function isalmostzero(x::Number)
+    x <= almost_zero
 end

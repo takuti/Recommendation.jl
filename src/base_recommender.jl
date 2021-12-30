@@ -21,7 +21,7 @@ function recommend(recommender::Recommender, u::Int, k::Int, candidates::Array{I
         score = ranking(recommender, u, candidate)
         d[candidate] = score
     end
-    sort(collect(d), by=tuple->last(tuple), rev=true)[1:k]
+    sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))[1:k]
 end
 
 function predict(recommender::Recommender, u::Int, i::Int)

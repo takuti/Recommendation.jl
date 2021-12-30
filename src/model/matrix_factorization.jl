@@ -1,7 +1,7 @@
-export MF
+export MatrixFactorization, MF
 
 """
-    MF(
+    MatrixFactorization(
         data::DataAccessor,
         k::Int
     )
@@ -16,13 +16,13 @@ MF solves the following minimization problem for a set of observed user-item int
 
 where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a factorized user and item vector, and ``\\lambda`` is a regularization parameter to avoid overfitting. An optimal solution will be found by stochastic gradient descent (SGD). Ultimately, we can predict missing values in ``R`` by just computing ``PQ^{\\mathrm{T}}``, and the prediction directly leads recommendation.
 """
-struct MF <: Recommender
+struct MatrixFactorization <: Recommender
     data::DataAccessor
     k::Int
     P::AbstractMatrix
     Q::AbstractMatrix
 
-    function MF(data::DataAccessor, k::Int)
+    function MatrixFactorization(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
         P = matrix(n_user, k)
         Q = matrix(n_item, k)
@@ -30,6 +30,8 @@ struct MF <: Recommender
         new(data, k, P, Q)
     end
 end
+
+const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)
 

@@ -1,7 +1,6 @@
 # Recommendation.jl
 
-[![Build Status](https://travis-ci.org/takuti/Recommendation.jl.svg?branch=master)](https://travis-ci.org/takuti/Recommendation.jl) 
-[![Coverage Status](https://coveralls.io/repos/github/takuti/Recommendation.jl/badge.svg?branch=master)](https://coveralls.io/github/takuti/Recommendation.jl?branch=master)
+![CI](https://github.com/takuti/Recommendation.jl/workflows/CI/badge.svg)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://takuti.github.io/Recommendation.jl/latest/)
 
 **Recommendation.jl** is a minimal, customizable Julia package for building recommender systems. Pre-built basic functionalities include:

@@ -26,7 +26,7 @@ function test_user_knn()
     rec = recommend(recommender, 1, 3, [i for i in 1:8])
     @test rec[1] == (5 => 3.0)
     @test rec[2] == (8 => 3.0)
-    @test rec[3] == (7 => 2.2)
+    @test rec[3] == (3 => 2.2)
 end
 
 test_user_knn()

@@ -16,11 +16,5 @@ function measure(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Int)
 end
 
 function count_true_positive(truth::Array{T}, pred::Array{T}) where T
-    tp = 0
-    for item in pred
-        if findfirst(isequal(item), truth) != nothing
-            tp += 1
-        end
-    end
-    tp
+    sum(in(truth), pred)
 end

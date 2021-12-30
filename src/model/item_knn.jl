@@ -49,7 +49,7 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     if adjusted_cosine
         # subtract mean
         for ri in 1:n_row
-            indices = broadcast(!isnan, R[ri, :])
+            indices = broadcast(!isalmostzero, R[ri, :])
             vmean = mean(R[ri, indices])
             R[ri, indices] .-= vmean
         end
@@ -87,7 +87,7 @@ function predict(recommender::ItemKNN, u::Int, i::Int)
 
     for (j, s) in ordered_pairs
         r = recommender.data.R[u, j]
-        if isnan(r); continue; end
+        if isalmostzero(r); continue; end
 
         numer += s * r
         denom += s

@@ -22,7 +22,7 @@ function build!(recommender::ItemMean)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        recommender.scores[i] = sum(v) / count(!iszero, v)
+        recommender.scores[i] = mean(v)
     end
 end
 

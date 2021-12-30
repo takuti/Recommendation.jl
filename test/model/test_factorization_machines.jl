@@ -1,5 +1,5 @@
-function test_fm()
-    println("-- Testing FM-based feature recommender ")
+function test_factorization_machines()
+    println("-- Testing Factorization Machines-based feature recommender")
 
     m = [NaN 3 NaN 1 2 1 NaN 4
          1 2 NaN NaN 3 2 NaN 3
@@ -22,11 +22,11 @@ function test_fm()
     set_item_attribute(data, 7, [0, 1, 0])
     set_item_attribute(data, 8, [1, 1, 1])
 
-    recommender = FM(data, 2)
+    recommender = FactorizationMachines(data, 2)
     build!(recommender, learning_rate=3e-8, max_iter=100)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test size(rec, 1) == 4  # top-4 recos
 end
 
-test_fm()
+test_factorization_machines()
