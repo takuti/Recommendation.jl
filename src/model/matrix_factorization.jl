@@ -47,13 +47,18 @@ isbuilt(recommender::MF) = isfilled(recommender.P)
 
 function build!(recommender::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100)
+               eps::Float64=1e-3, max_iter::Int=100,
+               random_init::Bool=false)
     n_user, n_item = size(recommender.data.R)
 
-    # initialize with small values
-    # (random is also possible)
-    P = ones(n_user, recommender.k) * 0.1
-    Q = ones(n_item, recommender.k) * 0.1
+    if random_init
+        P = rand(Float64, size(recommender.P))
+        Q = rand(Float64, size(recommender.Q))
+    else
+        # initialize with small constants
+        P = ones(size(recommender.P)) * 0.1
+        Q = ones(size(recommender.Q)) * 0.1
+    end
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter
