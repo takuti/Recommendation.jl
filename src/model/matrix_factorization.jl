@@ -24,8 +24,8 @@ struct MatrixFactorization <: Recommender
 
     function MatrixFactorization(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
-        P = matrix(n_user, k)
-        Q = matrix(n_item, k)
+        P = matrix(n_user, k, type=Float64, initializer=undef)
+        Q = matrix(n_item, k, type=Float64, initializer=undef)
 
         new(data, k, P, Q)
     end

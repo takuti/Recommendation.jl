@@ -34,8 +34,8 @@ struct FactorizationMachines <: Recommender
         p = n_user + n_item + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
-        w = vector(p)
-        V = matrix(p, k)
+        w = vector(p, type=Float64, initializer=undef)
+        V = matrix(p, k, type=Float64, initializer=undef)
 
         new(data, p, k, w0, w, V)
     end

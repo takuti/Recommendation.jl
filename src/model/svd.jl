@@ -19,9 +19,9 @@ struct SVD <: Recommender
 
     function SVD(data::DataAccessor, k::Int)
         n_user, n_item = size(data.R)
-        U = matrix(n_user, k)
-        S = vector(k)
-        Vt = matrix(k, n_item)
+        U = matrix(n_user, k, type=Float64, initializer=undef)
+        S = vector(k, type=Float64, initializer=undef)
+        Vt = matrix(k, n_item, type=Float64, initializer=undef)
         new(data, k, U, S, Vt)
     end
 end
