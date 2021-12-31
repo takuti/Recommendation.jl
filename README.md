@@ -7,6 +7,7 @@
 
 - Non-personalized baselines that give unsophisticated, rule-based recommendation.
 - Collaborative filtering on either explicit or implicit user-item matrix.
+- Model-based factorization approaches such as Singular Value Decomposition (SVD), Matrix Factorization (MF), and Factorization Machines (FMs).
 - Content-based filtering by using the TF-IDF weighting technique.
 - Evaluation based on a variety of rating and ranking metrics, with easy-to-use N-fold cross validation executor.
 
@@ -18,7 +19,7 @@ julia> using Pkg; Pkg.add("Recommendation")
 
 ## Usage
 
-This package contains `DataAccessor` and several fundamental recommendation techniques (e.g., non-personalized `MostPopular` recommender, `CF` and `MF`), and evaluation metrics such as `Recall`: 
+This package contains a unified `DataAccessor` module and several non-personalized/personalized recommenders, as well as evaluation metrics such as `Recall`: 
 
 <img src="docs/src/assets/images/overview.png" width="400px" alt="overview" />
 
@@ -71,15 +72,15 @@ build!(recommender)
 Personalized recommenders sometimes require us to specify the hyperparameters:
 
 ```julia
-help?> Recommendation.MF
-  MF(
+help?> Recommendation.MatrixFactorization
+  MatrixFactorization(
       data::DataAccessor,
       k::Int
   )
 ```
 
 ```julia
-recommender = MF(data, 2)
+recommender = MatrixFactorization(data, 2)
 build!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 
@@ -91,3 +92,22 @@ recommend(recommender, 4, 2, collect(1:n_item))
 ```
 
 See [**documentation**](https://takuti.github.io/Recommendation.jl/latest/) for the details.
+
+## Development
+
+Change the code and test locally:
+
+```
+$ julia
+julia> using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate()
+# hit `]`
+(Recommendation) pkg> test
+```
+
+Build documentation contents:
+
+```
+$ julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+$ julia --project=docs docs/make.jl
+$ open docs/build/index.html
+```
