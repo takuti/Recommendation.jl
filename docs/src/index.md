@@ -4,6 +4,7 @@
 
 - [Non-Personalized Baselines](@ref) that give unsophisticated, rule-based recommendation.
 - [Collaborative Filtering](@ref) on either explicit or implicit user-item matrix.
+- [Factorization Machines](@ref) for building an advanced model-based recommender with contextual user/item attributes.
 - [Content-Based Filtering](@ref) by using the TF-IDF weighting technique.
 - [Evaluation](@ref) based on a variety of rating and ranking metrics, with easy-to-use $N$-fold cross validation executor.
 

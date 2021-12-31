@@ -2,7 +2,7 @@
 
 ## Installation
 
-This package is registered in [METADATA.jl](https://github.com/JuliaLang/METADATA.jl).
+This package is registered in [JuliaRegistries](https://github.com/JuliaRegistries/General).
 
 ```julia
 julia> using Pkg; Pkg.add("Recommendation")
@@ -10,7 +10,7 @@ julia> using Pkg; Pkg.add("Recommendation")
 
 ## Usage
 
-This package contains `DataAccessor` and several fundamental recommendation techniques (e.g., non-personalized `MostPopular` recommender, `CF` and `MF`), and evaluation metrics such as `Recall`. All of them can be accessible by loading the package as follows:
+The package contains a unified `DataAccessor` module and several non-personalized/personalized recommenders, as well as evaluation metrics such as `Recall`. All of them can be accessible by loading the package as follows:
 
 ```julia
 using Recommendation
@@ -59,15 +59,15 @@ build!(recommender)
 Personalized recommenders sometimes require us to specify the hyperparameters:
 
 ```julia
-help?> Recommendation.MF
-  MF(
+help?> Recommendation.MatrixFactorization
+  MatrixFactorization(
       data::DataAccessor,
       k::Int
   )
 ```
 
 ```julia
-recommender = MF(data, 2)
+recommender = MatrixFactorization(data, 2)
 build!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 
