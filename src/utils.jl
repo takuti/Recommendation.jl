@@ -22,7 +22,7 @@ function isfilled(a::AbstractArray; by_value=nothing)
     by_value ∉ Set(a)
 end
 
-almost_zero = 1e-256 # including `undef`
+almost_zero = 1e-256
 
 function isalmostzero(x::Number)
     x <= almost_zero
