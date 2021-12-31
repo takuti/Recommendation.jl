@@ -19,9 +19,11 @@ function recommend(recommender::Recommender, u::Int, k::Int, candidates::Array{I
     d = Dict{Int,Float64}()
     for candidate in candidates
         score = ranking(recommender, u, candidate)
+        if isnan(score); continue; end
         d[candidate] = score
     end
-    sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))[1:k]
+    ranked_recs = sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))
+    ranked_recs[1:min(length(ranked_recs), k)]
 end
 
 function predict(recommender::Recommender, u::Int, i::Int)

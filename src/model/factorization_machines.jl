@@ -34,8 +34,8 @@ struct FactorizationMachines <: Recommender
         p = n_user + n_item + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
-        w = vector(p)
-        V = matrix(p, k)
+        w = vector(p, type=Float64, initializer=undef)
+        V = matrix(p, k, type=Float64, initializer=undef)
 
         new(data, p, k, w0, w, V)
     end
@@ -50,14 +50,20 @@ function build!(recommender::FactorizationMachines;
                reg_w::Float64=1e-3,
                reg_V::Float64=1e-3,
                learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100)
+               eps::Float64=1e-3, max_iter::Int=100,
+               random_init::Bool=false)
     n_user, n_item = size(recommender.data.R)
 
-    w0 = 0.
-    w = zeros(recommender.p)
-    # initialize with small values
-    # random is also possible like: V = rand(recommender.p, recommender.k)
-    V = ones(recommender.p, recommender.k) * 0.1
+    if random_init
+        w0 = rand()
+        w = rand(Float64, size(recommender.w))
+        V = rand(Float64, size(recommender.V))
+    else
+        w0 = 0.
+        w = zeros(size(recommender.w))
+        # initialize with small constants
+        V = ones(size(recommender.V)) * 0.1
+    end
 
     pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
     for it in 1:max_iter

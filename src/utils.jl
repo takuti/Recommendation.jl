@@ -6,19 +6,23 @@ mutable struct Event
     value::Float64 # e.g. rating, 0/1
 end
 
-function matrix(m::Int, n::Int, t::Type{<:Number}=Float64)
-    Array{Union{Nothing, t}}(nothing, m, n)
+accepted_types = Union{Nothing, Missing, Number}
+
+function matrix(m::Int, n::Int;
+                type::Type{<:accepted_types}=Union{Nothing, Float64}, initializer=nothing)
+    Array{type}(initializer, m, n)
 end
 
-function vector(m::Int, t::Type{<:Number}=Float64)
-    Array{Union{Nothing, t}}(nothing, m)
+function vector(m::Int;
+                type::Type{<:accepted_types}=Union{Nothing, Float64}, initializer=nothing)
+    Array{type}(initializer, m)
 end
 
-function isfilled(a::AbstractArray)
-    nothing ∉ Set(a)
+function isfilled(a::AbstractArray; by_value=nothing)
+    by_value ∉ Set(a)
 end
 
-almost_zero = 1e-256 # including `undef`
+almost_zero = 1e-256
 
 function isalmostzero(x::Number)
     x <= almost_zero

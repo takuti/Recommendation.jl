@@ -49,7 +49,7 @@ function test_factorization_machines_with_attributes()
     set_item_attribute(data, 8, [1, 1, 1])
 
     recommender = FactorizationMachines(data, 2)
-    build!(recommender, learning_rate=15e-4, max_iter=100)
+    build!(recommender, reg_w0=0.3, reg_w=0.3, reg_V=0.3, learning_rate=3e-10, random_init=true)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test size(rec, 1) == 4  # top-4 recos
