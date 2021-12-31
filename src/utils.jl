@@ -18,8 +18,8 @@ function vector(m::Int;
     Array{type}(initializer, m)
 end
 
-function isfilled(a::AbstractArray)
-    nothing ∉ Set(a)
+function isfilled(a::AbstractArray; by_value=nothing)
+    by_value ∉ Set(a)
 end
 
 almost_zero = 1e-256 # including `undef`
