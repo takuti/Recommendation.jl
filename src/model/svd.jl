@@ -3,7 +3,7 @@ export SVD
 """
     SVD(
         data::DataAccessor,
-        k::Int
+        k::Integer
     )
 
 Recommendation based on SVD of a user-item matrix ``R \\in \\mathbb{R}^{|\\mathcal{U}| \\times |\\mathcal{I}|}``, which was originally studied by [Sarwar et al.](http://files.grouplens.org/papers/webKDD00.pdf) Rank ``k`` is configured by `k`.
@@ -12,16 +12,16 @@ In a context of recommendation, ``U_k \\in \\mathbb{R}^{|\\mathcal{U}| \\times k
 """
 struct SVD <: Recommender
     data::DataAccessor
-    k::Int
+    k::Integer
     U::AbstractMatrix
     S::AbstractVector
     Vt::AbstractMatrix
 
-    function SVD(data::DataAccessor, k::Int)
+    function SVD(data::DataAccessor, k::Integer)
         n_user, n_item = size(data.R)
-        U = matrix(n_user, k, type=Float64, initializer=undef)
-        S = vector(k, type=Float64, initializer=undef)
-        Vt = matrix(k, n_item, type=Float64, initializer=undef)
+        U = matrix(n_user, k, type=AbstractFloat, initializer=undef)
+        S = vector(k, type=AbstractFloat, initializer=undef)
+        Vt = matrix(k, n_item, type=AbstractFloat, initializer=undef)
         new(data, k, U, S, Vt)
     end
 end
@@ -41,7 +41,7 @@ function build!(recommender::SVD)
     recommender.Vt[:] = res.Vt[1:recommender.k, :]
 end
 
-function predict(recommender::SVD, u::Int, i::Int)
+function predict(recommender::SVD, u::Integer, i::Integer)
     check_build_status(recommender)
     dot(recommender.U[u, :] .* recommender.S, recommender.Vt[:, i])
 end

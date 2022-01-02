@@ -4,17 +4,17 @@ export CoOccurrence
 
     CoOccurrence(
         data::DataAccessor,
-        i_ref::Int
+        i_ref::Integer
     )
 
 Recommend items which are most frequently co-occurred with a reference item `i_ref`.
 """
 struct CoOccurrence <: Recommender
     data::DataAccessor
-    i_ref::Int
+    i_ref::Integer
     scores::AbstractVector
 
-    function CoOccurrence(data::DataAccessor, i_ref::Int)
+    function CoOccurrence(data::DataAccessor, i_ref::Integer)
         n_item = size(data.R, 2)
         new(data, i_ref, vector(n_item))
     end
@@ -35,7 +35,7 @@ function build!(recommender::CoOccurrence)
     end
 end
 
-function ranking(recommender::CoOccurrence, u::Int, i::Int)
+function ranking(recommender::CoOccurrence, u::Integer, i::Integer)
     check_build_status(recommender)
     recommender.scores[i]
 end

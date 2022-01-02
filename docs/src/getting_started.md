@@ -38,9 +38,9 @@ where `Event()` is a composite type which represents a user-item interaction:
 
 ```julia
 type Event
-    user::Int
-    item::Int
-    value::Float64
+    user::Integer
+    item::Integer
+    value::AbstractFloat
 end
 ```
 
@@ -62,7 +62,7 @@ Personalized recommenders sometimes require us to specify the hyperparameters:
 help?> Recommendation.MatrixFactorization
   MatrixFactorization(
       data::DataAccessor,
-      k::Int
+      k::Integer
   )
 ```
 

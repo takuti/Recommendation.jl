@@ -26,7 +26,7 @@ function build!(recommender::MostPopular)
     end
 end
 
-function ranking(recommender::MostPopular, u::Int, i::Int)
+function ranking(recommender::MostPopular, u::Integer, i::Integer)
     check_build_status(recommender)
     recommender.scores[i]
 end

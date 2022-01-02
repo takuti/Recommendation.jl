@@ -3,7 +3,7 @@ export UserKNN
 """
     UserKNN(
         data::DataAccessor,
-        k::Int,
+        k::Integer,
         normalize::Bool=false
     )
 
@@ -28,17 +28,17 @@ It should be noted that user-based CF is highly inefficient because gradually in
 """
 struct UserKNN <: Recommender
     data::DataAccessor
-    k::Int
+    k::Integer
     sim::AbstractMatrix
     normalize::Bool
 
-    function UserKNN(data::DataAccessor, k::Int, normalize::Bool)
+    function UserKNN(data::DataAccessor, k::Integer, normalize::Bool)
         n_user = size(data.R, 1)
         new(data, k, matrix(n_user, n_user), normalize)
     end
 end
 
-UserKNN(data::DataAccessor, k::Int) = UserKNN(data, k, false)
+UserKNN(data::DataAccessor, k::Integer) = UserKNN(data, k, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
 isbuilt(recommender::UserKNN) = isfilled(recommender.sim)
@@ -69,7 +69,7 @@ function build!(recommender::UserKNN)
     end
 end
 
-function predict(recommender::UserKNN, u::Int, i::Int)
+function predict(recommender::UserKNN, u::Integer, i::Integer)
     check_build_status(recommender)
 
     numer = denom = 0

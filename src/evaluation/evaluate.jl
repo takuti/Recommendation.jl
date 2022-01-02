@@ -33,7 +33,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::RankingMetric, k::Int=0)
+                  metric::RankingMetric, k::Integer=0)
     check_build_status(recommender)
     n_user, n_item = validate_size(recommender, truth_data)
 

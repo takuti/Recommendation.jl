@@ -2,9 +2,9 @@ export cross_validation
 
 """
     cross_validation(
-        n_fold::Int,
+        n_fold::Integer,
         metric::Type{<:RankingMetric},
-        k::Int,
+        k::Integer,
         recommender_type::Type{<:Recommender},
         data::DataAccessor,
         recommender_args...
@@ -12,14 +12,14 @@ export cross_validation
 
 Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and ranking metric `metric`. A recommender is initialized with `recommender_args` and runs top-`k` recommendation.
 """
-function cross_validation(n_fold::Int, metric::Type{<:RankingMetric}, k::Int, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+function cross_validation(n_fold::Integer, metric::Type{<:RankingMetric}, k::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
     n_user, n_item = size(data.R)
 
     events = shuffle(data.events)
     n_events = length(events)
 
-    step = convert(Int, round(n_events / n_fold))
+    step = convert(Integer, round(n_events / n_fold))
     accum = 0.0
 
     for head in 1:step:n_events
@@ -45,7 +45,7 @@ end
 
 """
     cross_validation(
-        n_fold::Int,
+        n_fold::Integer,
         metric::Type{<:AccuracyMetric},
         recommender_type::Type{<:Recommender},
         data::DataAccessor,
@@ -54,14 +54,14 @@ end
 
 Conduct `n_fold` cross validation for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args`.
 """
-function cross_validation(n_fold::Int, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+function cross_validation(n_fold::Integer, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
     n_user, n_item = size(data.R)
 
     events = shuffle(data.events)
     n_events = length(events)
 
-    step = convert(Int, round(n_events / n_fold))
+    step = convert(Integer, round(n_events / n_fold))
     accum = 0.0
 
     for head in 1:step:n_events
