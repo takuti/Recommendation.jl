@@ -1,7 +1,7 @@
 function test_most_popular()
     println("-- Testing MostPopular recommender")
 
-    data = DataAccessor([1 2 3; 4 5 missing])
+    data = DataAccessor([1 2 3; 4 5 nothing])
     recommender = MostPopular(data)
     build!(recommender)
     @test ranking(recommender, 1, 1) == 2.0

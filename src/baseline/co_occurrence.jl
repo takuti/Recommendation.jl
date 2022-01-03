@@ -30,7 +30,7 @@ function build!(recommender::CoOccurrence)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        # count elements that are non-missing and non-zero both in v & v_ref
+        # count elements that are known and non-zero both in v & v_ref
         cc = count(!iszero, v .* v_ref)
         recommender.scores[i] = cc / c * 100.0
     end

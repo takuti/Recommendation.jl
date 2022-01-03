@@ -7,5 +7,5 @@ function test_co_occurrence(data)
 end
 
 println("-- Testing CoOccurrence recommender")
-test_co_occurrence(DataAccessor([1 0 missing; 4 5 0]))
+test_co_occurrence(DataAccessor([1 0 nothing; 4 5 0]))
 test_co_occurrence(DataAccessor(sparse([1 0 0; 4 5 0])))

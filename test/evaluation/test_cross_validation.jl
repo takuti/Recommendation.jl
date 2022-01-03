@@ -3,7 +3,7 @@ function test_cross_validation_accuracy(v)
          1 2 v v 3 2 v 3
          v v v v v v v v
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     fold = 5
 
@@ -24,7 +24,7 @@ function test_cross_validation_ranking(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     # 5-fold, top-4 recommendation
     fold = 5
@@ -41,9 +41,9 @@ function test_cross_validation_ranking(v)
 end
 
 println("-- Testing cross validation with accuracy metrics")
-test_cross_validation_accuracy(missing)
+test_cross_validation_accuracy(nothing)
 test_cross_validation_accuracy(0)
 
 println("-- Testing cross validation with ranking metrics")
-test_cross_validation_ranking(missing)
+test_cross_validation_ranking(nothing)
 test_cross_validation_ranking(0)

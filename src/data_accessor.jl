@@ -19,7 +19,7 @@ struct DataAccessor
         for user in 1:n_user
             for item in 1:n_item
                 r = R[user, item]
-                if ismissing(r)
+                if isa(r, Unknown)
                     R[user, item] = 0.0
                 elseif !iszero(r)
                     push!(events, Event(user, item, r))
@@ -31,7 +31,7 @@ struct DataAccessor
         # manipulations relying on copy(R), which possibly updates the matrix values to
         # floating point numbers
         if Int <: eltype(R)
-            R = map(Float64, R) # safe operation as all missing values are already filled by 0
+            R = map(Float64, R) # safe operation as all unknown values are already filled by 0
         end
 
         new(events, R, Dict(), Dict())

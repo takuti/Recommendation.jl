@@ -2,7 +2,7 @@ function test_evaluate_explicit(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
     recommender = MF(data, 2)
     build!(recommender)
 
@@ -19,7 +19,7 @@ function test_evaluate_implicit(v)
     m = [v 1 v 0 0 0 v 1
          0 0 v v 1 0 v 1
          v 0 1 1 v 1 v 0]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
     recommender = MF(data, 2)
     build!(recommender)
 
@@ -33,9 +33,9 @@ function test_evaluate_implicit(v)
 end
 
 println("-- Testing evaluate function for explicit feedback")
-test_evaluate_explicit(missing)
+test_evaluate_explicit(nothing)
 test_evaluate_explicit(0)
 
 println("-- Testing evaluate function for implicit feedback")
-test_evaluate_implicit(missing)
+test_evaluate_implicit(nothing)
 test_evaluate_implicit(0)

@@ -2,7 +2,7 @@ function test_factorization_machines(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     num_factors = 2
     learning_rate = 0.3
@@ -29,7 +29,7 @@ function test_factorization_machines_with_attributes(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     set_user_attribute(data, 1, [1, 0, 20])
     set_user_attribute(data, 2, [0, 1, 23])
@@ -52,9 +52,9 @@ function test_factorization_machines_with_attributes(v)
 end
 
 println("-- Testing Factorization Machines-based recommender")
-test_factorization_machines(missing)
+test_factorization_machines(nothing)
 test_factorization_machines(0)
 
 println("-- Testing Factorization Machines-based recommender with contextual user/item attributes")
-test_factorization_machines_with_attributes(missing)
+test_factorization_machines_with_attributes(nothing)
 test_factorization_machines_with_attributes(0)

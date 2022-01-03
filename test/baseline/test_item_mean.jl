@@ -7,5 +7,5 @@ function test_item_mean(data)
 end
 
 println("-- Testing ItemMean recommender")
-test_item_mean(DataAccessor([5 2 3; missing 4 6]))
+test_item_mean(DataAccessor([5 2 3; nothing 4 6]))
 test_item_mean(DataAccessor(sparse([1 2 3; 4 5 6])))

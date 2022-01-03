@@ -9,5 +9,5 @@ function vector(m::Integer)
 end
 
 function isfilled(a::AbstractArray)
-    missing ∉ Set(a)
+    findfirst(v -> isa(v, Unknown), a) == nothing
 end

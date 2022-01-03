@@ -2,7 +2,7 @@ function test_user_knn(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
          v 2 3 3 v 5 v 1]
-    data = DataAccessor(ismissing(v) ? m : sparse(m))
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     recommender = UserKNN(data, 1)
     build!(recommender)
@@ -28,5 +28,5 @@ function test_user_knn(v)
 end
 
 println("-- Testing UserKNN rating prediction")
-test_user_knn(missing)
+test_user_knn(nothing)
 test_user_knn(0)

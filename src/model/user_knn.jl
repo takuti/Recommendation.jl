@@ -52,7 +52,8 @@ function build!(recommender::UserKNN)
 
     for ri in 1:n_row
         for rj in ri:n_row
-            # pairwise correlation (i.e., ignore missings)
+            # pairwise correlation
+            # (zeros, which might originally be unknown values, are ignored)
             ij = broadcast(!iszero, R[ri, :]) .& broadcast(!iszero, R[rj, :])
 
             vi = R[ri, :] .- mean(R[ri, ij])
