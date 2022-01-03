@@ -27,6 +27,13 @@ struct DataAccessor
             end
         end
 
+        # cast to float matrix if an element type is integer; this is required by the following
+        # manipulations relying on copy(R), which possibly updates the matrix values to
+        # floating point numbers
+        if Int <: eltype(R)
+            R = map(Float64, R) # safe operation as all missing values are already filled by 0
+        end
+
         new(events, R, Dict(), Dict())
     end
 end
