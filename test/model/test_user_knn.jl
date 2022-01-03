@@ -1,10 +1,8 @@
-function test_user_knn()
-    println("-- Testing UserKNN rating prediction")
-
-    m = [missing 3 missing 1 2 1 missing 4
-         1 2 missing missing 3 2 missing 3
-         missing 2 3 3 missing 5 missing 1]
-    data = DataAccessor(m)
+function test_user_knn(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
 
     recommender = UserKNN(data, 1)
     build!(recommender)
@@ -29,4 +27,6 @@ function test_user_knn()
     @test rec[3] == (3 => 2.2)
 end
 
-test_user_knn()
+println("-- Testing UserKNN rating prediction")
+test_user_knn(missing)
+test_user_knn(0)

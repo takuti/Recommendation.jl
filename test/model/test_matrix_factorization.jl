@@ -1,8 +1,8 @@
-function run(recommender::Type{T}) where {T<:Recommender}
-    m = [missing 3 missing 1 2 1 missing 4
-         1 2 missing missing 3 2 missing 3
-         missing 2 3 3 missing 5 missing 1]
-    data = DataAccessor(m)
+function run(recommender::Type{T}, v) where {T<:Recommender}
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
 
     recommender = recommender(data, 2)
     build!(recommender, learning_rate=15e-4, max_iter=100)
@@ -14,20 +14,21 @@ end
 
 function test_mf()
     println("-- Testing MF-based (aliased) recommender")
-    run(MF)
+    run(MF, missing)
+    run(MF, 0)
 end
 
 function test_matrix_factorization()
     println("-- Testing Matrix Factorization-based recommender")
-    run(MatrixFactorization)
+    run(MatrixFactorization, missing)
+    run(MatrixFactorization, 0)
 end
 
-function test_mf_with_random_init()
-    println("-- Testing MF-based recommender with randomly initialized params")
-    m = [missing 3 missing 1 2 1 missing 4
-         1 2 missing missing 3 2 missing 3
-         missing 2 3 3 missing 5 missing 1]
-    data = DataAccessor(m)
+function test_mf_with_random_init(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
 
     recommender = MF(data, 2)
     build!(recommender, random_init=true)
@@ -38,4 +39,7 @@ end
 
 test_mf()
 test_matrix_factorization()
-test_mf_with_random_init()
+
+println("-- Testing MF-based recommender with randomly initialized params")
+test_mf_with_random_init(missing)
+test_mf_with_random_init(0)

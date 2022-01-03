@@ -1,12 +1,11 @@
-function test_item_mean()
-    println("-- Testing ItemMean recommender")
-
-    data = DataAccessor(sparse([1 2 3; 4 5 6]))
-    recommender = ItemMean(data)
+function test_user_mean(data)
+    recommender = UserMean(data)
     build!(recommender)
     actual = predict(recommender, 1, 1)
 
-    @test actual == 2.5
+    @test actual == 2.0
 end
 
-test_item_mean()
+println("-- Testing UserMean recommender")
+test_user_mean(DataAccessor([1 2 3 missing 4; 4 5 6 7 8]))
+test_user_mean(DataAccessor(sparse([1 2 3; 4 5 6])))

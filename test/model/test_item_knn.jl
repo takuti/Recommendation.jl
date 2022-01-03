@@ -1,10 +1,8 @@
-function test_item_knn()
-    println("-- Testing ItemKNN rating prediction")
-
-    m = [missing 3 missing 1 2 1 missing 4
-         1 2 missing missing 3 2 missing 3
-         missing 2 3 3 missing 5 missing 1]
-    data = DataAccessor(m)
+function test_item_knn(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
 
     recommender = ItemKNN(data, 1)
     build!(recommender)
@@ -29,4 +27,6 @@ function test_item_knn()
     @test rec[4] == (4 => 1.0)
 end
 
-test_item_knn()
+println("-- Testing ItemKNN rating prediction")
+test_item_knn(missing)
+test_item_knn(0)

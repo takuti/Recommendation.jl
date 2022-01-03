@@ -1,10 +1,8 @@
-function test_evaluate_explicit()
-    println("-- Testing evaluate function for explicit feedback")
-
-    m = [missing 3 missing 1 2 1 missing 4
-         1 2 missing missing 3 2 missing 3
-         missing 2 3 3 missing 5 missing 1]
-    data = DataAccessor(m)
+function test_evaluate_explicit(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
     recommender = MF(data, 2)
     build!(recommender)
 
@@ -17,13 +15,11 @@ function test_evaluate_explicit()
     @test evaluate(recommender, truth_data, RMSE()) < 2.5
 end
 
-function test_evaluate_implicit()
-    println("-- Testing evaluate function for implicit feedback")
-
-    m = [missing 1 missing 0 0 0 missing 1
-         0 0 missing missing 1 0 missing 1
-         missing 0 1 1 missing 1 missing 0]
-    data = DataAccessor(m)
+function test_evaluate_implicit(v)
+    m = [v 1 v 0 0 0 v 1
+         0 0 v v 1 0 v 1
+         v 0 1 1 v 1 v 0]
+    data = DataAccessor(ismissing(v) ? m : sparse(m))
     recommender = MF(data, 2)
     build!(recommender)
 
@@ -36,5 +32,10 @@ function test_evaluate_implicit()
     @test evaluate(recommender, truth_data, Recall(), 4) <= 0.5
 end
 
-test_evaluate_explicit()
-test_evaluate_implicit()
+println("-- Testing evaluate function for explicit feedback")
+test_evaluate_explicit(missing)
+test_evaluate_explicit(0)
+
+println("-- Testing evaluate function for implicit feedback")
+test_evaluate_implicit(missing)
+test_evaluate_implicit(0)
