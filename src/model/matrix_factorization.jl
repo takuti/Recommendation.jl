@@ -3,7 +3,7 @@ export MatrixFactorization, MF
 """
     MatrixFactorization(
         data::DataAccessor,
-        k::Int
+        k::Integer
     )
 
 Recommendation based on matrix factorization (MF). Number of factors is configured by `k`.
@@ -18,14 +18,14 @@ where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a fac
 """
 struct MatrixFactorization <: Recommender
     data::DataAccessor
-    k::Int
+    k::Integer
     P::AbstractMatrix
     Q::AbstractMatrix
 
-    function MatrixFactorization(data::DataAccessor, k::Int)
+    function MatrixFactorization(data::DataAccessor, k::Integer)
         n_user, n_item = size(data.R)
-        P = matrix(n_user, k, type=Float64, initializer=undef)
-        Q = matrix(n_item, k, type=Float64, initializer=undef)
+        P = matrix(n_user, k)
+        Q = matrix(n_item, k)
 
         new(data, k, P, Q)
     end
@@ -34,7 +34,7 @@ end
 """
     MF(
         data::DataAccessor,
-        k::Int
+        k::Integer
     )
 
 Alias of `MatrixFactorization`.
@@ -67,7 +67,7 @@ function build!(recommender::MF;
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
             r = recommender.data.R[u, i]
-            if isnan(r); continue; end
+            if iszero(r); continue; end
 
             uv, iv = P[u, :], Q[i, :]
 
@@ -88,7 +88,7 @@ function build!(recommender::MF;
     recommender.Q[:] = Q[:]
 end
 
-function predict(recommender::MF, u::Int, i::Int)
+function predict(recommender::MF, u::Integer, i::Integer)
     check_build_status(recommender)
     dot(recommender.P[u, :], recommender.Q[i, :])
 end

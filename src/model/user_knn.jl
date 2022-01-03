@@ -3,7 +3,7 @@ export UserKNN
 """
     UserKNN(
         data::DataAccessor,
-        k::Int,
+        k::Integer,
         normalize::Bool=false
     )
 
@@ -28,17 +28,17 @@ It should be noted that user-based CF is highly inefficient because gradually in
 """
 struct UserKNN <: Recommender
     data::DataAccessor
-    k::Int
+    k::Integer
     sim::AbstractMatrix
     normalize::Bool
 
-    function UserKNN(data::DataAccessor, k::Int, normalize::Bool)
+    function UserKNN(data::DataAccessor, k::Integer, normalize::Bool)
         n_user = size(data.R, 1)
         new(data, k, matrix(n_user, n_user), normalize)
     end
 end
 
-UserKNN(data::DataAccessor, k::Int) = UserKNN(data, k, false)
+UserKNN(data::DataAccessor, k::Integer) = UserKNN(data, k, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
 isbuilt(recommender::UserKNN) = isfilled(recommender.sim)
@@ -52,8 +52,9 @@ function build!(recommender::UserKNN)
 
     for ri in 1:n_row
         for rj in ri:n_row
-            # pairwise correlation (i.e., ignore NaNs)
-            ij = broadcast(!isalmostzero, R[ri, :]) .& broadcast(!isalmostzero, R[rj, :])
+            # pairwise correlation
+            # (zeros, which might originally be unknown values, are ignored)
+            ij = broadcast(!iszero, R[ri, :]) .& broadcast(!iszero, R[rj, :])
 
             vi = R[ri, :] .- mean(R[ri, ij])
             vj = R[rj, :] .- mean(R[rj, ij])
@@ -69,7 +70,7 @@ function build!(recommender::UserKNN)
     end
 end
 
-function predict(recommender::UserKNN, u::Int, i::Int)
+function predict(recommender::UserKNN, u::Integer, i::Integer)
     check_build_status(recommender)
 
     numer = denom = 0
@@ -82,11 +83,11 @@ function predict(recommender::UserKNN, u::Int, i::Int)
         v_near = recommender.data.R[u_near, :]
 
         r = v_near[i]
-        if isalmostzero(r); continue; end
+        if iszero(r); continue; end
 
         r_ = 0
         if recommender.normalize
-            jj = broadcast(!isalmostzero, v_near)
+            jj = broadcast(!iszero, v_near)
             r_ = mean(v_near[jj])
         end
 
@@ -96,9 +97,9 @@ function predict(recommender::UserKNN, u::Int, i::Int)
 
     pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(!isalmostzero, recommender.data.R[u, :])
+        ii = broadcast(!iszero, recommender.data.R[u, :])
         m = mean(recommender.data.R[u, ii])
-        pred += isnan(m) ? 0 : m
+        pred += m
     end
     pred
 end

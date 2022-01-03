@@ -1,6 +1,4 @@
-function test_tf_idf()
-    println("-- Testing TF-IDF content-based recommender")
-
+function test_tf_idf(sparsify::Bool)
     m = [1  0  1  0  1  1  0  0  0  1
          0  1  1  1  0  0  0  1  0  0
          0  0  0  1  1  1  0  0  0  0
@@ -45,6 +43,9 @@ function test_tf_idf()
               0   0
              -1   0
               0   0]
+    if sparsify
+        m = sparse(m)
+    end
     uv1 = sparse(users[:, 1])
     uv2 = sparse(users[:, 2])
 
@@ -88,4 +89,6 @@ function test_tf_idf()
     @test isapprox(last(rec[4]), 0.2476, atol=1e-4)
 end
 
-test_tf_idf()
+println("-- Testing TF-IDF content-based recommender")
+test_tf_idf(true)
+test_tf_idf(false)

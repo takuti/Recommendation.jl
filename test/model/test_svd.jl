@@ -1,9 +1,9 @@
 function test_svd()
     println("-- Testing SVD-based recommender")
 
-    m = [NaN 3 NaN 1 2 1 NaN 4
-         1 2 NaN NaN 3 2 NaN 3
-         NaN 2 3 3 NaN 5 NaN 1]
+    m = [nothing 3 nothing 1 2 1 nothing 4
+         1 2 nothing nothing 3 2 nothing 3
+         nothing 2 3 3 nothing 5 nothing 1]
     data = DataAccessor(m)
 
     recommender = SVD(data, 2)

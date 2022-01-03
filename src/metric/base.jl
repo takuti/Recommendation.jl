@@ -11,7 +11,7 @@ end
 
 abstract type RankingMetric <: Metric end
 
-function measure(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Int) where T
+function measure(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Integer) where T
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 

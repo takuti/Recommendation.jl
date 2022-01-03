@@ -3,7 +3,7 @@ export ItemKNN
 """
     ItemKNN(
         data::DataAccessor,
-        k::Int
+        k::Integer
     )
 
 [Item-based CF](https://dl.acm.org/citation.cfm?id=963776) that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. `k` represents number of neighbors.
@@ -27,10 +27,10 @@ In case that the number of items is smaller than users, item-based CF could be a
 """
 struct ItemKNN <: Recommender
     data::DataAccessor
-    k::Int
+    k::Integer
     sim::AbstractMatrix
 
-    function ItemKNN(data::DataAccessor, k::Int)
+    function ItemKNN(data::DataAccessor, k::Integer)
         n_item = size(data.R, 2)
         new(data, k, matrix(n_item, n_item))
     end
@@ -49,14 +49,11 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     if adjusted_cosine
         # subtract mean
         for ri in 1:n_row
-            indices = broadcast(!isalmostzero, R[ri, :])
+            indices = broadcast(!iszero, R[ri, :])
             vmean = mean(R[ri, indices])
             R[ri, indices] .-= vmean
         end
     end
-
-    # unlike pearson correlation, matrix can be filled by zeros for cosine similarity
-    R[isnan.(R)] .= 0
 
     # compute L2 nrom of each column
     norms = sqrt.(sum(R.^2, dims=1))
@@ -76,7 +73,7 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     recommender.sim[isnan.(recommender.sim)] .= 0
 end
 
-function predict(recommender::ItemKNN, u::Int, i::Int)
+function predict(recommender::ItemKNN, u::Integer, i::Integer)
     check_build_status(recommender)
 
     numer = denom = 0
@@ -87,7 +84,7 @@ function predict(recommender::ItemKNN, u::Int, i::Int)
 
     for (j, s) in ordered_pairs
         r = recommender.data.R[u, j]
-        if isalmostzero(r); continue; end
+        if iszero(r); continue; end
 
         numer += s * r
         denom += s

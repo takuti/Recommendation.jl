@@ -1,11 +1,9 @@
-function test_cross_validation_accuracy()
-    println("-- Testing cross validation with accuracy metrics")
-
-    m = [NaN 3 NaN 1 2 1 NaN 4
-         1 2 NaN NaN 3 2 NaN 3
-         NaN NaN NaN NaN NaN NaN NaN NaN
-         NaN 2 3 3 NaN 5 NaN 1]
-    data = DataAccessor(m)
+function test_cross_validation_accuracy(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v v v v v v v v
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     fold = 5
 
@@ -22,13 +20,11 @@ function test_cross_validation_accuracy()
     @test cross_validation(fold, MAE, UserKNN, data, 2, true) <= 2.5
 end
 
-function test_cross_validation_ranking()
-    println("-- Testing cross validation with ranking metrics")
-
-    m = [NaN 3 NaN 1 2 1 NaN 4
-         1 2 NaN NaN 3 2 NaN 3
-         NaN 2 3 3 NaN 5 NaN 1]
-    data = DataAccessor(m)
+function test_cross_validation_ranking(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     # 5-fold, top-4 recommendation
     fold = 5
@@ -44,5 +40,10 @@ function test_cross_validation_ranking()
     @test cross_validation(fold, Recall, k, UserKNN, data, 2, true) <= 0.5
 end
 
-test_cross_validation_accuracy()
-test_cross_validation_ranking()
+println("-- Testing cross validation with accuracy metrics")
+test_cross_validation_accuracy(nothing)
+test_cross_validation_accuracy(0)
+
+println("-- Testing cross validation with ranking metrics")
+test_cross_validation_ranking(nothing)
+test_cross_validation_ranking(0)

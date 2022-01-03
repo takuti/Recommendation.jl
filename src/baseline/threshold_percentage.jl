@@ -4,17 +4,17 @@ export ThresholdPercentage
 
     ThresholdPercentage(
         data::DataAccessor,
-        th::Float64
+        th::AbstractFloat
     )
 
 Recommend based on percentage of ratings which are greater than a certain threshold value `th`.
 """
 struct ThresholdPercentage <: Recommender
     data::DataAccessor
-    th::Float64
+    th::AbstractFloat
     scores::AbstractVector
 
-    function ThresholdPercentage(data::DataAccessor, th::Float64)
+    function ThresholdPercentage(data::DataAccessor, th::AbstractFloat)
         n_item = size(data.R, 2)
         new(data, th, vector(n_item))
     end
@@ -27,11 +27,11 @@ function build!(recommender::ThresholdPercentage)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        recommender.scores[i] = length(v[v .>= recommender.th]) / count(!isalmostzero, v) * 100.0
+        recommender.scores[i] = count(r -> r >= recommender.th, v) / count(!iszero, v) * 100.0
     end
 end
 
-function ranking(recommender::ThresholdPercentage, u::Int, i::Int)
+function ranking(recommender::ThresholdPercentage, u::Integer, i::Integer)
     check_build_status(recommender)
     recommender.scores[i]
 end

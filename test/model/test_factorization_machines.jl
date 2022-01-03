@@ -1,13 +1,11 @@
-function test_factorization_machines()
-    println("-- Testing Factorization Machines-based recommender")
-
-    m = [NaN 3 NaN 1 2 1 NaN 4
-         1 2 NaN NaN 3 2 NaN 3
-         NaN 2 3 3 NaN 5 NaN 1]
-    data = DataAccessor(m)
+function test_factorization_machines(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     num_factors = 2
-    learning_rate = 15e-4
+    learning_rate = 0.3
     max_iter = 100
 
     user = 1
@@ -27,13 +25,11 @@ function test_factorization_machines()
     @test [item for (item, score) in mf_rec] == [item for (item, score) in fm_rec]
 end
 
-function test_factorization_machines_with_attributes()
-    println("-- Testing Factorization Machines-based recommender with contextual user/item attributes")
-
-    m = [NaN 3 NaN 1 2 1 NaN 4
-         1 2 NaN NaN 3 2 NaN 3
-         NaN 2 3 3 NaN 5 NaN 1]
-    data = DataAccessor(m)
+function test_factorization_machines_with_attributes(v)
+    m = [v 3 v 1 2 1 v 4
+         1 2 v v 3 2 v 3
+         v 2 3 3 v 5 v 1]
+    data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     set_user_attribute(data, 1, [1, 0, 20])
     set_user_attribute(data, 2, [0, 1, 23])
@@ -55,5 +51,10 @@ function test_factorization_machines_with_attributes()
     @test size(rec, 1) == 4  # top-4 recos
 end
 
-test_factorization_machines()
-test_factorization_machines_with_attributes()
+println("-- Testing Factorization Machines-based recommender")
+test_factorization_machines(nothing)
+test_factorization_machines(0)
+
+println("-- Testing Factorization Machines-based recommender with contextual user/item attributes")
+test_factorization_machines_with_attributes(nothing)
+test_factorization_machines_with_attributes(0)

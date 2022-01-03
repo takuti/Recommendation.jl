@@ -38,11 +38,13 @@ where `Event()` is a composite type which represents a user-item interaction:
 
 ```julia
 type Event
-    user::Int
-    item::Int
-    value::Float64
+    user::Integer
+    item::Integer
+    value::Infinite
 end
 ```
+
+Note that `Infinite` is a custom type `Union{AbstractFloat, Integer}` that represents either floating point or integer number.
 
 Next, you can pass the data accessor to an arbitrary recommender as:
 
@@ -62,7 +64,7 @@ Personalized recommenders sometimes require us to specify the hyperparameters:
 help?> Recommendation.MatrixFactorization
   MatrixFactorization(
       data::DataAccessor,
-      k::Int
+      k::Integer
   )
 ```
 

@@ -3,7 +3,7 @@ export FactorizationMachines
 """
     FactorizationMachines(
         data::DataAccessor,
-        k::Int
+        k::Integer
     )
 
 Recommendation based on second-order factorization machines (FMs). Number of factors is configured by `k`.
@@ -12,13 +12,13 @@ Learning FM requires a set of parameters ``\\Theta = \\{w_0, \\mathbf{w}, V\\}``
 """
 struct FactorizationMachines <: Recommender
     data::DataAccessor
-    p::Int
-    k::Int
+    p::Integer
+    k::Integer
     w0::Base.RefValue{Float64} # making mutable
     w::AbstractVector
     V::AbstractMatrix
 
-    function FactorizationMachines(data::DataAccessor, k::Int)
+    function FactorizationMachines(data::DataAccessor, k::Integer)
         n_user, n_item = size(data.R)
 
         uv = []
@@ -34,8 +34,8 @@ struct FactorizationMachines <: Recommender
         p = n_user + n_item + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
-        w = vector(p, type=Float64, initializer=undef)
-        V = matrix(p, k, type=Float64, initializer=undef)
+        w = vector(p)
+        V = matrix(p, k)
 
         new(data, p, k, w0, w, V)
     end
@@ -72,7 +72,7 @@ function build!(recommender::FactorizationMachines;
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
             r = recommender.data.R[u, i]
-            if isnan(r); continue; end
+            if iszero(r); continue; end
 
             u_onehot = zeros(n_user)
             u_onehot[u] = 1.
@@ -115,7 +115,7 @@ function build!(recommender::FactorizationMachines;
     recommender.V[:] = V[:]
 end
 
-function predict(recommender::FactorizationMachines, u::Int, i::Int)
+function predict(recommender::FactorizationMachines, u::Integer, i::Integer)
     check_build_status(recommender)
     n_user, n_item = size(recommender.data.R)
 

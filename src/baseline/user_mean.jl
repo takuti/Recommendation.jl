@@ -26,7 +26,7 @@ function build!(recommender::UserMean)
     end
 end
 
-function predict(recommender::UserMean, u::Int, i::Int)
+function predict(recommender::UserMean, u::Integer, i::Integer)
     check_build_status(recommender)
     recommender.scores[u]
 end
