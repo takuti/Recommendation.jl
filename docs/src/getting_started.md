@@ -40,9 +40,11 @@ where `Event()` is a composite type which represents a user-item interaction:
 type Event
     user::Integer
     item::Integer
-    value::AbstractFloat
+    value::Infinite
 end
 ```
+
+Note that `Infinite` is a custom type `Union{AbstractFloat, Integer}` that represents either floating point or integer number.
 
 Next, you can pass the data accessor to an arbitrary recommender as:
 
