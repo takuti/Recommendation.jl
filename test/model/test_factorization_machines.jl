@@ -7,7 +7,7 @@ function test_factorization_machines()
     data = DataAccessor(m)
 
     num_factors = 2
-    learning_rate = 15e-4
+    learning_rate = 0.3
     max_iter = 100
 
     user = 1
