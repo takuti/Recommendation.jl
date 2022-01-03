@@ -10,10 +10,20 @@ Root Mean Squared Error.
         truth::AbstractVector,
         pred::AbstractVector
     )
+
+`truth` and `pred` are expected to be the same size.
 """
 struct RMSE <: AccuracyMetric end
 function measure(metric::RMSE, truth::AbstractVector, pred::AbstractVector)
-    sqrt(sum((truth - pred).^2) / length(truth))
+    n = length(truth)
+    if n != length(pred)
+        error("`truth` and `pred` have different size, which are $(n) and $(length(pred)), respectively")
+    end
+    if iszero(n)
+        0
+    else
+        sqrt(sum((truth - pred).^2) / n)
+    end
 end
 
 """
@@ -26,8 +36,18 @@ Mean Absolute Error.
         truth::AbstractVector,
         pred::AbstractVector
     )
+
+`truth` and `pred` are expected to be the same size.
 """
 struct MAE <: AccuracyMetric end
 function measure(metric::MAE, truth::AbstractVector, pred::AbstractVector)
-    sum(abs.(truth - pred)) / length(truth)
+    n = length(truth)
+    if n != length(pred)
+        error("`truth` and `pred` have different size, which are $(n) and $(length(pred)), respectively")
+    end
+    if iszero(n)
+        0
+    else
+        sum(abs.(truth - pred)) / n
+    end
 end
