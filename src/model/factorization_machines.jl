@@ -34,8 +34,8 @@ struct FactorizationMachines <: Recommender
         p = n_user + n_item + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
-        w = vector(p, type=AbstractFloat, initializer=undef)
-        V = matrix(p, k, type=AbstractFloat, initializer=undef)
+        w = vector(p)
+        V = matrix(p, k)
 
         new(data, p, k, w0, w, V)
     end
@@ -72,7 +72,7 @@ function build!(recommender::FactorizationMachines;
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
             r = recommender.data.R[u, i]
-            if isnan(r); continue; end
+            if iszero(r); continue; end
 
             u_onehot = zeros(n_user)
             u_onehot[u] = 1.

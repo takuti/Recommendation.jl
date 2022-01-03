@@ -1,6 +1,4 @@
-export Event, DataValue
-
-DataValue = Union{Nothing, Missing, AbstractFloat, Integer}
+export Event
 
 mutable struct Event
     user::Integer

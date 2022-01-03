@@ -27,7 +27,7 @@ function build!(recommender::ThresholdPercentage)
 
     for i in 1:n_item
         v = recommender.data.R[:, i]
-        recommender.scores[i] = length(v[v .>= recommender.th]) / count(!isalmostzero, v) * 100.0
+        recommender.scores[i] = count(r -> r >= recommender.th, v) / count(!iszero, v) * 100.0
     end
 end
 

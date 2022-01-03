@@ -24,8 +24,8 @@ struct MatrixFactorization <: Recommender
 
     function MatrixFactorization(data::DataAccessor, k::Integer)
         n_user, n_item = size(data.R)
-        P = matrix(n_user, k, type=AbstractFloat, initializer=undef)
-        Q = matrix(n_item, k, type=AbstractFloat, initializer=undef)
+        P = matrix(n_user, k)
+        Q = matrix(n_item, k)
 
         new(data, k, P, Q)
     end
@@ -67,7 +67,7 @@ function build!(recommender::MF;
         shuffled_pairs = shuffle(pairs)
         for (u, i) in shuffled_pairs
             r = recommender.data.R[u, i]
-            if isnan(r); continue; end
+            if iszero(r); continue; end
 
             uv, iv = P[u, :], Q[i, :]
 

@@ -19,9 +19,9 @@ struct SVD <: Recommender
 
     function SVD(data::DataAccessor, k::Integer)
         n_user, n_item = size(data.R)
-        U = matrix(n_user, k, type=AbstractFloat, initializer=undef)
-        S = vector(k, type=AbstractFloat, initializer=undef)
-        Vt = matrix(k, n_item, type=AbstractFloat, initializer=undef)
+        U = matrix(n_user, k)
+        S = vector(k)
+        Vt = matrix(k, n_item)
         new(data, k, U, S, Vt)
     end
 end
@@ -31,9 +31,7 @@ SVD(data::DataAccessor) = SVD(data, 20)
 isbuilt(recommender::SVD) = isfilled(recommender.U)
 
 function build!(recommender::SVD)
-    # NaNs are filled by zeros for now
     R = copy(recommender.data.R)
-    R[isnan.(R)] .= 0
 
     res = svd(R)
     recommender.U[:] = res.U[:, 1:recommender.k]
