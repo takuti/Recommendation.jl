@@ -22,7 +22,7 @@ struct DataAccessor
                 if ismissing(r)
                     R[user, item] = 0.0
                 elseif !iszero(r)
-                    append!(events, [Event(user, item, r)])
+                    push!(events, Event(user, item, r))
                 end
             end
         end
