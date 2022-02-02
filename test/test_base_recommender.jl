@@ -40,6 +40,19 @@ function test_recommend()
     @test last(pairs[3]) == 0
 end
 
+function test_data_size_validation()
+    println("-- Testing validation that compares recommnder's bundled data with another")
+
+    data = DataAccessor(sparse([1 0 0; 4 5 0]))
+    recommender = MostPopular(data)
+    fit!(recommender)
+
+    validate(recommender, data)  # to pass
+    @test_throws ErrorException validate(recommender, DataAccessor([1 2 3]))
+    @test_throws ErrorException validate(recommender, DataAccessor([1 2; 3 4]))
+end
+
 test_not_build_error()
 test_not_implemented_error()
 test_recommend()
+test_data_size_validation()
