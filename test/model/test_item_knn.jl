@@ -5,7 +5,7 @@ function test_item_knn(v)
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     recommender = ItemKNN(data, 1)
-    build!(recommender)
+    fit!(recommender)
     @test isapprox(recommender.sim[1, 2], 0.485, atol=1e-3)
     @test isapprox(recommender.sim[5, 6], 0.405, atol=1e-3)
 
@@ -16,7 +16,7 @@ function test_item_knn(v)
     @test rec[4] == (4 => 1.0)
 
     recommender = ItemKNN(data, 1)
-    build!(recommender, adjusted_cosine=true)
+    fit!(recommender, adjusted_cosine=true)
     @test isapprox(recommender.sim[1, 2], 0.174, atol=1e-3)
     @test isapprox(recommender.sim[5, 6], 0.039, atol=1e-3)
 

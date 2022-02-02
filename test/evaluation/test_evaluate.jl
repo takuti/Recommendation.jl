@@ -4,7 +4,7 @@ function test_evaluate_explicit(v)
          v 2 3 3 v 5 v 1]
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
     recommender = MF(data, 2)
-    build!(recommender)
+    fit!(recommender)
 
     truth_m = [1 3 4 1 2 1 2 4
                1 2 4 1 3 2 2 3
@@ -21,7 +21,7 @@ function test_evaluate_implicit(v)
          v 0 1 1 v 1 v 0]
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
     recommender = MF(data, 2)
-    build!(recommender)
+    fit!(recommender)
 
     truth_m = [0 1 1 0 0 0 0 1
                0 0 1 0 1 0 0 1

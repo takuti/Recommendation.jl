@@ -5,7 +5,7 @@ function run(recommender::Type{T}, v) where {T<:Recommender}
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     recommender = recommender(data, 2)
-    build!(recommender, learning_rate=15e-4, max_iter=100)
+    fit!(recommender, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommended item set should be same as CF/SVD-based recommender
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
@@ -31,7 +31,7 @@ function test_mf_with_random_init(v)
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     recommender = MF(data, 2)
-    build!(recommender, random_init=true)
+    fit!(recommender, random_init=true)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test size(rec, 1) == 4  # top-4 recos
