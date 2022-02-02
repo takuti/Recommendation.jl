@@ -20,9 +20,9 @@ struct CoOccurrence <: Recommender
     end
 end
 
-isbuilt(recommender::CoOccurrence) = isfilled(recommender.scores)
+isdefined(recommender::CoOccurrence) = isfilled(recommender.scores)
 
-function build!(recommender::CoOccurrence)
+function fit!(recommender::CoOccurrence)
     n_item = size(recommender.data.R, 2)
 
     v_ref = recommender.data.R[:, recommender.i_ref]
@@ -37,6 +37,6 @@ function build!(recommender::CoOccurrence)
 end
 
 function ranking(recommender::CoOccurrence, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     recommender.scores[i]
 end

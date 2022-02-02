@@ -15,9 +15,9 @@ struct ItemMean <: Recommender
     end
 end
 
-isbuilt(recommender::ItemMean) = isfilled(recommender.scores)
+isdefined(recommender::ItemMean) = isfilled(recommender.scores)
 
-function build!(recommender::ItemMean)
+function fit!(recommender::ItemMean)
     n_item = size(recommender.data.R, 2)
 
     for i in 1:n_item
@@ -27,6 +27,6 @@ function build!(recommender::ItemMean)
 end
 
 function predict(recommender::ItemMean, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     recommender.scores[i]
 end

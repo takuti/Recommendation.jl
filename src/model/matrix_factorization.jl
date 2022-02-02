@@ -43,9 +43,9 @@ const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)
 
-isbuilt(recommender::MF) = isfilled(recommender.P)
+isdefined(recommender::MF) = isfilled(recommender.P)
 
-function build!(recommender::MF;
+function fit!(recommender::MF;
                reg::Float64=1e-3, learning_rate::Float64=1e-3,
                eps::Float64=1e-3, max_iter::Int=100,
                random_init::Bool=false)
@@ -89,6 +89,6 @@ function build!(recommender::MF;
 end
 
 function predict(recommender::MF, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     dot(recommender.P[u, :], recommender.Q[i, :])
 end

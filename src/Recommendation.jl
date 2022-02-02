@@ -10,8 +10,8 @@ using Random
 include("types.jl")
 include("utils.jl")
 
-include("base_recommender.jl")
 include("data_accessor.jl")
+include("base_recommender.jl")
 
 include("baseline/user_mean.jl")
 include("baseline/item_mean.jl")
@@ -32,5 +32,7 @@ include("metric/ranking.jl")
 
 include("evaluation/evaluate.jl")
 include("evaluation/cross_validation.jl")
+
+include("compat.jl")
 
 end # module

@@ -20,9 +20,9 @@ struct ThresholdPercentage <: Recommender
     end
 end
 
-isbuilt(recommender::ThresholdPercentage) = isfilled(recommender.scores)
+isdefined(recommender::ThresholdPercentage) = isfilled(recommender.scores)
 
-function build!(recommender::ThresholdPercentage)
+function fit!(recommender::ThresholdPercentage)
     n_item = size(recommender.data.R, 2)
 
     for i in 1:n_item
@@ -32,6 +32,6 @@ function build!(recommender::ThresholdPercentage)
 end
 
 function ranking(recommender::ThresholdPercentage, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     recommender.scores[i]
 end

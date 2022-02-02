@@ -41,9 +41,9 @@ end
 UserKNN(data::DataAccessor, k::Integer) = UserKNN(data, k, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
-isbuilt(recommender::UserKNN) = isfilled(recommender.sim)
+isdefined(recommender::UserKNN) = isfilled(recommender.sim)
 
-function build!(recommender::UserKNN)
+function fit!(recommender::UserKNN)
     # Pearson correlation
 
     R = copy(recommender.data.R)
@@ -71,7 +71,7 @@ function build!(recommender::UserKNN)
 end
 
 function predict(recommender::UserKNN, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
 
     numer = denom = 0
 

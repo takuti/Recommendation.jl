@@ -33,7 +33,7 @@ function cross_validation(n_fold::Integer, metric::Type{<:RankingMetric}, k::Int
 
         # get recommender from the specified data type
         recommender = recommender_type(train_data, recommender_args...)
-        build!(recommender)
+        fit!(recommender)
 
         accuracy = evaluate(recommender, truth_data, metric(), k)
         if isnan(accuracy); continue; end
@@ -75,7 +75,7 @@ function cross_validation(n_fold::Integer, metric::Type{<:AccuracyMetric}, recom
 
         # get recommender from the specified data type
         recommender = recommender_type(train_data, recommender_args...)
-        build!(recommender)
+        fit!(recommender)
 
         accuracy = evaluate(recommender, truth_data, metric())
         if isnan(accuracy); continue; end

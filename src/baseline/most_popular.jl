@@ -16,9 +16,9 @@ struct MostPopular <: Recommender
     end
 end
 
-isbuilt(recommender::MostPopular) = isfilled(recommender.scores)
+isdefined(recommender::MostPopular) = isfilled(recommender.scores)
 
-function build!(recommender::MostPopular)
+function fit!(recommender::MostPopular)
     n_item = size(recommender.data.R, 2)
 
     for i in 1:n_item
@@ -27,6 +27,6 @@ function build!(recommender::MostPopular)
 end
 
 function ranking(recommender::MostPopular, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     recommender.scores[i]
 end

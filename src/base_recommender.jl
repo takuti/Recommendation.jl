@@ -1,18 +1,31 @@
 export Recommender
-export isbuilt, check_build_status, build!, recommend, predict, ranking
+export isdefined, validate, fit!, recommend, predict, ranking
 
 abstract type Recommender end
 
-function check_build_status(recommender::Recommender)
-    if !isbuilt(recommender)
+function validate(recommender::Recommender)
+    if !isdefined(recommender)
         error("Recommender $(typeof(recommender)) is not built before making recommendation")
     end
 end
 
-isbuilt(recommender::Recommender) = true
+function validate(recommender::Recommender, data::DataAccessor)
+    validate(recommender)
 
-function build!(recommender::Recommender; kwargs...)
-    error("build! is not implemented for recommender type $(typeof(recommender))")
+    n_rec_user, n_rec_item = size(recommender.data.R)
+    n_data_user, n_data_item = size(data.R)
+
+    if n_rec_user != n_data_user
+        error("number of users is mismatched: (recommender, target) = ($(n_rec_user), $(n_data_user)")
+    elseif n_rec_item != n_data_item
+        error("number of items is mismatched: (recommender, target) = ($(n_rec_item), $(n_data_item)")
+    end
+end
+
+isdefined(recommender::Recommender) = true
+
+function fit!(recommender::Recommender; kwargs...)
+    error("fit! is not implemented for recommender type $(typeof(recommender))")
 end
 
 function recommend(recommender::Recommender, u::Integer, k::Integer, candidates::Array{T}) where {T<:Integer}
@@ -32,6 +45,6 @@ end
 
 # Return a ranking score of item i for user u
 function ranking(recommender::Recommender, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     predict(recommender, u, i)
 end
