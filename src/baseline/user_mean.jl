@@ -15,9 +15,9 @@ struct UserMean <: Recommender
     end
 end
 
-isbuilt(recommender::UserMean) = isfilled(recommender.scores)
+isdefined(recommender::UserMean) = isfilled(recommender.scores)
 
-function build!(recommender::UserMean)
+function fit!(recommender::UserMean)
     n_user = size(recommender.data.R, 1)
 
     for u in 1:n_user
@@ -27,6 +27,6 @@ function build!(recommender::UserMean)
 end
 
 function predict(recommender::UserMean, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     recommender.scores[u]
 end

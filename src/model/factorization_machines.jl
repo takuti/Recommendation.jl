@@ -43,9 +43,9 @@ end
 
 FactorizationMachines(data::DataAccessor) = FactorizationMachines(data, 20)
 
-isbuilt(recommender::FactorizationMachines) = isfilled(recommender.V)
+isdefined(recommender::FactorizationMachines) = isfilled(recommender.V)
 
-function build!(recommender::FactorizationMachines;
+function fit!(recommender::FactorizationMachines;
                reg_w0::Float64=1e-3,
                reg_w::Float64=1e-3,
                reg_V::Float64=1e-3,
@@ -116,7 +116,7 @@ function build!(recommender::FactorizationMachines;
 end
 
 function predict(recommender::FactorizationMachines, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     n_user, n_item = size(recommender.data.R)
 
     u_onehot = zeros(n_user)

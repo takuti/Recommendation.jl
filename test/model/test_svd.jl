@@ -7,7 +7,7 @@ function test_svd()
     data = DataAccessor(m)
 
     recommender = SVD(data, 2)
-    build!(recommender)
+    fit!(recommender)
 
     # dimensionality reduction should preserve user-user/item-item similarities
     # i.e., recommendation list should be same as ItemKNN

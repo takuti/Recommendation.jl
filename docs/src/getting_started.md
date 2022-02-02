@@ -55,7 +55,7 @@ recommender = MostPopular(data)
 and building a recommendation engine should be easy:
 
 ```julia
-build!(recommender)
+fit!(recommender)
 ```
 
 Personalized recommenders sometimes require us to specify the hyperparameters:
@@ -70,7 +70,7 @@ help?> Recommendation.MatrixFactorization
 
 ```julia
 recommender = MatrixFactorization(data, 2)
-build!(recommender, learning_rate=15e-4, max_iter=100)
+fit!(recommender, learning_rate=15e-4, max_iter=100)
 ```
 
 Once a recommendation engine has been built successfully, top-`2` recommendation for a user `4` is performed as follows:

@@ -1,22 +1,9 @@
 export evaluate
 
-function validate_size(recommender::Recommender, truth_data::DataAccessor)
-    n_rec_user, n_rec_item = size(recommender.data.R)
-    n_truth_user, n_truth_item = size(truth_data.R)
-
-    if n_rec_user != n_truth_user
-        error("number of users is mismatched: (recommenre, truth) = ($(n_rec_user), $(n_truth_user)")
-    elseif n_rec_item != n_truth_item
-        error("number of items is mismatched: (recommenre, truth) = ($(n_rec_item), $(n_truth_item)")
-    end
-
-    n_truth_user, n_truth_item
-end
-
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
                   metric::AccuracyMetric)
-    check_build_status(recommender)
-    n_user, n_item = validate_size(recommender, truth_data)
+    validate(recommender, truth_data)
+    n_user, n_item = size(truth_data.R)
 
     accum = 0.0
 
@@ -34,8 +21,8 @@ end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
                   metric::RankingMetric, k::Integer=0)
-    check_build_status(recommender)
-    n_user, n_item = validate_size(recommender, truth_data)
+    validate(recommender, truth_data)
+    n_user, n_item = size(truth_data.R)
 
     accum = 0.0
 

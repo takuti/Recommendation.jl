@@ -28,9 +28,9 @@ end
 
 SVD(data::DataAccessor) = SVD(data, 20)
 
-isbuilt(recommender::SVD) = isfilled(recommender.U)
+isdefined(recommender::SVD) = isfilled(recommender.U)
 
-function build!(recommender::SVD)
+function fit!(recommender::SVD)
     R = copy(recommender.data.R)
 
     res = svd(R)
@@ -40,6 +40,6 @@ function build!(recommender::SVD)
 end
 
 function predict(recommender::SVD, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
     dot(recommender.U[u, :] .* recommender.S, recommender.Vt[:, i])
 end

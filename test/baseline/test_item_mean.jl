@@ -1,6 +1,6 @@
 function test_item_mean(data)
     recommender = ItemMean(data)
-    build!(recommender)
+    fit!(recommender)
     actual = predict(recommender, 1, 1)
 
     @test actual == 2.5

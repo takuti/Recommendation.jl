@@ -38,9 +38,9 @@ end
 
 ItemKNN(data::DataAccessor) = ItemKNN(data, 5)
 
-isbuilt(recommender::ItemKNN) = isfilled(recommender.sim)
+isdefined(recommender::ItemKNN) = isfilled(recommender.sim)
 
-function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
+function fit!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
 
     R = copy(recommender.data.R)
@@ -74,7 +74,7 @@ function build!(recommender::ItemKNN; adjusted_cosine::Bool=false)
 end
 
 function predict(recommender::ItemKNN, u::Integer, i::Integer)
-    check_build_status(recommender)
+    validate(recommender)
 
     numer = denom = 0
 

@@ -5,7 +5,7 @@ function test_user_knn(v)
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
     recommender = UserKNN(data, 1)
-    build!(recommender)
+    fit!(recommender)
 
     @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)
     @test isapprox(recommender.sim[2, 3], -0.693, atol=1e-3)
@@ -16,7 +16,7 @@ function test_user_knn(v)
     @test rec[3] == (2 => 2.0)
 
     recommender = UserKNN(data, 1, true)
-    build!(recommender)
+    fit!(recommender)
 
     @test isapprox(recommender.sim[1, 2], 0.447, atol=1e-3)
     @test isapprox(recommender.sim[2, 3], -0.693, atol=1e-3)

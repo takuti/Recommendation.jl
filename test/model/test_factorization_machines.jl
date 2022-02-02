@@ -13,11 +13,11 @@ function test_factorization_machines(v)
     items = [i for i in 1:8]
 
     mf = MatrixFactorization(data, num_factors)
-    build!(mf, learning_rate=learning_rate, max_iter=max_iter)
+    fit!(mf, learning_rate=learning_rate, max_iter=max_iter)
     mf_rec = recommend(mf, user, topk, items)
 
     fm = FactorizationMachines(data, num_factors)
-    build!(fm, learning_rate=learning_rate, max_iter=max_iter)
+    fit!(fm, learning_rate=learning_rate, max_iter=max_iter)
     fm_rec = recommend(fm, user, topk, items)
 
     # if no contextual features are considered in FMs, the recommendation
@@ -45,7 +45,7 @@ function test_factorization_machines_with_attributes(v)
     set_item_attribute(data, 8, [1, 1, 1])
 
     recommender = FactorizationMachines(data, 2)
-    build!(recommender, reg_w0=0.3, reg_w=0.3, reg_V=0.3, learning_rate=3e-10, random_init=true)
+    fit!(recommender, reg_w0=0.3, reg_w=0.3, reg_V=0.3, learning_rate=3e-10, random_init=true)
 
     rec = recommend(recommender, 1, 4, [i for i in 1:8])
     @test size(rec, 1) == 4  # top-4 recos

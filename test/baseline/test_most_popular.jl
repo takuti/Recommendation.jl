@@ -3,13 +3,13 @@ function test_most_popular()
 
     data = DataAccessor([1 2 3; 4 5 nothing])
     recommender = MostPopular(data)
-    build!(recommender)
+    fit!(recommender)
     @test ranking(recommender, 1, 1) == 2.0
     @test ranking(recommender, 1, 3) == 1.0
 
     data = DataAccessor(sparse([1 2 3; 4 5 0]))
     recommender = MostPopular(data)
-    build!(recommender)
+    fit!(recommender)
     @test ranking(recommender, 1, 1) == 2.0
     @test ranking(recommender, 1, 3) == 1.0
 
@@ -17,7 +17,7 @@ function test_most_popular()
     events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
     data = DataAccessor(events, n_user, n_item)
     recommender = MostPopular(data)
-    build!(recommender)
+    fit!(recommender)
     @test ranking(recommender, 1, 1) == 0.0
     @test ranking(recommender, 1, 2) == 2.0
     @test ranking(recommender, 1, 6) == 1.0
