@@ -9,6 +9,7 @@ using Random
 
 include("types.jl")
 include("utils.jl")
+include("datasets.jl")
 
 include("data_accessor.jl")
 include("base_recommender.jl")
