@@ -1,10 +1,6 @@
-using JLD
-using SparseArrays
 using Recommendation
 
-R = load("data/ml-100k.jld")["R"]
-data = DataAccessor(R)
-
+data = load_movielens_100k()
 recall = cross_validation(
                           1,            # N-fold
                           Recall,       # Metric
