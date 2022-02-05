@@ -7,12 +7,12 @@ function test_load_movielens_100k()
     write(io, "943\t1\t4\n")
     flush(io)
 
-    R = load_movielens_100k(path)
+    data = load_movielens_100k(path)
 
-    @test R[1, 1] == 3
-    @test R[1, 1682] == 2
-    @test R[943, 1] == 4
-    @test ismissing(R[2, 2])
+    @test data.R[1, 1] == 3.0
+    @test data.R[1, 1682] == 2.0
+    @test data.R[943, 1] == 4.0
+    @test data.R[2, 2] == 0.0
 end
 
 test_load_movielens_100k()

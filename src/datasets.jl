@@ -12,5 +12,5 @@ function load_movielens_100k(path::String)
             R[user, item] = value
         end
     end
-    R
+    DataAccessor(R)
 end
