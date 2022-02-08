@@ -45,18 +45,26 @@ Download if `path` is not given or the specified file does not exist.
 function load_movielens_100k(path::Union{String, Nothing}=nothing)
     n_user = 943
     n_item = 1682
+    R = matrix(n_user, n_item)
 
     if path == nothing || !isfile(path)
-        path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k/u.data", path)
+        zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip",
+                                 joinpath(dirname(path), "ml-100k.zip"))
+        reader = ZipFile.Reader(zip_path)
+        file = reader.files[findfirst(file -> endswith(file.name, "u.data"), reader.files)]
+        open(path, "w") do io
+            write(io, read(file, String))
+        end
+        close(reader)
     end
 
-    R = matrix(n_user, n_item)
-    open(path, "r") do f
-        for line in eachline(f)
+    open(path, "r") do io
+        for line in eachline(io)
             l = split(line, "\t")
             user, item, value = parse(Int, l[1]), parse(Int, l[2]), parse(Int, l[3])
             R[user, item] = value
         end
     end
+
     DataAccessor(R)
 end
