@@ -18,8 +18,8 @@ include("model/test_svd.jl")
 include("model/test_matrix_factorization.jl")
 include("model/test_factorization_machines.jl")
 
-include("metric/test_accuracy.jl")
-include("metric/test_ranking.jl")
+include("metrics/test_accuracy.jl")
+include("metrics/test_ranking.jl")
 
 include("evaluation/test_evaluate.jl")
 include("evaluation/test_cross_validation.jl")

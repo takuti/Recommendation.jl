@@ -10,14 +10,14 @@ Pages = ["evaluation.md"]
 cross_validation
 ```
 
-## Rating metric
+## Rating metrics
 
 ```@docs
 RMSE
 MAE
 ```
 
-## Ranking metric
+## Ranking metrics
 
 Let a target user $u \in \mathcal{U}$, set of all items $\mathcal{I}$, ordered set of top-$N$ recommended items $I_N(u) \subset \mathcal{I}$, and set of truth items $\mathcal{I}^+_u$.
 

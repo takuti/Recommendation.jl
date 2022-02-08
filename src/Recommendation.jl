@@ -28,9 +28,9 @@ include("model/svd.jl")
 include("model/matrix_factorization.jl")
 include("model/factorization_machines.jl")
 
-include("metric/base.jl")
-include("metric/accuracy.jl")
-include("metric/ranking.jl")
+include("metrics/base.jl")
+include("metrics/accuracy.jl")
+include("metrics/ranking.jl")
 
 include("evaluation/evaluate.jl")
 include("evaluation/cross_validation.jl")
