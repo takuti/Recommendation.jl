@@ -1,7 +1,5 @@
 export get_data_home, download_file, load_movielens_100k
 
-# function download_data()
-
 """
     get_data_home([data_home=nothing]) -> String
 
