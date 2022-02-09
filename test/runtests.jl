@@ -1,6 +1,7 @@
 using Recommendation
 using Test
 using SparseArrays
+using ZipFile
 
 include("test_base_recommender.jl")
 include("test_data_accessor.jl")

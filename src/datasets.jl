@@ -1,4 +1,4 @@
-export get_data_home, download_file, load_movielens_100k
+export get_data_home, download_file, unzip, load_movielens_100k
 
 """
     get_data_home([data_home=nothing]) -> String
@@ -35,30 +35,55 @@ end
 
 
 """
+    unzip(path[, exdir=nothing]) -> exdir
+
+Extract files in a zip file at `path` into a directory `exdir`.
+Extract into the same directory as the zip file if `exdir=nothing`.
+
+Reference: https://github.com/fhs/ZipFile.jl/pull/16
+"""
+function unzip(path::String, exdir::Union{String, Nothing}=nothing)
+    if exdir == nothing
+        exdir = dirname(path)
+    end
+    zip_reader = ZipFile.Reader(path)
+    for file in zip_reader.files
+        out_path = joinpath(exdir, file.name)
+        if isdirpath(out_path)
+            mkpath(out_path)
+        else
+            open(out_path, "w") do io
+                write(io, read(file, String))
+            end
+        end
+    end
+    close(zip_reader)
+    exdir
+end
+
+
+"""
     load_movielens_100k([path=nothing]) -> DataAccessor
 
-Read user-item-rating triples from a locally saved `u.data` TSV file downloaded from
-[MovieLens 100k](https://grouplens.org/datasets/movielens/100k/), and convert them into a `DataAccessor` instance.
+`path` points to a locally saved [MovieLens 100k](https://grouplens.org/datasets/movielens/100k/).
+Read user-item-rating triples in the folder, and convert them into a `DataAccessor` instance.
 
-Download if `path` is not given or the specified file does not exist.
+Download and decompress a corresponding zip file, if `path` is not given or the specified folder does not exist.
 """
 function load_movielens_100k(path::Union{String, Nothing}=nothing)
     n_user = 943
     n_item = 1682
     R = matrix(n_user, n_item)
 
-    if path == nothing || !isfile(path)
-        zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip",
-                                 joinpath(dirname(path), "ml-100k.zip"))
-        reader = ZipFile.Reader(zip_path)
-        file = reader.files[findfirst(file -> endswith(file.name, "u.data"), reader.files)]
-        open(path, "w") do io
-            write(io, read(file, String))
+    if path == nothing || !isdir(path)
+        zip_path = joinpath(dirname(path), "ml-100k.zip")
+        if !isfile(zip_path)
+            zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip", zip_path)
         end
-        close(reader)
+        path = joinpath(unzip(zip_path, path), "ml-100k/")
     end
 
-    open(path, "r") do io
+    open(joinpath(path, "u.data"), "r") do io
         for line in eachline(io)
             l = split(line, "\t")
             user, item, value = parse(Int, l[1]), parse(Int, l[2]), parse(Int, l[3])
