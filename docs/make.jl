@@ -10,15 +10,13 @@ makedocs(
     linkcheck = !("skiplinks" in ARGS),
     pages = [
         "Home" => "index.md",
-        "Getting Started" => "getting_started.md",
-        "References" => [
-            "notation.md",
-            "baseline.md",
-            "collaborative_filtering.md",
-            "factorization_machines.md",
-            "content_based_filtering.md",
-            "evaluation.md",
-        ],
+        "getting_started.md",
+        "notation.md",
+        "baseline.md",
+        "collaborative_filtering.md",
+        "factorization_machines.md",
+        "content_based_filtering.md",
+        "evaluation.md",
     ],
 )
 
