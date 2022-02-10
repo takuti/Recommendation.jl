@@ -30,3 +30,8 @@ function onehot(value::Union{Unknown, Integer, String}, value_set::AbstractVecto
         vec
     end
 end
+
+function onehot(vec::AbstractVector)
+    value_set = unique(vec)
+    vcat(map(value -> onehot(value, value_set)', vec)...)
+end

@@ -6,4 +6,13 @@ function test_onehot_value()
     @test  onehot(nothing, value_set) == [0, 0]
 end
 
+function test_onehot_vector()
+    m = ["Male", "Female", nothing]
+    expected = [1 0
+                0 1
+                0 0]
+    @test onehot(m) == expected
+end
+
 test_onehot_value()
+test_onehot_vector()
