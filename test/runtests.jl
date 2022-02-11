@@ -27,3 +27,4 @@ include("evaluation/test_cross_validation.jl")
 
 include("test_compat.jl")
 include("test_datasets.jl")
+include("test_utils.jl")
