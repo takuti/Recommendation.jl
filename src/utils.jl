@@ -35,3 +35,7 @@ function onehot(vec::AbstractVector)
     value_set = unique(vec)
     vcat(map(value -> onehot(value, value_set)', vec)...)
 end
+
+function onehot(mat::AbstractMatrix)
+    hcat(map(onehot, eachcol(mat))...)
+end
