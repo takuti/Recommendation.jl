@@ -49,6 +49,12 @@ function test_load_movielens_100k()
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0
     ]
     @test get_user_attribute(data, 1) == expected_user_attribute
+
+    # Genres from 1st row of `u.item` - Toy Story
+    expected_item_attribute = [
+        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+    @test get_item_attribute(data, 1) == expected_item_attribute
 end
 
 test_get_data_home()

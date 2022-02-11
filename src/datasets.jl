@@ -108,5 +108,14 @@ function load_movielens_100k(path::Union{String, Nothing}=nothing)
         end
     end
 
+    open(joinpath(path, "u.item"), "r") do io
+        for line in eachline(io)
+            l = split(line, "|")
+            item = parse(Int, l[1])
+            genres = map(s -> parse(Float64, s), last(l, 19)) # last 19 fields are genres (already onehot-encoded)
+            set_item_attribute(data, item, genres)
+        end
+    end
+
     data
 end
