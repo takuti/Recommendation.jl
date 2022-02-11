@@ -9,19 +9,19 @@ function test_onehot_value()
     @test onehot("Female", value_set) == [0, 1, 0]
     @test onehot("Others", value_set) == [0, 0, 1]
     @test onehot(nothing, value_set) == [0, 0, 0]
-    @test onehot(nothing, value_set) == [0, 0, 0]
+    @test onehot(missing, value_set) == [0, 0, 0]
 
 end
 
 function test_onehot_vector()
     println("-- Testing onehot encoding of a categorical vector")
 
-    m = ["Male", "Female", "Others", nothing, missing]
+    m = ["Male", nothing, "Female", missing, "Others"]
     expected = [1 0 0
-                0 1 0
-                0 0 1
                 0 0 0
-                0 0 0]
+                0 1 0
+                0 0 0
+                0 0 1]
     @test onehot(m) == expected
 end
 
