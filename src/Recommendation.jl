@@ -6,6 +6,7 @@ using LinearAlgebra
 import LinearAlgebra: svd
 
 using Random
+using Downloads
 using ZipFile
 
 include("types.jl")
