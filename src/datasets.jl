@@ -90,6 +90,32 @@ function load_movielens_100k(path::Union{String, Nothing}=nothing)
             R[user, item] = value
         end
     end
+    data = DataAccessor(R)
 
-    DataAccessor(R)
+    gender_set = ["M", "F"]
+    occupation_set = []
+    open(joinpath(path, "u.occupation"), "r") do io
+        for line in eachline(io)
+            push!(occupation_set, String(line))
+        end
+    end
+
+    open(joinpath(path, "u.user"), "r") do io
+        for line in eachline(io)
+            l = split(line, "|")
+            user, age, gender, occupation = parse(Int, l[1]), parse(Int, l[2]), String(l[3]), String(l[4])
+            set_user_attribute(data, user, [age, onehot(gender, gender_set)..., onehot(occupation, occupation_set)...])
+        end
+    end
+
+    open(joinpath(path, "u.item"), "r") do io
+        for line in eachline(io)
+            l = split(line, "|")
+            item = parse(Int, l[1])
+            genres = map(s -> parse(Float64, s), last(l, 19)) # last 19 fields are genres (already onehot-encoded)
+            set_item_attribute(data, item, genres)
+        end
+    end
+
+    data
 end

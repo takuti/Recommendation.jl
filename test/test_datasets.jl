@@ -40,6 +40,21 @@ function test_load_movielens_100k()
     @test data.R[186, 302] == 3.0
     @test data.R[22, 377] == 1.0
     @test data.R[2, 2] == 0.0
+
+    # 1|24|M|technician|85711 in `u.user`
+    # 21 occupations in total, and "technician" is on the 20th line of `u.occupation`
+    expected_user_attribute = [
+        24,
+        1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0
+    ]
+    @test get_user_attribute(data, 1) == expected_user_attribute
+
+    # Genres from 1st row of `u.item` - Toy Story
+    expected_item_attribute = [
+        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+    @test get_item_attribute(data, 1) == expected_item_attribute
 end
 
 test_get_data_home()
