@@ -76,7 +76,11 @@ function load_movielens_100k(path::Union{String, Nothing}=nothing)
     R = matrix(n_user, n_item)
 
     if path == nothing || !isdir(path)
-        zip_path = joinpath(dirname(path), "ml-100k.zip")
+        zip_path = if path == nothing
+            joinpath(get_data_home(), "ml-100k.zip")
+        else
+            joinpath(dirname(path), "ml-100k.zip")
+        end
         if !isfile(zip_path)
             zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip", zip_path)
         end

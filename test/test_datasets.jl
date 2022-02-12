@@ -32,10 +32,19 @@ function test_unzip()
 end
 
 function test_load_movielens_100k()
+    dir = mktempdir()
+    println("-- Testing to download and read the MovieLens 100k data without specifying a path (JULIA_RECOMMENDATION_DATA=$dir)")
+    ENV["JULIA_RECOMMENDATION_DATA"] = dir
+    data = load_movielens_100k()
+    validate_movielens_100k(data)
+
     path = tempname()
     println("-- Testing to download and read the MovieLens 100k data file: $path")
     data = load_movielens_100k(path)
+    validate_movielens_100k(data)
+end
 
+function validate_movielens_100k(data::DataAccessor)
     @test data.R[196, 242] == 3.0
     @test data.R[186, 302] == 3.0
     @test data.R[22, 377] == 1.0
