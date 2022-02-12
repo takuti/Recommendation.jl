@@ -30,7 +30,7 @@ function download_file(url::String, path::Union{String, Nothing}=nothing)
         error("file already exists: $path")
     end
     data_home = get_data_home(dirname(path))  # ensure the directory exists
-    download(url, joinpath(data_home, basename(path)))
+    Downloads.download(url, joinpath(data_home, basename(path)))
 end
 
 
