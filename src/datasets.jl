@@ -24,13 +24,15 @@ Download a dataset from the URL to the path. Create folders if needed. `path=not
 """
 function download_file(url::String, path::Union{String, Nothing}=nothing)
     if path == nothing
-        path = tempname()
+        path = joinpath(tempname(), basename(url))
     end
     if isfile(path)
-        error("file already exists: $path")
+        @warn "file already exists, so skip downloading: $path"
+        path
+    else
+        data_home = get_data_home(dirname(path))  # ensure the directory exists
+        Downloads.download(url, joinpath(data_home, basename(path)))
     end
-    data_home = get_data_home(dirname(path))  # ensure the directory exists
-    Downloads.download(url, joinpath(data_home, basename(path)))
 end
 
 
@@ -76,10 +78,11 @@ function load_movielens_100k(path::Union{String, Nothing}=nothing)
     R = matrix(n_user, n_item)
 
     if path == nothing || !isdir(path)
-        zip_path = joinpath(dirname(path), "ml-100k.zip")
-        if !isfile(zip_path)
-            zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip", zip_path)
+        zip_path = path
+        if zip_path != nothing
+            zip_path = joinpath(dirname(zip_path), "ml-100k.zip")
         end
+        zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-100k.zip", zip_path)
         path = joinpath(unzip(zip_path, path), "ml-100k/")
     end
 
