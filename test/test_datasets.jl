@@ -66,6 +66,23 @@ function validate_movielens_100k(data::DataAccessor)
     @test get_item_attribute(data, 1) == expected_item_attribute
 end
 
+function test_load_movielens_latest()
+    path = tempname()
+    println("-- Testing to download and read the MovieLens latest (small) data file: $path")
+    data = load_movielens_latest(path)
+
+    @test data.R[1, 1] == 4.0
+    @test data.R[1, 2] == 4.0
+    @test data.R[1, 3] == 4.0
+    @test data.R[1, 4] == 5.0
+
+    # Genres from 1st item in `movies.csv` - Toy Story: Adventure|Animation|Children|Comedy|Fantasy
+    expected_item_attribute = [
+        0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    ]
+    @test get_item_attribute(data, 1) == expected_item_attribute
+end
+
 function test_load_amazon_review()
     println("-- Testing download and read Amazon Review Dataset")
     @test_throws ErrorException load_amazon_review(category="foo")
@@ -78,4 +95,5 @@ test_get_data_home()
 test_download_file()
 test_unzip()
 test_load_movielens_100k()
+test_load_movielens_latest()
 test_load_amazon_review()

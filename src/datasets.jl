@@ -1,4 +1,4 @@
-export get_data_home, download_file, unzip, load_movielens_100k, load_amazon_review
+export get_data_home, download_file, unzip, load_movielens_100k, load_movielens_latest, load_amazon_review
 
 """
     get_data_home([data_home=nothing]) -> String
@@ -117,6 +117,94 @@ function load_movielens_100k(path::Union{String, Nothing}=nothing)
             item = parse(Int, l[1])
             genres = map(s -> parse(Float64, s), last(l, 19)) # last 19 fields are genres (already onehot-encoded)
             set_item_attribute(data, item, genres)
+        end
+    end
+
+    data
+end
+
+
+"""
+    load_movielens_latest([path=nothing])
+
+`path` points to a locally saved [MovieLens Latest (Small)](https://files.grouplens.org/datasets/movielens/ml-latest-small-README.html).
+Read user-item-rating triples in the folder, and convert them into a `DataAccessor` instance.
+
+Download and decompress a corresponding zip file, if `path` is not given or the specified folder does not exist.
+"""
+function load_movielens_latest(path::Union{String, Nothing}=nothing)
+    n_user = 610
+    n_item = 9742
+    R = matrix(n_user, n_item)
+
+    if path == nothing || !isdir(path)
+        zip_path = path
+        if zip_path != nothing
+            zip_path = joinpath(dirname(zip_path), "ml-latest-small.zip")
+        end
+        zip_path = download_file("https://files.grouplens.org/datasets/movielens/ml-latest-small.zip", zip_path)
+        path = joinpath(unzip(zip_path, path), "ml-latest-small/")
+    end
+
+    events = Array{Event, 1}()
+    n_user, n_item = 0, 0
+    user_ids, item_ids = Dict{Integer, Integer}(), Dict{Integer, Integer}()
+    open(joinpath(path, "ratings.csv"), "r") do io
+        for (index, line) in enumerate(eachline(io))
+            if index == 1
+                continue
+            end
+            l = split(line, ",")
+            user, item, rating = parse(Int, l[1]), parse(Int, l[2]), parse(Float64, l[3])
+            if haskey(user_ids, user)
+                u = user_ids[user]
+            else
+                n_user += 1
+                u = n_user
+                user_ids[user] = n_user
+            end
+            if haskey(item_ids, item)
+                i = item_ids[item]
+            else
+                n_item += 1
+                i = n_item
+                item_ids[item] = n_item
+            end
+            push!(events, Event(u, i, rating))
+        end
+    end
+    data = DataAccessor(events, n_user, n_item)
+
+    all_genres = [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Children",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Fantasy",
+        "Film-Noir",
+        "Horror",
+        "Musical",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War",
+        "Western"
+    ]
+    open(joinpath(path, "movies.csv"), "r") do io
+        for (index, line) in enumerate(eachline(io))
+            if index == 1
+                continue
+            end
+            l = split(line, ",")
+            item, genres = parse(Int, l[1]), binarize_multi_label(split(l[3], "|"), all_genres)
+            if haskey(item_ids, item)
+                set_item_attribute(data, item_ids[item], genres)
+            end
         end
     end
 

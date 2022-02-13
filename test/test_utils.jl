@@ -40,6 +40,14 @@ function test_onehot_matrix()
     @test m_encoded == expected
 end
 
+function test_binarize_multi_label()
+    println("-- Testing multi-label binarization")
+    v = ["Comedy", nothing, "Action", missing, "Anime"]
+    @test binarize_multi_label(v, ["Action", "Anime", "Bollywood", "Comedy"]) == [1, 1, 0, 1]
+    @test_throws ErrorException binarize_multi_label([1, 2, 3, 4], [1, 1, 2, 3, 4])
+end
+
 test_onehot_value()
 test_onehot_vector()
 test_onehot_matrix()
+test_binarize_multi_label()
