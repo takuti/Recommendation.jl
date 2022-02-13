@@ -84,6 +84,9 @@ recommend(recommender, 4, 2, collect(1:n_item))
 
 ```@docs
 load_movielens_100k
+load_movielens_latest
+load_amazon_review
+load_lastfm
 ```
 
 Test a recommender with `cross_validation`:

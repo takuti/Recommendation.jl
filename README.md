@@ -19,7 +19,7 @@ julia> using Pkg; Pkg.add("Recommendation")
 
 ## Usage
 
-This package contains a unified `DataAccessor` module and several non-personalized/personalized recommenders, as well as evaluation metrics such as `Recall`: 
+This package contains a unified `DataAccessor` module and several non-personalized/personalized recommenders, as well as evaluation metrics such as `Recall`:
 
 <img src="docs/src/assets/images/overview.png" width="400px" alt="overview" />
 
@@ -29,16 +29,14 @@ See [Getting Started](https://takuti.github.io/Recommendation.jl/latest/getting_
 
 Change the code and test locally:
 
-```
-$ julia
+```julia
 julia> using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate()
 julia> Pkg.test("Recommendation")
-julia> Pkg.test("Recommendation", test_args=["download"])
 ```
 
 Note that unit tests for dataset loaders (e.g., `load_movielens_lates()`) are conditionally triggered as follows, so that CI does not make excessive download requests to the external sites:
 
-```
+```julia
 julia> Pkg.test("Recommendation", test_args=["download"])
 ```
 
