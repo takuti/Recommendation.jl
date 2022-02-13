@@ -10,7 +10,7 @@ function test_download_file()
     iris_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
     path = download_file(iris_url)
     @test isfile(path)
-    @test_throws ErrorException download_file(iris_url, path)
+    @test path == download_file(iris_url, path)
 end
 
 function test_unzip()
