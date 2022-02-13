@@ -126,7 +126,7 @@ end
 
 
 """
-    load_movielens_latest([path=nothing])
+    load_movielens_latest([path=nothing]) -> DataAccessor
 
 `path` points to a locally saved [MovieLens Latest (Small)](https://files.grouplens.org/datasets/movielens/ml-latest-small-README.html).
 Read user-item-rating triples in the folder, and convert them into a `DataAccessor` instance.
@@ -134,10 +134,6 @@ Read user-item-rating triples in the folder, and convert them into a `DataAccess
 Download and decompress a corresponding zip file, if `path` is not given or the specified folder does not exist.
 """
 function load_movielens_latest(path::Union{String, Nothing}=nothing)
-    n_user = 610
-    n_item = 9742
-    R = matrix(n_user, n_item)
-
     if path == nothing || !isdir(path)
         zip_path = path
         if zip_path != nothing
