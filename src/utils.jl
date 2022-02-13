@@ -1,4 +1,4 @@
-export matrix, vector, isfilled, onehot
+export matrix, vector, isfilled, onehot, binarize_multi_label
 
 function matrix(m::Integer, n::Integer)
     Array{Union{Missing, AbstractFloat}}(missing, m, n)
@@ -58,4 +58,17 @@ Onehot-encode the individual columns and horizontally concatenate them as an out
 """
 function onehot(mat::AbstractMatrix)
     hcat(map(onehot, eachcol(mat))...)
+end
+
+function binarize_multi_label(values::AbstractVector, value_set::AbstractVector)
+    if !allunique(value_set)
+        error("duplicated value exists in a value set")
+    end
+    filter!(val -> !isa(val, Unknown), values)
+    filter!(val -> !isa(val, Unknown), value_set)
+    dims = length(value_set)
+    indices = findall(v -> v in values, value_set)
+    vec = zeros(dims)
+    vec[indices] .= 1.0
+    vec
 end
