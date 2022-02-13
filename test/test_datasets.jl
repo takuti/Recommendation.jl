@@ -100,9 +100,12 @@ function test_load_lastfm()
 end
 
 test_get_data_home()
-test_download_file()
 test_unzip()
-test_load_movielens_100k()
-test_load_movielens_latest()
-test_load_amazon_review()
-test_load_lastfm()
+
+if "download" in ARGS
+    test_download_file()
+    test_load_movielens_100k()
+    test_load_movielens_latest()
+    test_load_amazon_review()
+    test_load_lastfm()
+end
