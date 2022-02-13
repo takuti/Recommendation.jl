@@ -48,6 +48,7 @@ function unzip(path::String, exdir::Union{String, Nothing}=nothing)
     if exdir == nothing
         exdir = dirname(path)
     end
+    get_data_home(exdir)
     zip_reader = ZipFile.Reader(path)
     for file in zip_reader.files
         out_path = joinpath(exdir, file.name)
