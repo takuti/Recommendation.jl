@@ -1,4 +1,4 @@
-export get_data_home, download_file, unzip, load_movielens_100k, load_movielens_latest, load_amazon_review
+export get_data_home, download_file, unzip, load_movielens_100k, load_movielens_latest, load_amazon_review, load_lastfm
 
 """
     get_data_home([data_home=nothing]) -> String
@@ -48,6 +48,7 @@ function unzip(path::String, exdir::Union{String, Nothing}=nothing)
     if exdir == nothing
         exdir = dirname(path)
     end
+    get_data_home(exdir)
     zip_reader = ZipFile.Reader(path)
     for file in zip_reader.files
         out_path = joinpath(exdir, file.name)
@@ -125,7 +126,7 @@ end
 
 
 """
-    load_movielens_latest([path=nothing])
+    load_movielens_latest([path=nothing]) -> DataAccessor
 
 `path` points to a locally saved [MovieLens Latest (Small)](https://files.grouplens.org/datasets/movielens/ml-latest-small-README.html).
 Read user-item-rating triples in the folder, and convert them into a `DataAccessor` instance.
@@ -133,10 +134,6 @@ Read user-item-rating triples in the folder, and convert them into a `DataAccess
 Download and decompress a corresponding zip file, if `path` is not given or the specified folder does not exist.
 """
 function load_movielens_latest(path::Union{String, Nothing}=nothing)
-    n_user = 610
-    n_item = 9742
-    R = matrix(n_user, n_item)
-
     if path == nothing || !isdir(path)
         zip_path = path
         if zip_path != nothing
@@ -278,6 +275,52 @@ function load_amazon_review(path::Union{String, Nothing}=nothing; category::Stri
                 item_ids[item] = n_item
             end
             push!(events, Event(u, i, rating))
+        end
+    end
+    DataAccessor(events, n_user, n_item)
+end
+
+"""
+    load_lastfm([path=nothing]) -> DataAccessor
+
+`path` points to a locally saved [HetRec 2011 Last.FM dataset](https://files.grouplens.org/datasets/hetrec2011/hetrec2011-lastfm-readme.txt)
+Each row has a tuple of (user, artist, # of listenings).
+"""
+function load_lastfm(path::Union{String, Nothing}=nothing)
+    if path == nothing || !isdir(path)
+        zip_path = path
+        if zip_path != nothing
+            zip_path = joinpath(dirname(zip_path), "hetrec2011-lastfm-2k.zip")
+        end
+        zip_path = download_file("https://files.grouplens.org/datasets/hetrec2011/hetrec2011-lastfm-2k.zip", zip_path)
+        path = unzip(zip_path, path)
+    end
+
+    events = Array{Event, 1}()
+    n_user, n_item = 0, 0
+    user_ids, item_ids = Dict{Integer, Integer}(), Dict{Integer, Integer}()
+    open(joinpath(path, "user_artists.dat"), "r") do io
+        for (index, line) in enumerate(eachline(io))
+            if index == 1
+                continue
+            end
+            l = split(line, "\t")
+            user, item, cnt = parse(Int, l[1]), parse(Int, l[2]), parse(Int, l[3])
+            if haskey(user_ids, user)
+                u = user_ids[user]
+            else
+                n_user += 1
+                u = n_user
+                user_ids[user] = n_user
+            end
+            if haskey(item_ids, item)
+                i = item_ids[item]
+            else
+                n_item += 1
+                i = n_item
+                item_ids[item] = n_item
+            end
+            push!(events, Event(u, i, cnt))
         end
     end
     DataAccessor(events, n_user, n_item)

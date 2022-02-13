@@ -32,8 +32,14 @@ Change the code and test locally:
 ```
 $ julia
 julia> using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate()
-# hit `]`
-(Recommendation) pkg> test
+julia> Pkg.test("Recommendation")
+julia> Pkg.test("Recommendation", test_args=["download"])
+```
+
+Note that unit tests for dataset loaders (e.g., `load_movielens_lates()`) are conditionally triggered as follows, so that CI does not make excessive download requests to the external sites:
+
+```
+julia> Pkg.test("Recommendation", test_args=["download"])
 ```
 
 Build documentation contents:
