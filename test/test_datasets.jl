@@ -66,7 +66,16 @@ function validate_movielens_100k(data::DataAccessor)
     @test get_item_attribute(data, 1) == expected_item_attribute
 end
 
+function test_load_amazon_review()
+    println("-- Testing download and read Amazon Review Dataset")
+    @test_throws ErrorException load_amazon_review(category="foo")
+
+    data = load_amazon_review(category="Magazine_Subscriptions") # smallest category
+    @test data.R[1, 1] == 5.0
+end
+
 test_get_data_home()
 test_download_file()
 test_unzip()
 test_load_movielens_100k()
+test_load_amazon_review()
