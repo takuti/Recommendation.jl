@@ -34,7 +34,7 @@ julia> using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate()
 julia> Pkg.test("Recommendation")
 ```
 
-Note that unit tests for dataset loaders (e.g., `load_movielens_lates()`) are conditionally triggered as follows, so that CI does not make excessive download requests to the external sites:
+Note that unit tests for dataset loaders (e.g., `load_movielens_latest()`) are conditionally triggered as follows, so that CI does not make excessive download requests to the external sites:
 
 ```julia
 julia> Pkg.test("Recommendation", test_args=["download"])
@@ -47,3 +47,5 @@ $ julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.
 $ julia --project=docs docs/make.jl
 $ open docs/build/index.html
 ```
+
+Follow [JuliaRegistries/Registrator.jl](https://github.com/JuliaRegistries/Registrator.jl) for releasing.
