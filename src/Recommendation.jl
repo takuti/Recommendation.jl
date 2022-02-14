@@ -16,6 +16,7 @@ include("data_accessor.jl")
 include("base_recommender.jl")
 
 include("datasets.jl")
+include("synthetic.jl")
 
 include("baseline/user_mean.jl")
 include("baseline/item_mean.jl")
