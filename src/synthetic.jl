@@ -3,17 +3,17 @@ export SyntheticFeature, SyntheticRule, accumulate, generate
 struct SyntheticFeature
     name::String
     candidates::AbstractVector{Union{String, Infinite}}
-    value::Union{String, Infinite}
+    value::Union{Unknown, String, Infinite}
 
     function SyntheticFeature(name::String, candidates::UnitRange)
-        new(name, collect(candidates), -1)
+        new(name, collect(candidates), missing)
     end
 
     function SyntheticFeature(name::String, candidates::AbstractVector)
-        new(name, candidates, -1)
+        new(name, candidates, missing)
     end
 
-    function SyntheticFeature(name::String, candidates::AbstractVector, value::Union{String, Infinite})
+    function SyntheticFeature(name::String, candidates::AbstractVector, value::Union{Unknown, String, Infinite})
         new(name, candidates, value)
     end
 end
