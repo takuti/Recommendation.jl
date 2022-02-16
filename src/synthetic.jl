@@ -18,6 +18,8 @@ struct SyntheticFeature
     end
 end
 
+to_dict(features::AbstractVector{SyntheticFeature}) = Dict(map(feature -> (feature.name, feature.value), features))
+
 Random.rand(rng::AbstractRNG, f::Random.SamplerTrivial{SyntheticFeature}) =
     SyntheticFeature(f[].name, f[].candidates, rand(rng, f[].candidates))
 
@@ -48,7 +50,7 @@ function generate(n_samples::Integer, n_items::Integer, features::AbstractVector
     for sample in eachrow(samples)
         push!(
             feedback,
-            rand() <= accumulate(rand(1:n_items), Dict(map(f -> (f.name, f.value), sample)), rules)
+            rand() <= accumulate(rand(1:n_items), to_dict(sample), rules)
         )
     end
     feedback
