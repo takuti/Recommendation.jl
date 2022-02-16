@@ -9,12 +9,12 @@ push!(features, SyntheticFeature("Geo", ["Arizona", "California", "Colorado", "I
 # create a set of rules
 rules = SyntheticRule[]
 
-push!(rules, SyntheticRule(nothing, s -> true, 0.001))
-push!(rules, SyntheticRule(3, s -> true, 0.01))
-push!(rules, SyntheticRule(1, s -> s["Age"] >= 1980 && s["Age"] <= 1989 && s["Geo"] == "New York", 0.30))
-push!(rules, SyntheticRule(2, s -> s["Age"] >= 1950 && s["Age"] <= 1959 && s["Geo"] == "New York", 0.30))
-push!(rules, SyntheticRule(2, s -> s["Age"] >= 1980 && s["Age"] <= 1989 && s["Geo"] == "Arizona", 0.30))
-push!(rules, SyntheticRule(1, s -> s["Age"] >= 1950 && s["Age"] <= 1959 && s["Geo"] == "Arizona", 0.30))
+push!(rules, SyntheticRule(0.001))
+push!(rules, SyntheticRule(0.01, 3))
+push!(rules, SyntheticRule(0.30, 1, s -> s["Age"] >= 1980 && s["Age"] <= 1989 && s["Geo"] == "New York"))
+push!(rules, SyntheticRule(0.30, 2, s -> s["Age"] >= 1950 && s["Age"] <= 1959 && s["Geo"] == "New York"))
+push!(rules, SyntheticRule(0.30, 2, s -> s["Age"] >= 1980 && s["Age"] <= 1989 && s["Geo"] == "Arizona"))
+push!(rules, SyntheticRule(0.30, 1, s -> s["Age"] >= 1950 && s["Age"] <= 1959 && s["Geo"] == "Arizona"))
 
 # check if a accumulative CTR is computed correctly
 sample1 = Dict("Age" => 1940, "Geo" => "California")

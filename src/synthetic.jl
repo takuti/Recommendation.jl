@@ -24,14 +24,28 @@ Random.rand(rng::AbstractRNG, f::Random.SamplerTrivial{SyntheticFeature}) =
     SyntheticFeature(f[].name, f[].candidates, rand(rng, f[].candidates))
 
 struct SyntheticRule
+    # if f returns true, accumulative CTR is lifted p%
+    probability::Float64
+
     # item ID
     item::Union{Nothing, Integer}
 
     # return bool
     match::Function
 
-    # if f returns true, accumulative CTR is lifted p%
-    probability::Float64
+    function SyntheticRule(probability::Float64)
+        # matching any items, any combinations of features
+        new(probability, nothing, _ -> true)
+    end
+
+    function SyntheticRule(probability::Float64, item::Union{Nothing, Integer})
+        # matching any combinations of features
+        new(probability, item, _ -> true)
+    end
+
+    function SyntheticRule(probability::Float64, item::Union{Nothing, Integer}, match::Function)
+        new(probability, item, match)
+    end
 end
 
 function accumulate(item::Integer, sample::Dict{String, Any}, rules::AbstractVector{SyntheticRule})
