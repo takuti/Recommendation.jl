@@ -2,18 +2,19 @@ export SyntheticFeature, SyntheticRule, accumulate, generate
 
 struct SyntheticFeature
     name::String
-    candidates::AbstractVector{Union{String, Infinite}}
+    candidates::Union{UnitRange, AbstractVector}
     value::Union{Unknown, String, Infinite}
 
-    function SyntheticFeature(name::String, candidates::UnitRange)
-        new(name, collect(candidates), missing)
+    function SyntheticFeature(name::String, candidates::Union{UnitRange, AbstractVector})
+        value_type = eltype(candidates)
+        if value_type <: Infinite || value_type <: String
+            new(name, candidates, missing)
+        else
+            error("unsupported feature value type: $value_type")
+        end
     end
 
-    function SyntheticFeature(name::String, candidates::AbstractVector)
-        new(name, candidates, missing)
-    end
-
-    function SyntheticFeature(name::String, candidates::AbstractVector, value::Union{Unknown, String, Infinite})
+    function SyntheticFeature(name::String, candidates::Union{UnitRange, AbstractVector}, value::Union{Unknown, String, Infinite})
         new(name, candidates, value)
     end
 end
