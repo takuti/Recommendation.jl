@@ -11,6 +11,7 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "getting_started.md",
+        "data.md",
         "notation.md",
         "baseline.md",
         "collaborative_filtering.md",

@@ -79,28 +79,3 @@ Once a recommendation engine has been built successfully, top-`2` recommendation
 # for user#4, pick top-2 from all items
 recommend(recommender, 4, 2, collect(1:n_item))
 ```
-
-## Datasets for experiments
-
-```@docs
-load_movielens_100k
-load_movielens_latest
-load_amazon_review
-load_lastfm
-```
-
-Test a recommender with `cross_validation`:
-
-```julia
-using Recommendation
-
-data = load_movielens_100k()
-recall = cross_validation(
-                          1,            # N-fold
-                          Recall,       # Metric
-                          5,            # Top-k
-                          MostPopular,  # Recommender
-                          data          # Data Accessor
-                         )
-println(recall)
-```
