@@ -5,6 +5,8 @@ features = SyntheticFeature[]
 
 push!(features, SyntheticFeature("Age", 1930:2010))
 push!(features, SyntheticFeature("Geo", ["Arizona", "California", "Colorado", "Illinois", "Indiana", "Michigan", "New York", "Utah"]))
+@test_throws ErrorException SyntheticFeature("Foo", [1, 2, 1+2im])
+@test_throws ErrorException SyntheticFeature("Foo", ['a', 'b'])
 
 # create a set of rules
 rules = SyntheticRule[]
