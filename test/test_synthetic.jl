@@ -27,7 +27,7 @@ sample3 = Dict("Age" => 1953, "Geo" => "New York")
 @test Recommendation.accumulate(2, sample3, rules) == 0.301
 
 # generate samples with random pairs of demographics and ad variants
-n_samples = 100
+n_samples = 256
 n_items = 5
 feedback = generate(n_samples, n_items, features, rules)
 
