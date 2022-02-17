@@ -19,6 +19,7 @@ struct SyntheticFeature
     end
 end
 
+vectorize(feature::SyntheticFeature) = (feature.candidates isa UnitRange) ? [feature.value] : onehot(feature.value, feature.candidates)
 to_dict(features::AbstractVector{SyntheticFeature}) = Dict(map(feature -> (feature.name, feature.value), features))
 
 Random.rand(rng::AbstractRNG, f::Random.SamplerTrivial{SyntheticFeature}) =
@@ -60,13 +61,22 @@ function accumulate(item::Integer, sample::Dict{String, Any}, rules::AbstractVec
 end
 
 function generate(n_samples::Integer, n_items::Integer, features::AbstractVector{SyntheticFeature}, rules::AbstractVector{SyntheticRule})
+    events = Event[]
+    attributes = Dict()
+
     samples = hcat(map(f ->  rand(f, n_samples), features)...) # n_samples * len(features) matrix
-    feedback = Bool[]
-    for sample in eachrow(samples)
-        push!(
-            feedback,
-            rand() <= accumulate(rand(1:n_items), to_dict(sample), rules)
-        )
+    for (user, sample) in enumerate(eachrow(samples))
+        item = rand(1:n_items)
+        if rand() <= accumulate(item, to_dict(sample), rules)
+            push!(events, Event(user, item, 1.0))  # record the probabilistically accepted binary feedback
+            attributes[user] = collect(Iterators.flatten(map(vectorize, sample)))
+        end
     end
-    feedback
+
+    data = DataAccessor(events, n_samples, n_items)
+    for (user, user_attribute) in attributes
+        set_user_attribute(data, user, user_attribute)
+    end
+
+    data
 end

@@ -29,7 +29,12 @@ sample3 = Dict("Age" => 1953, "Geo" => "New York")
 # generate samples with random pairs of demographics and ad variants
 n_samples = 256
 n_items = 5
-feedback = generate(n_samples, n_items, features, rules)
+data = generate(n_samples, n_items, features, rules)
 
-@test isa(feedback, Array{Bool})
-@test length(feedback) == n_samples
+@test isa(data, DataAccessor)
+@test size(data.R) == (n_samples, n_items)
+@test length(data.events) == length(data.user_attributes)
+for (user, user_attribute) in data.user_attributes
+    @test all(map(value -> typeof(value) <: Infinite, user_attribute))
+end
+@test isempty(data.item_attributes)
