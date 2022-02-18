@@ -1,4 +1,4 @@
-export get_data_home, download_file, unzip, load_movielens_100k, load_movielens_latest, load_amazon_review, load_lastfm
+export get_data_home, download_file, unzip, load_libsvm_file, load_movielens_100k, load_movielens_latest, load_amazon_review, load_lastfm
 
 """
     get_data_home([data_home=nothing]) -> String
@@ -62,6 +62,37 @@ function unzip(path::String, exdir::Union{String, Nothing}=nothing)
     end
     close(zip_reader)
     exdir
+end
+
+
+function load_libsvm_file(path::String, n_features::Integer; zero_based::Bool=false)
+    y = Float64[]
+    X = []
+    open(path, "r") do io
+        for line in eachline(io)
+            l = split(line, " ")
+
+            y_value = parse(Float64, l[1])
+            push!(y, y_value)
+
+            row = zeros(1, n_features)
+            pairs = map(elm -> split(elm, ":"), l[2:end])
+            for (index, value) in pairs
+                idx, val = parse(Int, string(index)), parse(Float64, string(value))
+                if zero_based
+                    idx += 1
+                end
+                row[idx] = val
+            end
+
+            if isempty(X)
+                X = row
+            else
+                X = [X; row]
+            end
+        end
+    end
+    X, y
 end
 
 

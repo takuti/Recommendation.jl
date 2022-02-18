@@ -31,6 +31,20 @@ function test_unzip()
     @test isfile(joinpath(exdir, "hello.txt"))
 end
 
+function test_load_libsvm_file()
+    println("-- Testing libsvm file loader")
+
+    f = tempname()
+    write(f, "1.0 0:1.0 2:-1.0\n-1.0 1:10 3:-10\n")
+
+    X, y = load_libsvm_file(f, 4, zero_based=true)
+
+    @test size(X) == (2, 4)
+    @test X == [1.0 0.0 -1.0 0.0; 0.0 10.0 0.0 -10.0]
+    @test length(y) == 2
+    @test y == [1.0, -1.0]
+end
+
 function test_load_movielens_100k()
     dir = mktempdir()
     println("-- Testing to download and read the MovieLens 100k data without specifying a path (JULIA_RECOMMENDATION_DATA=$dir)")
@@ -101,6 +115,7 @@ end
 
 test_get_data_home()
 test_unzip()
+test_load_libsvm_file()
 
 if "download" in ARGS
     test_download_file()
