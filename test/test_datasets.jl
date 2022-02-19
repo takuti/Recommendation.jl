@@ -37,7 +37,7 @@ function test_load_libsvm_file()
     f = tempname()
     write(f, "1.0 0:1.0 2:-1.0\n-1.0 1:10 3:-10\n")
 
-    X, y = load_libsvm_file(f, 4, zero_based=true)
+    X, y = load_libsvm_file(f, zero_based=true)
 
     @test size(X) == (2, 4)
     @test X == [1.0 0.0 -1.0 0.0; 0.0 10.0 0.0 -10.0]

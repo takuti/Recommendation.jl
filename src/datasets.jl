@@ -65,9 +65,15 @@ function unzip(path::String, exdir::Union{String, Nothing}=nothing)
 end
 
 
-function load_libsvm_file(path::String, n_features::Integer; zero_based::Bool=false)
+function load_libsvm_file(path::String; zero_based::Bool=false, n_features::Union{Integer, Nothing}=nothing)
     y = Float64[]
     X = []
+
+    infer_n_features = isnothing(n_features)
+    if infer_n_features
+        n_features = 0
+    end
+
     open(path, "r") do io
         for line in eachline(io)
             l = split(line, " ")
@@ -82,16 +88,27 @@ function load_libsvm_file(path::String, n_features::Integer; zero_based::Bool=fa
                 if zero_based
                     idx += 1
                 end
+
+                if infer_n_features && length(row) < idx
+                    row = [row zeros(1, idx - length(row))]  # grow a row as needed
+                end
                 row[idx] = val
             end
 
             if isempty(X)
                 X = row
+            elseif infer_n_features
+                n_features = max(n_features, length(row))
+                n_rows, n_cols = size(X)
+                # adjust the size of an entire matrix based on the largest # of features so far
+                X = [X zeros(n_rows, max(0, n_features - n_cols));
+                     row zeros(1, max(0, n_cols - n_features))]
             else
                 X = [X; row]
             end
         end
     end
+
     X, y
 end
 
