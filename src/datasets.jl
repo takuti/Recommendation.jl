@@ -97,15 +97,20 @@ function load_libsvm_file(path::String; zero_based::Bool=false, n_features::Unio
 
             if isempty(X)
                 X = row
-            elseif infer_n_features
-                n_features = max(n_features, length(row))
-                n_rows, n_cols = size(X)
-                # adjust the size of an entire matrix based on the largest # of features so far
-                X = [X zeros(n_rows, max(0, n_features - n_cols));
-                     row zeros(1, max(0, n_cols - n_features))]
-            else
-                X = [X; row]
+                continue
             end
+
+            if infer_n_features
+                n_features = max(n_features, length(row))
+                # adjust the size of an entire matrix based on the largest # of features so far
+                n_rows, n_cols = size(X)
+                if n_features > n_cols
+                    X = [X zeros(n_rows, n_features - n_cols)]
+                else
+                    row = [row zeros(1, n_cols - n_features)]
+                end
+            end
+            X = [X; row]
         end
     end
 
