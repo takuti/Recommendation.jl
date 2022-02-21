@@ -38,3 +38,12 @@ SyntheticFeature
 SyntheticRule
 generate
 ```
+
+## Helper functions
+
+```@docs
+get_data_home
+download_file
+unzip
+load_libsvm_file
+```

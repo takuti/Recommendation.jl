@@ -1,4 +1,4 @@
-export get_data_home, download_file, unzip, load_movielens_100k, load_movielens_latest, load_amazon_review, load_lastfm
+export get_data_home, download_file, unzip, load_libsvm_file, load_movielens_100k, load_movielens_latest, load_amazon_review, load_lastfm
 
 """
     get_data_home([data_home=nothing]) -> String
@@ -62,6 +62,88 @@ function unzip(path::String, exdir::Union{String, Nothing}=nothing)
     end
     close(zip_reader)
     exdir
+end
+
+
+"""
+    load_libsvm_file(path::String; zero_based::Bool=false, n_features::Union{Integer, Nothing}=nothing) -> X, y
+
+Read a sparse matrix dataset represented by [libsvm format](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/).
+Each row of X and y corresponds to a pair of sample that is already transformed to a vector; since there is no concept of
+user/item ID in the data, users may need to manually translate the resulting matrix/vector to `DataAccessor` as:
+
+```julia
+n_user, n_item = ...
+
+X, y = load_libsvm_file("/path/to/data.libsvm")
+
+events = Event[]
+for i in 1:length(y)
+    user, item = ... # find user/item ID per row based on your definition
+    push!(events, Event(user, item, y[i]))
+
+data = DataAccessor(events, n_user, n_item)
+
+# declare which columns in X represent user and item features, respectively
+user_feature_indices = [...]
+item_feature_indices = [...]
+
+for i in 1:size(X, 1)
+    user, item = ... # find user/item ID per row based on your definition
+    set_user_attributes(data, user, X[i, user_feature_indices])
+    set_item_attributes(data, item, X[i, item_feature_indices])
+```
+"""
+function load_libsvm_file(path::String; zero_based::Bool=false, n_features::Union{Integer, Nothing}=nothing)
+    y = Float64[]
+    X = []
+
+    infer_n_features = isnothing(n_features)
+    if infer_n_features
+        n_features = 0
+    end
+
+    open(path, "r") do io
+        for line in eachline(io)
+            l = split(line, " ")
+
+            y_value = parse(Float64, l[1])
+            push!(y, y_value)
+
+            row = zeros(1, n_features)
+            pairs = map(elm -> split(elm, ":"), l[2:end])
+            for (index, value) in pairs
+                idx, val = parse(Int, string(index)), parse(Float64, string(value))
+                if zero_based
+                    idx += 1
+                end
+
+                if infer_n_features && length(row) < idx
+                    row = [row zeros(1, idx - length(row))]  # grow a row as needed
+                end
+                row[idx] = val
+            end
+
+            if isempty(X)
+                X = row
+                continue
+            end
+
+            if infer_n_features
+                n_features = max(n_features, length(row))
+                # adjust the size of an entire matrix based on the largest # of features so far
+                n_rows, n_cols = size(X)
+                if n_features > n_cols
+                    X = [X zeros(n_rows, n_features - n_cols)]
+                else
+                    row = [row zeros(1, n_cols - n_features)]
+                end
+            end
+            X = [X; row]
+        end
+    end
+
+    X, y
 end
 
 
