@@ -4,6 +4,18 @@ using SparseArrays
 
 include("test_utils.jl")
 
+# run testing modules if and only if `name` is in `test_args``
+# e.g. `Pkg.test("Recommendation", test_args=["misc"])`
+# reference: https://github.com/JuliaAI/MLJBase.jl/blob/4a8f3f323f91ee6b6f5fb2b3268729b3101c003c/test/runtests.jl#L52-L62
+macro conditional_testset(name, expr)
+    name = string(name)
+    esc(quote
+        if $name in ARGS
+            @testset $name $expr
+        end
+    end)
+end
+
 @testset "recommender" begin
     include("test_base_recommender.jl")
     include("test_compat.jl")
