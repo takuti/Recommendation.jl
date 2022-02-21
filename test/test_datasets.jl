@@ -1,3 +1,5 @@
+using ZipFile
+
 function test_get_data_home()
     dir = mktempdir()
     println("-- Testing to get a data home with a temp directory: $dir")
