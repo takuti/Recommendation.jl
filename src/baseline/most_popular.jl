@@ -19,11 +19,7 @@ end
 isdefined(recommender::MostPopular) = isfilled(recommender.scores)
 
 function fit!(recommender::MostPopular)
-    n_item = size(recommender.data.R, 2)
-
-    for i in 1:n_item
-        recommender.scores[i] = count(!iszero, recommender.data.R[:, i])
-    end
+    recommender.scores[:] = vec(sum(x->x>0, recommender.data.R, dims=1))
 end
 
 function ranking(recommender::MostPopular, u::Integer, i::Integer)
