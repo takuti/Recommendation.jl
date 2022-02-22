@@ -9,7 +9,7 @@ function test_build()
     recommender = MatrixFactorization(data, 2)
 
     # make sure build! works as a synonym of fit!
-    build!(recommender, learning_rate=15e-4, max_iter=100)
+    @test_deprecated build!(recommender, learning_rate=15e-4, max_iter=100)
 
     # top-4 recommended item set should be same as CF/SVD-based recommender
     rec = recommend(recommender, 1, 4, [i for i in 1:8])

@@ -1,6 +1,8 @@
+import Base: depwarn
+
 export build!
 
 function build!(recommender::Recommender; kwargs...)
-    @warn "`build!`` is deprecated and renamed to `fit!`"
+    depwarn("`build!`` is deprecated and renamed to `fit!`", :build!)
     fit!(recommender; kwargs...)
 end

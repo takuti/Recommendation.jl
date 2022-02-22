@@ -1,3 +1,5 @@
+using ZipFile
+
 function test_get_data_home()
     dir = mktempdir()
     println("-- Testing to get a data home with a temp directory: $dir")
@@ -117,7 +119,7 @@ test_get_data_home()
 test_unzip()
 test_load_libsvm_file()
 
-if "download" in ARGS
+@conditional_testset "download" begin
     test_download_file()
     test_load_movielens_100k()
     test_load_movielens_latest()
