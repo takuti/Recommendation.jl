@@ -23,17 +23,13 @@ end
 isdefined(recommender::CoOccurrence) = isfilled(recommender.scores)
 
 function fit!(recommender::CoOccurrence)
-    n_item = size(recommender.data.R, 2)
-
     v_ref = recommender.data.R[:, recommender.i_ref]
-    c = count(!iszero, v_ref)
+    c = sum(!iszero, v_ref)
 
-    for i in 1:n_item
-        v = recommender.data.R[:, i]
-        # count elements that are known and non-zero both in v & v_ref
-        cc = count(!iszero, v .* v_ref)
-        recommender.scores[i] = cc / c * 100.0
-    end
+    # count elements that are known and non-zero both in v & v_ref
+    CC = vec(sum(!iszero, recommender.data.R .* v_ref, dims=1))
+
+    recommender.scores[:] = CC / c * 100.0
 end
 
 function ranking(recommender::CoOccurrence, u::Integer, i::Integer)

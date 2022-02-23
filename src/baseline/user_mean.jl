@@ -18,12 +18,7 @@ end
 isdefined(recommender::UserMean) = isfilled(recommender.scores)
 
 function fit!(recommender::UserMean)
-    n_user = size(recommender.data.R, 1)
-
-    for u in 1:n_user
-        v = recommender.data.R[u, :]
-        recommender.scores[u] = mean(v)
-    end
+    recommender.scores[:] = vec(sum(recommender.data.R, dims=2)) / size(recommender.data.R, 2)
 end
 
 function predict(recommender::UserMean, u::Integer, i::Integer)

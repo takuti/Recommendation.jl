@@ -18,12 +18,7 @@ end
 isdefined(recommender::ItemMean) = isfilled(recommender.scores)
 
 function fit!(recommender::ItemMean)
-    n_item = size(recommender.data.R, 2)
-
-    for i in 1:n_item
-        v = recommender.data.R[:, i]
-        recommender.scores[i] = mean(v)
-    end
+    recommender.scores[:] = vec(mean(recommender.data.R, dims=1))
 end
 
 function predict(recommender::ItemMean, u::Integer, i::Integer)
