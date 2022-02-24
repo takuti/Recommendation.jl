@@ -23,11 +23,14 @@ end
 isdefined(recommender::CoOccurrence) = isfilled(recommender.scores)
 
 function fit!(recommender::CoOccurrence)
-    v_ref = recommender.data.R[:, recommender.i_ref]
-    c = sum(!iszero, v_ref)
+    # bit vector representing whether the reference item `i_ref` is rated by a user or not
+    v_ref = (!iszero).(recommender.data.R[:, recommender.i_ref])
 
-    # count elements that are known and non-zero both in v & v_ref
-    CC = vec(sum(!iszero, recommender.data.R .* v_ref, dims=1))
+    # total num of ratings for the reference item
+    c = sum(v_ref)
+
+    # for each item `i`, count num of users who rated both `i` and `i_ref`
+    CC = vec(v_ref' * (!iszero).(recommender.data.R))
 
     recommender.scores[:] = CC / c * 100.0
 end
