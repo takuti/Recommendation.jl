@@ -31,9 +31,7 @@ SVD(data::DataAccessor) = SVD(data, 20)
 isdefined(recommender::SVD) = isfilled(recommender.U)
 
 function fit!(recommender::SVD)
-    R = copy(recommender.data.R)
-
-    res = svd(R)
+    res = svd(recommender.data.R)
     recommender.U[:] = res.U[:, 1:recommender.k]
     recommender.S[:] = res.S[1:recommender.k]
     recommender.Vt[:] = res.Vt[1:recommender.k, :]
