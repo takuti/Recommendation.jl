@@ -23,9 +23,9 @@ end
 isdefined(recommender::ThresholdPercentage) = isfilled(recommender.scores)
 
 function fit!(recommender::ThresholdPercentage)
-    M = sum(r->r>=recommender.th, recommender.data.R, dims=1)
-    N = sum(!iszero, recommender.data.R, dims=1)
-    recommender.scores[:] = vec(M ./ N * 100.0)
+    users_rated_higher = sum(r->r>=recommender.th, recommender.data.R, dims=1)
+    users_rated = sum(!iszero, recommender.data.R, dims=1)
+    recommender.scores[:] = vec(users_rated_higher ./ users_rated * 100.0)
 end
 
 function ranking(recommender::ThresholdPercentage, u::Integer, i::Integer)
