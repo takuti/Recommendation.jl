@@ -32,6 +32,7 @@ struct ItemKNN <: Recommender
 
     function ItemKNN(data::DataAccessor, k::Integer)
         n_item = size(data.R, 2)
+        k = min(n_item, k)
         new(data, k, matrix(n_item, n_item))
     end
 end
@@ -42,53 +43,42 @@ isdefined(recommender::ItemKNN) = isfilled(recommender.sim)
 
 function fit!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     # cosine similarity
-
-    R = copy(recommender.data.R)
-    n_row, n_col = size(R)
-
     if adjusted_cosine
-        # subtract mean
-        for ri in 1:n_row
-            indices = broadcast(!iszero, R[ri, :])
-            vmean = mean(R[ri, indices])
-            R[ri, indices] .-= vmean
-        end
+        # subtract mean (of nonzero elements) from the matrix, and keep zero elements as-is
+        nonzero_flags = (!iszero).(recommender.data.R)
+        R = (recommender.data.R .- (sum(recommender.data.R, dims=2) ./ sum(nonzero_flags, dims=2))) .* nonzero_flags
+    else
+        R = copy(recommender.data.R)
     end
 
     # compute L2 nrom of each column
     norms = sqrt.(sum(R.^2, dims=1))
 
-    for ci in 1:n_col
-        for cj in ci:n_col
-            numer = dot(R[:, ci], R[:, cj])
-            denom = norms[ci] * norms[cj]
-            s = numer / denom
-
-            recommender.sim[ci, cj] = s
-            if (ci != cj); recommender.sim[cj, ci] = s; end
+    n_items = size(R, 2)
+    for ii in 1:n_items
+        for ij in ii:n_items
+            denom = norms[ii] * norms[ij]
+            similarity = iszero(denom) ? 0 : (dot(R[:, ii], R[:, ij]) / denom)
+            recommender.sim[ii, ij] = similarity
+            if (ii != ij); recommender.sim[ij, ii] = similarity; end
         end
     end
-
-    # NaN similarities are converted into zeros
-    recommender.sim[isnan.(recommender.sim)] .= 0
 end
 
 function predict(recommender::ItemKNN, u::Integer, i::Integer)
     validate(recommender)
 
+    # filter out negative similarities
+    item_similarity_pairs = collect(enumerate(max.(recommender.sim[i, :], 0)))
+    k_neighbors = sort(item_similarity_pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
+
     numer = denom = 0
-
-    # negative similarities are filtered
-    pairs = collect(zip(1:size(recommender.data.R)[2], max.(recommender.sim[i, :], 0)))
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[1:recommender.k]
-
-    for (j, s) in ordered_pairs
-        r = recommender.data.R[u, j]
+    for (i_near, s) in k_neighbors
+        r = recommender.data.R[u, i_near]
         if iszero(r); continue; end
 
         numer += s * r
         denom += s
     end
-
-    (denom == 0) ? 0 : numer / denom
+    iszero(denom) ? 0 : numer / denom
 end
