@@ -3,11 +3,11 @@ export UserKNN
 """
     UserKNN(
         data::DataAccessor,
-        n_neighbor::Integer,
+        n_neighbors::Integer,
         normalize::Bool=false
     )
 
-[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `n_neighbor` represents number of neighbors ``k``, and `normalize` specifies if weighted sum of neighbors' rating is normalized.
+[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `n_neighbors` represents number of neighbors ``k``, and `normalize` specifies if weighted sum of neighbors' rating is normalized.
 
 The technique gives a weight to a user-user pair by the following equation:
 
@@ -28,18 +28,18 @@ It should be noted that user-based CF is highly inefficient because gradually in
 """
 struct UserKNN <: Recommender
     data::DataAccessor
-    n_neighbor::Integer
+    n_neighbors::Integer
     sim::AbstractMatrix
     normalize::Bool
 
-    function UserKNN(data::DataAccessor, n_neighbor::Integer, normalize::Bool)
-        n_user = size(data.R, 1)
-        n_neighbor = min(n_user - 1, n_neighbor)  # max #neighbors is (#users - 1), excluding a target user him/herself
-        new(data, n_neighbor, matrix(n_user, n_user), normalize)
+    function UserKNN(data::DataAccessor, n_neighbors::Integer, normalize::Bool)
+        n_users = size(data.R, 1)
+        n_neighbors = min(n_users - 1, n_neighbors)  # max #neighbors is (#users - 1), excluding a target user him/herself
+        new(data, n_neighbors, matrix(n_users, n_users), normalize)
     end
 end
 
-UserKNN(data::DataAccessor, n_neighbor::Integer) = UserKNN(data, n_neighbor, false)
+UserKNN(data::DataAccessor, n_neighbors::Integer) = UserKNN(data, n_neighbors, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
 isdefined(recommender::UserKNN) = isfilled(recommender.sim)
@@ -73,7 +73,7 @@ function predict(recommender::UserKNN, u::Integer, i::Integer)
     user_similarity_pairs = collect(enumerate(recommender.sim[u, :]))
 
     # closest neighbor is always target user him/herself, so omit him/her
-    neighbors = sort(user_similarity_pairs, by=tuple->last(tuple), rev=true)[2:(recommender.n_neighbor + 1)]
+    neighbors = sort(user_similarity_pairs, by=tuple->last(tuple), rev=true)[2:(recommender.n_neighbors + 1)]
 
     numer = denom = 0
     for (u_near, w) in neighbors

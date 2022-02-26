@@ -10,8 +10,8 @@ struct UserMean <: Recommender
     scores::AbstractVector
 
     function UserMean(data::DataAccessor)
-        n_user = size(data.R, 1)
-        new(data, vector(n_user))
+        n_users = size(data.R, 1)
+        new(data, vector(n_users))
     end
 end
 

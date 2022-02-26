@@ -15,8 +15,8 @@ struct ThresholdPercentage <: Recommender
     scores::AbstractVector
 
     function ThresholdPercentage(data::DataAccessor, th::AbstractFloat)
-        n_item = size(data.R, 2)
-        new(data, th, vector(n_item))
+        n_items = size(data.R, 2)
+        new(data, th, vector(n_items))
     end
 end
 

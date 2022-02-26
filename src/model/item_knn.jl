@@ -3,10 +3,10 @@ export ItemKNN
 """
     ItemKNN(
         data::DataAccessor,
-        n_neighbor::Integer
+        n_neighbors::Integer
     )
 
-[Item-based CF](https://dl.acm.org/citation.cfm?id=963776) that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. `n_neighbor` represents number of neighbors ``k``.
+[Item-based CF](https://dl.acm.org/citation.cfm?id=963776) that provides a way to model item-item concepts by utilizing the similarities of items in the CF paradigm. `n_neighbors` represents number of neighbors ``k``.
 
 Item properties are relatively stable compared to the users' tastes, and the number of items is generally smaller than the number of users. Hence, while user-based CF successfully captures the similarities of users' complex tastes, modeling item-item concepts could be much more promising in terms of both scalability and overall accuracy.
 
@@ -27,13 +27,13 @@ In case that the number of items is smaller than users, item-based CF could be a
 """
 struct ItemKNN <: Recommender
     data::DataAccessor
-    n_neighbor::Integer
+    n_neighbors::Integer
     sim::AbstractMatrix
 
-    function ItemKNN(data::DataAccessor, n_neighbor::Integer)
-        n_item = size(data.R, 2)
-        n_neighbor = min(n_item, n_neighbor)
-        new(data, n_neighbor, matrix(n_item, n_item))
+    function ItemKNN(data::DataAccessor, n_neighbors::Integer)
+        n_items = size(data.R, 2)
+        n_neighbors = min(n_items, n_neighbors)
+        new(data, n_neighbors, matrix(n_items, n_items))
     end
 end
 
@@ -70,7 +70,7 @@ function predict(recommender::ItemKNN, u::Integer, i::Integer)
 
     # filter out negative similarities
     item_similarity_pairs = collect(enumerate(max.(recommender.sim[i, :], 0)))
-    neighbors = sort(item_similarity_pairs, by=tuple->last(tuple), rev=true)[1:recommender.n_neighbor]
+    neighbors = sort(item_similarity_pairs, by=tuple->last(tuple), rev=true)[1:recommender.n_neighbors]
 
     numer = denom = 0
     for (i_near, s) in neighbors

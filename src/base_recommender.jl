@@ -12,13 +12,13 @@ end
 function validate(recommender::Recommender, data::DataAccessor)
     validate(recommender)
 
-    n_rec_user, n_rec_item = size(recommender.data.R)
-    n_data_user, n_data_item = size(data.R)
+    n_rec_users, n_rec_items = size(recommender.data.R)
+    n_data_users, n_data_items = size(data.R)
 
-    if n_rec_user != n_data_user
-        error("number of users is mismatched: (recommender, target) = ($(n_rec_user), $(n_data_user)")
-    elseif n_rec_item != n_data_item
-        error("number of items is mismatched: (recommender, target) = ($(n_rec_item), $(n_data_item)")
+    if n_rec_users != n_data_users
+        error("number of users is mismatched: (recommender, target) = ($(n_rec_users), $(n_data_users)")
+    elseif n_rec_items != n_data_items
+        error("number of items is mismatched: (recommender, target) = ($(n_rec_items), $(n_data_items)")
     end
 end
 

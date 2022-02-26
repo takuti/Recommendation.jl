@@ -15,8 +15,8 @@ struct CoOccurrence <: Recommender
     scores::AbstractVector
 
     function CoOccurrence(data::DataAccessor, i_ref::Integer)
-        n_item = size(data.R, 2)
-        new(data, i_ref, vector(n_item))
+        n_items = size(data.R, 2)
+        new(data, i_ref, vector(n_items))
     end
 end
 

@@ -11,8 +11,8 @@ struct MostPopular <: Recommender
     scores::AbstractVector
 
     function MostPopular(data::DataAccessor)
-        n_item = size(data.R, 2)
-        new(data, vector(n_item))
+        n_items = size(data.R, 2)
+        new(data, vector(n_items))
     end
 end
 

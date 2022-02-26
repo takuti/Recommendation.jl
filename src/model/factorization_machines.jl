@@ -3,23 +3,23 @@ export FactorizationMachines
 """
     FactorizationMachines(
         data::DataAccessor,
-        n_factor::Integer
+        n_factors::Integer
     )
 
-Recommendation based on second-order factorization machines (FMs). Number of factors ``k`` is configured by `n_factor`.
+Recommendation based on second-order factorization machines (FMs). Number of factors ``k`` is configured by `n_factors`.
 
 Learning FM requires a set of parameters ``\\Theta = \\{w_0, \\mathbf{w}, V\\}`` and a loss function ``\\ell(\\hat{y}(\\mathbf{x} \\mid \\Theta), y)``. Ultimately, the parameters can be optimized by stochastic gradient descent (SGD).
 """
 struct FactorizationMachines <: Recommender
     data::DataAccessor
     p::Integer
-    n_factor::Integer
+    n_factors::Integer
     w0::Base.RefValue{Float64} # making mutable
     w::AbstractVector
     V::AbstractMatrix
 
-    function FactorizationMachines(data::DataAccessor, n_factor::Integer)
-        n_user, n_item = size(data.R)
+    function FactorizationMachines(data::DataAccessor, n_factors::Integer)
+        n_users, n_items = size(data.R)
 
         uv = []
         user_vectors = collect(values(data.user_attributes))
@@ -31,13 +31,13 @@ struct FactorizationMachines <: Recommender
         if !isempty(item_vectors)
             iv = item_vectors[1]
         end
-        p = n_user + n_item + size(uv, 1) + size(iv, 1)
+        p = n_users + n_items + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
         w = vector(p)
-        V = matrix(p, n_factor)
+        V = matrix(p, n_factors)
 
-        new(data, p, n_factor, w0, w, V)
+        new(data, p, n_factors, w0, w, V)
     end
 end
 
@@ -64,7 +64,7 @@ function fit!(recommender::FactorizationMachines;
         V = ones(size(recommender.V)) * 0.1
     end
 
-    n_user, n_item = size(recommender.data.R)
+    n_users, n_items = size(recommender.data.R)
     nonzero_indices = findall(!iszero, recommender.data.R)
 
     for it in 1:max_iter
@@ -79,10 +79,10 @@ function fit!(recommender::FactorizationMachines;
 
             u, i = idx[1], idx[2]
 
-            u_onehot = zeros(n_user)
+            u_onehot = zeros(n_users)
             u_onehot[u] = 1.
 
-            i_onehot = zeros(n_item)
+            i_onehot = zeros(n_items)
             i_onehot[i] = 1.
 
             x = vcat(u_onehot, i_onehot,
@@ -122,12 +122,12 @@ end
 
 function predict(recommender::FactorizationMachines, u::Integer, i::Integer)
     validate(recommender)
-    n_user, n_item = size(recommender.data.R)
+    n_users, n_items = size(recommender.data.R)
 
-    u_onehot = zeros(n_user)
+    u_onehot = zeros(n_users)
     u_onehot[u] = 1.
 
-    i_onehot = zeros(n_item)
+    i_onehot = zeros(n_items)
     i_onehot[i] = 1.
 
     x = vcat(u_onehot, i_onehot,
