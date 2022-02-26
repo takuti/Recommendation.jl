@@ -46,12 +46,12 @@ FactorizationMachines(data::DataAccessor) = FactorizationMachines(data, 20)
 isdefined(recommender::FactorizationMachines) = isfilled(recommender.V)
 
 function fit!(recommender::FactorizationMachines;
-               reg_w0::Float64=1e-3,
-               reg_w::Float64=1e-3,
-               reg_V::Float64=1e-3,
-               learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100,
-               random_init::Bool=false)
+              reg_w0::Float64=1e-3,
+              reg_w::Float64=1e-3,
+              reg_V::Float64=1e-3,
+              learning_rate::Float64=1e-3,
+              eps::Float64=1e-3, max_iter::Int=100,
+              random_init::Bool=false)
     if random_init
         w0 = rand()
         w = rand(Float64, size(recommender.w))
