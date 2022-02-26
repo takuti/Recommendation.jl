@@ -48,7 +48,8 @@ isdefined(recommender::MatrixFactorization) = isfilled(recommender.P)
 function fit!(recommender::MatrixFactorization;
               reg::Float64=1e-3, learning_rate::Float64=1e-3,
               eps::Float64=1e-3, max_iter::Int=100,
-              random_init::Bool=false)
+              random_init::Bool=false,
+              shuffled::Bool=true)
     if random_init
         P = rand(Float64, size(recommender.P))
         Q = rand(Float64, size(recommender.Q))
@@ -62,8 +63,11 @@ function fit!(recommender::MatrixFactorization;
     for it in 1:max_iter
         converged = true
 
-        shuffled_indices = shuffle(nonzero_indices)
-        for idx in shuffled_indices
+        if shuffled
+            shuffle!(nonzero_indices)
+        end
+
+        for idx in nonzero_indices
             r = recommender.data.R[idx]
 
             u, i = idx[1], idx[2]
