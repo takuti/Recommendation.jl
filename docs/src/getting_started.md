@@ -64,7 +64,7 @@ Personalized recommenders sometimes require us to specify the hyperparameters:
 help?> Recommendation.MatrixFactorization
   MatrixFactorization(
       data::DataAccessor,
-      k::Integer
+      n_factor::Integer
   )
 ```
 

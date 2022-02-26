@@ -3,22 +3,22 @@ export FactorizationMachines
 """
     FactorizationMachines(
         data::DataAccessor,
-        k::Integer
+        n_factor::Integer
     )
 
-Recommendation based on second-order factorization machines (FMs). Number of factors is configured by `k`.
+Recommendation based on second-order factorization machines (FMs). Number of factors ``k`` is configured by `n_factor`.
 
 Learning FM requires a set of parameters ``\\Theta = \\{w_0, \\mathbf{w}, V\\}`` and a loss function ``\\ell(\\hat{y}(\\mathbf{x} \\mid \\Theta), y)``. Ultimately, the parameters can be optimized by stochastic gradient descent (SGD).
 """
 struct FactorizationMachines <: Recommender
     data::DataAccessor
     p::Integer
-    k::Integer
+    n_factor::Integer
     w0::Base.RefValue{Float64} # making mutable
     w::AbstractVector
     V::AbstractMatrix
 
-    function FactorizationMachines(data::DataAccessor, k::Integer)
+    function FactorizationMachines(data::DataAccessor, n_factor::Integer)
         n_user, n_item = size(data.R)
 
         uv = []
@@ -35,9 +35,9 @@ struct FactorizationMachines <: Recommender
 
         w0 = Ref(0.)
         w = vector(p)
-        V = matrix(p, k)
+        V = matrix(p, n_factor)
 
-        new(data, p, k, w0, w, V)
+        new(data, p, n_factor, w0, w, V)
     end
 end
 

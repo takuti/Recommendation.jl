@@ -3,10 +3,10 @@ export MatrixFactorization, MF
 """
     MatrixFactorization(
         data::DataAccessor,
-        k::Integer
+        n_factor::Integer
     )
 
-Recommendation based on matrix factorization (MF). Number of factors is configured by `k`.
+Recommendation based on matrix factorization (MF). Number of factors ``k`` is configured by `n_factor`.
 
 MF solves the following minimization problem for a set of observed user-item interactions ``\\mathcal{S} = \\{(u, i) \\in \\mathcal{U} \\times \\mathcal{I}\\}``:
 
@@ -18,23 +18,23 @@ where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a fac
 """
 struct MatrixFactorization <: Recommender
     data::DataAccessor
-    k::Integer
+    n_factor::Integer
     P::AbstractMatrix
     Q::AbstractMatrix
 
-    function MatrixFactorization(data::DataAccessor, k::Integer)
+    function MatrixFactorization(data::DataAccessor, n_factor::Integer)
         n_user, n_item = size(data.R)
-        P = matrix(n_user, k)
-        Q = matrix(n_item, k)
+        P = matrix(n_user, n_factor)
+        Q = matrix(n_item, n_factor)
 
-        new(data, k, P, Q)
+        new(data, n_factor, P, Q)
     end
 end
 
 """
     MF(
         data::DataAccessor,
-        k::Integer
+        n_factor::Integer
     )
 
 Alias of `MatrixFactorization`.
