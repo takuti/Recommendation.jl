@@ -49,8 +49,6 @@ function fit!(recommender::MatrixFactorization;
               reg::Float64=1e-3, learning_rate::Float64=1e-3,
               eps::Float64=1e-3, max_iter::Int=100,
               random_init::Bool=false)
-    n_user, n_item = size(recommender.data.R)
-
     if random_init
         P = rand(Float64, size(recommender.P))
         Q = rand(Float64, size(recommender.Q))
@@ -60,15 +58,15 @@ function fit!(recommender::MatrixFactorization;
         Q = ones(size(recommender.Q)) * 0.1
     end
 
-    pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
+    nonzero_indices = findall(!iszero, recommender.data.R)
     for it in 1:max_iter
         converged = true
 
-        shuffled_pairs = shuffle(pairs)
-        for (u, i) in shuffled_pairs
-            r = recommender.data.R[u, i]
-            if iszero(r); continue; end
+        shuffled_indices = shuffle(nonzero_indices)
+        for idx in shuffled_indices
+            r = recommender.data.R[idx]
 
+            u, i = idx[1], idx[2]
             uv, iv = P[u, :], Q[i, :]
 
             err = r - dot(uv, iv)

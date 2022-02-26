@@ -52,8 +52,6 @@ function fit!(recommender::FactorizationMachines;
                learning_rate::Float64=1e-3,
                eps::Float64=1e-3, max_iter::Int=100,
                random_init::Bool=false)
-    n_user, n_item = size(recommender.data.R)
-
     if random_init
         w0 = rand()
         w = rand(Float64, size(recommender.w))
@@ -65,14 +63,17 @@ function fit!(recommender::FactorizationMachines;
         V = ones(size(recommender.V)) * 0.1
     end
 
-    pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
+    n_user, n_item = size(recommender.data.R)
+    nonzero_indices = findall(!iszero, recommender.data.R)
+
     for it in 1:max_iter
         converged = true
 
-        shuffled_pairs = shuffle(pairs)
-        for (u, i) in shuffled_pairs
-            r = recommender.data.R[u, i]
-            if iszero(r); continue; end
+        shuffled_indices = shuffle(nonzero_indices)
+        for idx in shuffled_indices
+            r = recommender.data.R[idx]
+
+            u, i = idx[1], idx[2]
 
             u_onehot = zeros(n_user)
             u_onehot[u] = 1.
