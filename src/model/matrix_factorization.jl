@@ -43,12 +43,12 @@ const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)
 
-isdefined(recommender::MF) = isfilled(recommender.P)
+isdefined(recommender::MatrixFactorization) = isfilled(recommender.P)
 
-function fit!(recommender::MF;
-               reg::Float64=1e-3, learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100,
-               random_init::Bool=false)
+function fit!(recommender::MatrixFactorization;
+              reg::Float64=1e-3, learning_rate::Float64=1e-3,
+              eps::Float64=1e-3, max_iter::Int=100,
+              random_init::Bool=false)
     n_user, n_item = size(recommender.data.R)
 
     if random_init
@@ -88,7 +88,7 @@ function fit!(recommender::MF;
     recommender.Q[:] = Q[:]
 end
 
-function predict(recommender::MF, u::Integer, i::Integer)
+function predict(recommender::MatrixFactorization, u::Integer, i::Integer)
     validate(recommender)
     dot(recommender.P[u, :], recommender.Q[i, :])
 end
