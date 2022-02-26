@@ -57,8 +57,7 @@ function fit!(recommender::UserKNN)
             vi = recommender.data.R[ui, co_occurred_indices] .- mean(recommender.data.R[ui, co_occurred_indices])
             vj = recommender.data.R[uj, co_occurred_indices] .- mean(recommender.data.R[uj, co_occurred_indices])
 
-            denom = sqrt(dot(vi, vi) * dot(vj, vj))
-
+            denom = length(vi) == 0 ? 0 : sqrt(dot(vi, vi) * dot(vj, vj)) # zero similarity if there is no co-occurred index
             similarity = iszero(denom) ? 0 : (dot(vi, vj) / denom)
 
             recommender.sim[ui, uj] = similarity
