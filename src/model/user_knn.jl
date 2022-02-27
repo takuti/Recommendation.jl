@@ -3,11 +3,11 @@ export UserKNN
 """
     UserKNN(
         data::DataAccessor,
-        k::Integer,
+        n_neighbors::Integer,
         normalize::Bool=false
     )
 
-[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `k` represents number of neighbors, and `normalize` specifies if weighted sum of neighbors' rating is normalized.
+[User-based CF using the Pearson correlation](https://dl.acm.org/citation.cfm?id=312682). `n_neighbors` represents number of neighbors ``k``, and `normalize` specifies if weighted sum of neighbors' rating is normalized.
 
 The technique gives a weight to a user-user pair by the following equation:
 
@@ -28,44 +28,40 @@ It should be noted that user-based CF is highly inefficient because gradually in
 """
 struct UserKNN <: Recommender
     data::DataAccessor
-    k::Integer
+    n_neighbors::Integer
     sim::AbstractMatrix
     normalize::Bool
 
-    function UserKNN(data::DataAccessor, k::Integer, normalize::Bool)
-        n_user = size(data.R, 1)
-        new(data, k, matrix(n_user, n_user), normalize)
+    function UserKNN(data::DataAccessor, n_neighbors::Integer, normalize::Bool)
+        n_users = size(data.R, 1)
+        n_neighbors = min(n_users - 1, n_neighbors)  # max #neighbors is (#users - 1), excluding a target user him/herself
+        new(data, n_neighbors, matrix(n_users, n_users), normalize)
     end
 end
 
-UserKNN(data::DataAccessor, k::Integer) = UserKNN(data, k, false)
+UserKNN(data::DataAccessor, n_neighbors::Integer) = UserKNN(data, n_neighbors, false)
 UserKNN(data::DataAccessor) = UserKNN(data, 20, false)
 
 isdefined(recommender::UserKNN) = isfilled(recommender.sim)
 
 function fit!(recommender::UserKNN)
     # Pearson correlation
-
-    R = copy(recommender.data.R)
-
-    n_row = size(R, 1)
-
-    for ri in 1:n_row
-        for rj in ri:n_row
+    nonzero_flags = (!iszero).(recommender.data.R)
+    n_users = size(recommender.data.R, 1)
+    for ui in 1:n_users
+        for uj in ui:n_users
             # pairwise correlation
             # (zeros, which might originally be unknown values, are ignored)
-            ij = broadcast(!iszero, R[ri, :]) .& broadcast(!iszero, R[rj, :])
+            co_occurred_indices = nonzero_flags[ui, :] .& nonzero_flags[uj, :]
 
-            vi = R[ri, :] .- mean(R[ri, ij])
-            vj = R[rj, :] .- mean(R[rj, ij])
+            vi = recommender.data.R[ui, co_occurred_indices] .- mean(recommender.data.R[ui, co_occurred_indices])
+            vj = recommender.data.R[uj, co_occurred_indices] .- mean(recommender.data.R[uj, co_occurred_indices])
 
-            numer = dot(vi[ij], vj[ij])
-            denom = sqrt(dot(vi[ij], vi[ij]) * dot(vj[ij], vj[ij]))
+            denom = length(vi) == 0 ? 0 : sqrt(dot(vi, vi) * dot(vj, vj)) # zero similarity if there is no co-occurred index
+            similarity = iszero(denom) ? 0 : (dot(vi, vj) / denom)
 
-            c = (denom == 0) ? 0 : (numer / denom)
-
-            recommender.sim[ri, rj] = c
-            if (ri != rj); recommender.sim[rj, ri] = c; end # symmetric
+            recommender.sim[ui, uj] = similarity
+            if (ui != uj); recommender.sim[uj, ui] = similarity; end # symmetric
         end
     end
 end
@@ -73,33 +69,32 @@ end
 function predict(recommender::UserKNN, u::Integer, i::Integer)
     validate(recommender)
 
-    numer = denom = 0
+    user_similarity_pairs = collect(enumerate(recommender.sim[u, :]))
 
-    pairs = collect(zip(1:size(recommender.data.R)[1], recommender.sim[u, :]))
     # closest neighbor is always target user him/herself, so omit him/her
-    ordered_pairs = sort(pairs, by=tuple->last(tuple), rev=true)[2:(recommender.k + 1)]
+    neighbors = sort(user_similarity_pairs, by=tuple->last(tuple), rev=true)[2:(recommender.n_neighbors + 1)]
 
-    for (u_near, w) in ordered_pairs
+    numer = denom = 0
+    for (u_near, w) in neighbors
         v_near = recommender.data.R[u_near, :]
 
         r = v_near[i]
         if iszero(r); continue; end
 
-        r_ = 0
         if recommender.normalize
-            jj = broadcast(!iszero, v_near)
-            r_ = mean(v_near[jj])
+            jj = (!iszero).(v_near)
+            r -= mean(v_near[jj])
         end
 
-        numer += (r - r_) * w
+        numer += r * w
         denom += w
     end
+    pred = iszero(denom) ? 0 : numer / denom
 
-    pred = (denom == 0) ? 0 : numer / denom
     if recommender.normalize
-        ii = broadcast(!iszero, recommender.data.R[u, :])
-        m = mean(recommender.data.R[u, ii])
-        pred += m
+        ii = (!iszero).(recommender.data.R[u, :])
+        pred += mean(recommender.data.R[u, ii])
     end
+
     pred
 end

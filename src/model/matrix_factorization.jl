@@ -3,10 +3,10 @@ export MatrixFactorization, MF
 """
     MatrixFactorization(
         data::DataAccessor,
-        k::Integer
+        n_factors::Integer
     )
 
-Recommendation based on matrix factorization (MF). Number of factors is configured by `k`.
+Recommendation based on matrix factorization (MF). Number of factors ``k`` is configured by `n_factors`.
 
 MF solves the following minimization problem for a set of observed user-item interactions ``\\mathcal{S} = \\{(u, i) \\in \\mathcal{U} \\times \\mathcal{I}\\}``:
 
@@ -18,23 +18,23 @@ where ``\\mathbf{p}_u, \\mathbf{q}_i \\in \\mathbb{R}^k`` are respectively a fac
 """
 struct MatrixFactorization <: Recommender
     data::DataAccessor
-    k::Integer
+    n_factors::Integer
     P::AbstractMatrix
     Q::AbstractMatrix
 
-    function MatrixFactorization(data::DataAccessor, k::Integer)
-        n_user, n_item = size(data.R)
-        P = matrix(n_user, k)
-        Q = matrix(n_item, k)
+    function MatrixFactorization(data::DataAccessor, n_factors::Integer)
+        n_users, n_items = size(data.R)
+        P = matrix(n_users, n_factors)
+        Q = matrix(n_items, n_factors)
 
-        new(data, k, P, Q)
+        new(data, n_factors, P, Q)
     end
 end
 
 """
     MF(
         data::DataAccessor,
-        k::Integer
+        n_factors::Integer
     )
 
 Alias of `MatrixFactorization`.
@@ -43,14 +43,13 @@ const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)
 
-isdefined(recommender::MF) = isfilled(recommender.P)
+isdefined(recommender::MatrixFactorization) = isfilled(recommender.P)
 
-function fit!(recommender::MF;
-               reg::Float64=1e-3, learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100,
-               random_init::Bool=false)
-    n_user, n_item = size(recommender.data.R)
-
+function fit!(recommender::MatrixFactorization;
+              reg::Float64=1e-3, learning_rate::Float64=1e-3,
+              eps::Float64=1e-3, max_iter::Int=100,
+              random_init::Bool=false,
+              shuffled::Bool=true)
     if random_init
         P = rand(Float64, size(recommender.P))
         Q = rand(Float64, size(recommender.Q))
@@ -60,15 +59,18 @@ function fit!(recommender::MF;
         Q = ones(size(recommender.Q)) * 0.1
     end
 
-    pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
+    nonzero_indices = findall(!iszero, recommender.data.R)
     for it in 1:max_iter
         converged = true
 
-        shuffled_pairs = shuffle(pairs)
-        for (u, i) in shuffled_pairs
-            r = recommender.data.R[u, i]
-            if iszero(r); continue; end
+        if shuffled
+            shuffle!(nonzero_indices)
+        end
 
+        for idx in nonzero_indices
+            r = recommender.data.R[idx]
+
+            u, i = idx[1], idx[2]
             uv, iv = P[u, :], Q[i, :]
 
             err = r - dot(uv, iv)
@@ -88,7 +90,7 @@ function fit!(recommender::MF;
     recommender.Q[:] = Q[:]
 end
 
-function predict(recommender::MF, u::Integer, i::Integer)
+function predict(recommender::MatrixFactorization, u::Integer, i::Integer)
     validate(recommender)
     dot(recommender.P[u, :], recommender.Q[i, :])
 end

@@ -27,11 +27,11 @@ data = DataAccessor(sparse([1 0 0; 4 5 0]))
 or set of events:
 
 ```julia
-n_user, n_item = 5, 10
+n_users, n_items = 5, 10
 
 events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
 
-data = DataAccessor(events, n_user, n_item)
+data = DataAccessor(events, n_users, n_items)
 ```
 
 where `Event()` is a composite type which represents a user-item interaction:
@@ -64,7 +64,7 @@ Personalized recommenders sometimes require us to specify the hyperparameters:
 help?> Recommendation.MatrixFactorization
   MatrixFactorization(
       data::DataAccessor,
-      k::Integer
+      n_factors::Integer
   )
 ```
 
@@ -77,5 +77,5 @@ Once a recommendation engine has been built successfully, top-`2` recommendation
 
 ```julia
 # for user#4, pick top-2 from all items
-recommend(recommender, 4, 2, collect(1:n_item))
+recommend(recommender, 4, 2, collect(1:n_items))
 ```

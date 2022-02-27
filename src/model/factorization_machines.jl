@@ -3,23 +3,23 @@ export FactorizationMachines
 """
     FactorizationMachines(
         data::DataAccessor,
-        k::Integer
+        n_factors::Integer
     )
 
-Recommendation based on second-order factorization machines (FMs). Number of factors is configured by `k`.
+Recommendation based on second-order factorization machines (FMs). Number of factors ``k`` is configured by `n_factors`.
 
 Learning FM requires a set of parameters ``\\Theta = \\{w_0, \\mathbf{w}, V\\}`` and a loss function ``\\ell(\\hat{y}(\\mathbf{x} \\mid \\Theta), y)``. Ultimately, the parameters can be optimized by stochastic gradient descent (SGD).
 """
 struct FactorizationMachines <: Recommender
     data::DataAccessor
     p::Integer
-    k::Integer
+    n_factors::Integer
     w0::Base.RefValue{Float64} # making mutable
     w::AbstractVector
     V::AbstractMatrix
 
-    function FactorizationMachines(data::DataAccessor, k::Integer)
-        n_user, n_item = size(data.R)
+    function FactorizationMachines(data::DataAccessor, n_factors::Integer)
+        n_users, n_items = size(data.R)
 
         uv = []
         user_vectors = collect(values(data.user_attributes))
@@ -31,13 +31,13 @@ struct FactorizationMachines <: Recommender
         if !isempty(item_vectors)
             iv = item_vectors[1]
         end
-        p = n_user + n_item + size(uv, 1) + size(iv, 1)
+        p = n_users + n_items + size(uv, 1) + size(iv, 1)
 
         w0 = Ref(0.)
         w = vector(p)
-        V = matrix(p, k)
+        V = matrix(p, n_factors)
 
-        new(data, p, k, w0, w, V)
+        new(data, p, n_factors, w0, w, V)
     end
 end
 
@@ -46,14 +46,13 @@ FactorizationMachines(data::DataAccessor) = FactorizationMachines(data, 20)
 isdefined(recommender::FactorizationMachines) = isfilled(recommender.V)
 
 function fit!(recommender::FactorizationMachines;
-               reg_w0::Float64=1e-3,
-               reg_w::Float64=1e-3,
-               reg_V::Float64=1e-3,
-               learning_rate::Float64=1e-3,
-               eps::Float64=1e-3, max_iter::Int=100,
-               random_init::Bool=false)
-    n_user, n_item = size(recommender.data.R)
-
+              reg_w0::Float64=1e-3,
+              reg_w::Float64=1e-3,
+              reg_V::Float64=1e-3,
+              learning_rate::Float64=1e-3,
+              eps::Float64=1e-3, max_iter::Int=100,
+              random_init::Bool=false,
+              shuffled::Bool=true)
     if random_init
         w0 = rand()
         w = rand(Float64, size(recommender.w))
@@ -65,19 +64,25 @@ function fit!(recommender::FactorizationMachines;
         V = ones(size(recommender.V)) * 0.1
     end
 
-    pairs = vec([(u, i) for u in 1:n_user, i in 1:n_item])
+    n_users, n_items = size(recommender.data.R)
+    nonzero_indices = findall(!iszero, recommender.data.R)
+
     for it in 1:max_iter
         converged = true
 
-        shuffled_pairs = shuffle(pairs)
-        for (u, i) in shuffled_pairs
-            r = recommender.data.R[u, i]
-            if iszero(r); continue; end
+        if shuffled
+            shuffle!(nonzero_indices)
+        end
 
-            u_onehot = zeros(n_user)
+        for idx in nonzero_indices
+            r = recommender.data.R[idx]
+
+            u, i = idx[1], idx[2]
+
+            u_onehot = zeros(n_users)
             u_onehot[u] = 1.
 
-            i_onehot = zeros(n_item)
+            i_onehot = zeros(n_items)
             i_onehot[i] = 1.
 
             x = vcat(u_onehot, i_onehot,
@@ -117,12 +122,12 @@ end
 
 function predict(recommender::FactorizationMachines, u::Integer, i::Integer)
     validate(recommender)
-    n_user, n_item = size(recommender.data.R)
+    n_users, n_items = size(recommender.data.R)
 
-    u_onehot = zeros(n_user)
+    u_onehot = zeros(n_users)
     u_onehot[u] = 1.
 
-    i_onehot = zeros(n_item)
+    i_onehot = zeros(n_items)
     i_onehot[i] = 1.
 
     x = vcat(u_onehot, i_onehot,

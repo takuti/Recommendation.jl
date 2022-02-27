@@ -15,20 +15,17 @@ struct ThresholdPercentage <: Recommender
     scores::AbstractVector
 
     function ThresholdPercentage(data::DataAccessor, th::AbstractFloat)
-        n_item = size(data.R, 2)
-        new(data, th, vector(n_item))
+        n_items = size(data.R, 2)
+        new(data, th, vector(n_items))
     end
 end
 
 isdefined(recommender::ThresholdPercentage) = isfilled(recommender.scores)
 
 function fit!(recommender::ThresholdPercentage)
-    n_item = size(recommender.data.R, 2)
-
-    for i in 1:n_item
-        v = recommender.data.R[:, i]
-        recommender.scores[i] = count(r -> r >= recommender.th, v) / count(!iszero, v) * 100.0
-    end
+    users_rated_higher = sum(r->r>=recommender.th, recommender.data.R, dims=1)
+    users_rated = sum(!iszero, recommender.data.R, dims=1)
+    recommender.scores[:] = vec(users_rated_higher ./ users_rated * 100.0)
 end
 
 function ranking(recommender::ThresholdPercentage, u::Integer, i::Integer)

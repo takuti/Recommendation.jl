@@ -10,20 +10,17 @@ struct UserMean <: Recommender
     scores::AbstractVector
 
     function UserMean(data::DataAccessor)
-        n_user = size(data.R, 1)
-        new(data, vector(n_user))
+        n_users = size(data.R, 1)
+        new(data, vector(n_users))
     end
 end
 
 isdefined(recommender::UserMean) = isfilled(recommender.scores)
 
 function fit!(recommender::UserMean)
-    n_user = size(recommender.data.R, 1)
-
-    for u in 1:n_user
-        v = recommender.data.R[u, :]
-        recommender.scores[u] = mean(v)
-    end
+    # equivalent to vec(mean(recommender.data.R, dims=2)),
+    # but avoid using `mean` as `dims=2` shows poor performance
+    recommender.scores[:] = vec(sum(recommender.data.R, dims=2)) / size(recommender.data.R, 2)
 end
 
 function predict(recommender::UserMean, u::Integer, i::Integer)

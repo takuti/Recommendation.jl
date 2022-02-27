@@ -15,25 +15,24 @@ struct CoOccurrence <: Recommender
     scores::AbstractVector
 
     function CoOccurrence(data::DataAccessor, i_ref::Integer)
-        n_item = size(data.R, 2)
-        new(data, i_ref, vector(n_item))
+        n_items = size(data.R, 2)
+        new(data, i_ref, vector(n_items))
     end
 end
 
 isdefined(recommender::CoOccurrence) = isfilled(recommender.scores)
 
 function fit!(recommender::CoOccurrence)
-    n_item = size(recommender.data.R, 2)
+    # bit vector representing whether the reference item `i_ref` is rated by a user or not
+    v_ref = (!iszero).(recommender.data.R[:, recommender.i_ref])
 
-    v_ref = recommender.data.R[:, recommender.i_ref]
-    c = count(!iszero, v_ref)
+    # total num of ratings for the reference item
+    c = sum(v_ref)
 
-    for i in 1:n_item
-        v = recommender.data.R[:, i]
-        # count elements that are known and non-zero both in v & v_ref
-        cc = count(!iszero, v .* v_ref)
-        recommender.scores[i] = cc / c * 100.0
-    end
+    # for each item `i`, count num of users who rated both `i` and `i_ref`
+    CC = vec(v_ref' * (!iszero).(recommender.data.R))
+
+    recommender.scores[:] = CC / c * 100.0
 end
 
 function ranking(recommender::CoOccurrence, u::Integer, i::Integer)

@@ -73,7 +73,7 @@ Each row of X and y corresponds to a pair of sample that is already transformed 
 user/item ID in the data, users may need to manually translate the resulting matrix/vector to `DataAccessor` as:
 
 ```julia
-n_user, n_item = ...
+n_users, n_items = ...
 
 X, y = load_libsvm_file("/path/to/data.libsvm")
 
@@ -82,7 +82,7 @@ for i in 1:length(y)
     user, item = ... # find user/item ID per row based on your definition
     push!(events, Event(user, item, y[i]))
 
-data = DataAccessor(events, n_user, n_item)
+data = DataAccessor(events, n_users, n_items)
 
 # declare which columns in X represent user and item features, respectively
 user_feature_indices = [...]
@@ -156,9 +156,9 @@ Read user-item-rating triples in the folder, and convert them into a `DataAccess
 Download and decompress a corresponding zip file, if `path` is not given or the specified folder does not exist.
 """
 function load_movielens_100k(path::Union{String, Nothing}=nothing)
-    n_user = 943
-    n_item = 1682
-    R = matrix(n_user, n_item)
+    n_users = 943
+    n_items = 1682
+    R = matrix(n_users, n_items)
 
     if path == nothing || !isdir(path)
         zip_path = path
@@ -226,7 +226,7 @@ function load_movielens_latest(path::Union{String, Nothing}=nothing)
     end
 
     events = Array{Event, 1}()
-    n_user, n_item = 0, 0
+    n_users, n_items = 0, 0
     user_ids, item_ids = Dict{Integer, Integer}(), Dict{Integer, Integer}()
     open(joinpath(path, "ratings.csv"), "r") do io
         for (index, line) in enumerate(eachline(io))
@@ -238,21 +238,21 @@ function load_movielens_latest(path::Union{String, Nothing}=nothing)
             if haskey(user_ids, user)
                 u = user_ids[user]
             else
-                n_user += 1
-                u = n_user
-                user_ids[user] = n_user
+                n_users += 1
+                u = n_users
+                user_ids[user] = n_users
             end
             if haskey(item_ids, item)
                 i = item_ids[item]
             else
-                n_item += 1
-                i = n_item
-                item_ids[item] = n_item
+                n_items += 1
+                i = n_items
+                item_ids[item] = n_items
             end
             push!(events, Event(u, i, rating))
         end
     end
-    data = DataAccessor(events, n_user, n_item)
+    data = DataAccessor(events, n_users, n_items)
 
     all_genres = [
         "Action",
@@ -336,7 +336,7 @@ function load_amazon_review(path::Union{String, Nothing}=nothing; category::Stri
         path = download_file("http://deepyeti.ucsd.edu/jianmo/amazon/categoryFilesSmall/$category.csv", path)
     end
     events = Array{Event, 1}()
-    n_user, n_item = 0, 0
+    n_users, n_items = 0, 0
     user_ids, item_ids = Dict{String, Integer}(), Dict{String, Integer}()
     open(path, "r") do io
         for line in eachline(io)
@@ -345,21 +345,21 @@ function load_amazon_review(path::Union{String, Nothing}=nothing; category::Stri
             if haskey(user_ids, user)
                 u = user_ids[user]
             else
-                n_user += 1
-                u = n_user
-                user_ids[user] = n_user
+                n_users += 1
+                u = n_users
+                user_ids[user] = n_users
             end
             if haskey(item_ids, item)
                 i = item_ids[item]
             else
-                n_item += 1
-                i = n_item
-                item_ids[item] = n_item
+                n_items += 1
+                i = n_items
+                item_ids[item] = n_items
             end
             push!(events, Event(u, i, rating))
         end
     end
-    DataAccessor(events, n_user, n_item)
+    DataAccessor(events, n_users, n_items)
 end
 
 """
@@ -379,7 +379,7 @@ function load_lastfm(path::Union{String, Nothing}=nothing)
     end
 
     events = Array{Event, 1}()
-    n_user, n_item = 0, 0
+    n_users, n_items = 0, 0
     user_ids, item_ids = Dict{Integer, Integer}(), Dict{Integer, Integer}()
     open(joinpath(path, "user_artists.dat"), "r") do io
         for (index, line) in enumerate(eachline(io))
@@ -391,19 +391,19 @@ function load_lastfm(path::Union{String, Nothing}=nothing)
             if haskey(user_ids, user)
                 u = user_ids[user]
             else
-                n_user += 1
-                u = n_user
-                user_ids[user] = n_user
+                n_users += 1
+                u = n_users
+                user_ids[user] = n_users
             end
             if haskey(item_ids, item)
                 i = item_ids[item]
             else
-                n_item += 1
-                i = n_item
-                item_ids[item] = n_item
+                n_items += 1
+                i = n_items
+                item_ids[item] = n_items
             end
             push!(events, Event(u, i, cnt))
         end
     end
-    DataAccessor(events, n_user, n_item)
+    DataAccessor(events, n_users, n_items)
 end

@@ -2,10 +2,10 @@ function test_data_accessor()
     println("-- Testing data accessor")
 
     events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
-    n_user = 5
-    n_item = 10
+    n_users = 5
+    n_items = 10
 
-    data = DataAccessor(events, n_user, n_item)
+    data = DataAccessor(events, n_users, n_items)
     set_user_attribute(data, 1, [1, 2, 3, 4, 5])
     set_item_attribute(data, 5, [2, 4, 8, 16, 32])
 

@@ -13,9 +13,9 @@ function test_most_popular()
     @test ranking(recommender, 1, 1) == 2.0
     @test ranking(recommender, 1, 3) == 1.0
 
-    n_user, n_item = 5, 10
+    n_users, n_items = 5, 10
     events = [Event(1, 2, 1), Event(3, 2, 1), Event(2, 6, 4)]
-    data = DataAccessor(events, n_user, n_item)
+    data = DataAccessor(events, n_users, n_items)
     recommender = MostPopular(data)
     fit!(recommender)
     @test ranking(recommender, 1, 1) == 0.0

@@ -7,17 +7,17 @@ struct DataAccessor
     user_attributes::Dict{Int,Any} # user => attributes e.g. vector
     item_attributes::Dict{Int,Any} # item => attributes
 
-    function DataAccessor(events::Array{Event,1}, n_user::Integer, n_item::Integer)
-        R = create_matrix(events, n_user, n_item)
+    function DataAccessor(events::Array{Event,1}, n_users::Integer, n_items::Integer)
+        R = create_matrix(events, n_users, n_items)
         new(events, R, Dict(), Dict())
     end
 
     function DataAccessor(R::AbstractMatrix)
-        n_user, n_item = size(R)
+        n_users, n_items = size(R)
         events = Array{Event,1}()
 
-        for user in 1:n_user
-            for item in 1:n_item
+        for user in 1:n_users
+            for item in 1:n_items
                 r = R[user, item]
                 if isa(r, Unknown)
                     R[user, item] = 0.0
@@ -38,8 +38,8 @@ struct DataAccessor
     end
 end
 
-function create_matrix(events::Array{Event,1}, n_user::Integer, n_item::Integer)
-    R = zeros(n_user, n_item)
+function create_matrix(events::Array{Event,1}, n_users::Integer, n_items::Integer)
+    R = zeros(n_users, n_items)
     for event in events
         # accumulate for implicit feedback events
         R[event.user, event.item] += event.value
