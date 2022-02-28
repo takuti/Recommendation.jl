@@ -35,7 +35,7 @@ function fit!(recommender::CoOccurrence)
     recommender.scores[:] = CC / c * 100.0
 end
 
-function ranking(recommender::CoOccurrence, u::Integer, i::Integer)
+function predict(recommender::CoOccurrence, u::Integer, i::Integer)
     validate(recommender)
     recommender.scores[i]
 end

@@ -1,5 +1,5 @@
 export Recommender
-export isdefined, validate, fit!, recommend, predict, ranking
+export isdefined, validate, fit!, recommend, predict
 
 abstract type Recommender end
 
@@ -31,7 +31,7 @@ end
 function recommend(recommender::Recommender, u::Integer, k::Integer, candidates::Array{T}) where {T<:Integer}
     d = Dict{T,AbstractFloat}()
     for candidate in candidates
-        score = ranking(recommender, u, candidate)
+        score = predict(recommender, u, candidate)
         if isnan(score); continue; end
         d[candidate] = score
     end
@@ -41,10 +41,4 @@ end
 
 function predict(recommender::Recommender, u::Integer, i::Integer)
     error("predict is not implemented for recommender type $(typeof(recommender))")
-end
-
-# Return a ranking score of item i for user u
-function ranking(recommender::Recommender, u::Integer, i::Integer)
-    validate(recommender)
-    predict(recommender, u, i)
 end

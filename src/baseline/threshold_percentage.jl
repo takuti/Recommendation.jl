@@ -28,7 +28,7 @@ function fit!(recommender::ThresholdPercentage)
     recommender.scores[:] = vec(users_rated_higher ./ users_rated * 100.0)
 end
 
-function ranking(recommender::ThresholdPercentage, u::Integer, i::Integer)
+function predict(recommender::ThresholdPercentage, u::Integer, i::Integer)
     validate(recommender)
     recommender.scores[i]
 end
