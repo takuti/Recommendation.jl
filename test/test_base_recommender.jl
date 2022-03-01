@@ -8,7 +8,7 @@ function test_not_implemented_error()
     recommender = Foo(data)
     @test_throws ErrorException fit!(recommender)
     @test_throws ErrorException predict(recommender, 1, 1)
-    @test_throws ErrorException ranking(recommender, 1, 1)
+    @test_throws ErrorException predict(recommender, 1, 1)
 end
 
 function test_not_build_error()

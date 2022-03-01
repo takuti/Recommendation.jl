@@ -22,7 +22,7 @@ function fit!(recommender::MostPopular)
     recommender.scores[:] = vec(sum(!iszero, recommender.data.R, dims=1))
 end
 
-function ranking(recommender::MostPopular, u::Integer, i::Integer)
+function predict(recommender::MostPopular, u::Integer, i::Integer)
     validate(recommender)
     recommender.scores[i]
 end

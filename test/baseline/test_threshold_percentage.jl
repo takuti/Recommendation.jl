@@ -1,8 +1,8 @@
 function test_threshold_percentage(data)
     recommender = ThresholdPercentage(data, 2.0)
     fit!(recommender)
-    @test ranking(recommender, 1, 1) == 50.0
-    @test ranking(recommender, 1, 2) == 100.0
+    @test predict(recommender, 1, 1) == 50.0
+    @test predict(recommender, 1, 2) == 100.0
 end
 
 println("-- Testing ThresholdPercentage recommender")
