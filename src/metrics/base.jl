@@ -1,5 +1,5 @@
 export Metric, AccuracyMetric, RankingMetric
-export measure, count_true_positive
+export measure, count_true_positive, coverage
 
 abstract type Metric end
 
@@ -17,4 +17,8 @@ end
 
 function count_true_positive(truth::Array{T}, pred::Array{T}) where T
     sum(in(truth), pred)
+end
+
+function coverage(items::Union{AbstractSet, AbstractVector}, catalog::Union{AbstractSet, AbstractVector})
+    length(intersect(items, catalog)) / length(catalog)
 end

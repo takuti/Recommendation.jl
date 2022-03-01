@@ -39,6 +39,7 @@ end
 end
 
 @testset "evaluation" begin
+    include("metrics/test_base.jl")
     include("metrics/test_accuracy.jl")
     include("metrics/test_ranking.jl")
 
