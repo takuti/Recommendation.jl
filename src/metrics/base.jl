@@ -11,11 +11,11 @@ end
 
 abstract type RankingMetric <: Metric end
 
-function measure(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Integer) where T
+function measure(metric::RankingMetric, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 
-function count_true_positive(truth::Array{T}, pred::Array{T}) where T
+function count_true_positive(truth::AbstractVector{T}, pred::AbstractVector{T}) where T
     sum(in(truth), pred)
 end
 

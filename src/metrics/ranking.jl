@@ -11,13 +11,13 @@ Here, ``|\\mathcal{I}^+_u \\cap I_N(u)|`` is the number of *true positives*.
 
     measure(
         metric::Recall,
-        truth::Array{T},
-        pred::Array{T},
+        truth::AbstractVector{T},
+        pred::AbstractVector{T},
         k::Integer
     )
 """
 struct Recall <: RankingMetric end
-function measure(metric::Recall, truth::Array{T}, pred::Array{T}, k::Integer) where T
+function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
     count_true_positive(truth, pred[1:k]) / length(truth)
 end
 
@@ -31,13 +31,13 @@ Precision-at-``N`` (Precision@``N``) evaluates correctness of a top-``N`` recomm
 
     measure(
         metric::Precision,
-        truth::Array{T},
-        pred::Array{T},
+        truth::AbstractVector{T},
+        pred::AbstractVector{T},
         k::Integer
     )
 """
 struct Precision <: RankingMetric end
-function measure(metric::Precision, truth::Array{T}, pred::Array{T}, k::Integer) where T
+function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
     count_true_positive(truth, pred[1:k]) / k
 end
 
@@ -53,12 +53,12 @@ It should be noticed that, MAP is not a simple mean of sum of Precision@``1``, P
 
     measure(
         metric::MAP,
-        truth::Array{T},
-        pred::Array{T}
+        truth::AbstractVector{T},
+        pred::AbstractVector{T}
     )
 """
 struct MAP <: RankingMetric end
-function measure(metric::MAP, truth::Array{T}, pred::Array{T}, k::Integer=0) where T
+function measure(metric::MAP, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
     tp = accum = 0
     n_pred = length(pred)
 
@@ -83,12 +83,12 @@ AUC calculation keeps track the number of true positives at different rank in ``
 
     measure(
         metric::AUC,
-        truth::Array{T},
-        pred::Array{T}
+        truth::AbstractVector{T},
+        pred::AbstractVector{T}
     )
 """
 struct AUC <: RankingMetric end
-function measure(metric::AUC, truth::Array{T}, pred::Array{T}, k::Integer=0) where T
+function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
     tp = correct = 0
     for r in pred
         if findfirst(isequal(r), truth) != nothing
@@ -115,12 +115,12 @@ RR can be zero if and only if ``\\mathcal{I}^+_u`` is empty.
 
     measure(
         metric::ReciprocalRank,
-        truth::Array{T},
-        pred::Array{T}
+        truth::AbstractVector{T},
+        pred::AbstractVector{T}
     )
 """
 struct ReciprocalRank <: RankingMetric end
-function measure(metric::ReciprocalRank, truth::Array{T}, pred::Array{T}, k::Integer=0) where T
+function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
     n_pred = length(pred)
     for n = 1:n_pred
         if findfirst(isequal(pred[n]), truth) != nothing
@@ -143,12 +143,12 @@ MPR internally considers not only top-``N`` recommended items also all of the no
 
     measure(
         metric::MPR,
-        truth::Array{T},
-        pred::Array{T}
+        truth::AbstractVector{T},
+        pred::AbstractVector{T}
     )
 """
 struct MPR <: RankingMetric end
-function measure(metric::MPR, truth::Array{T}, pred::Array{T}, k::Integer=0) where T
+function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
     accum = 0
     n_pred = length(pred)
     for t in truth
@@ -165,13 +165,13 @@ Like MPR, normalized discounted cumulative gain (NDCG) computes a score for ``I(
 
     measure(
         metric::NDCG,
-        truth::Array{T},
-        pred::Array{T},
+        truth::AbstractVector{T},
+        pred::AbstractVector{T},
         k::Integer
     )
 """
 struct NDCG <: RankingMetric end
-function measure(metric::NDCG, truth::Array{T}, pred::Array{T}, k::Integer) where T
+function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
     dcg = idcg = 0
     for n = 1:k
         d = 1 / log2(n + 1)

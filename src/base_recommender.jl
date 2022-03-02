@@ -28,7 +28,7 @@ function fit!(recommender::Recommender; kwargs...)
     error("fit! is not implemented for recommender type $(typeof(recommender))")
 end
 
-function recommend(recommender::Recommender, u::Integer, k::Integer, candidates::Array{T}) where {T<:Integer}
+function recommend(recommender::Recommender, u::Integer, k::Integer, candidates::AbstractVector{T}) where {T<:Integer}
     d = Dict{T,AbstractFloat}()
     for candidate in candidates
         score = predict(recommender, u, candidate)
