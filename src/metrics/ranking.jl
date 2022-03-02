@@ -18,7 +18,7 @@ Here, ``|\\mathcal{I}^+_u \\cap I_N(u)|`` is the number of *true positives*.
 """
 struct Recall <: RankingMetric end
 function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
-    count_true_positive(truth, pred[1:k]) / length(truth)
+    count_intersect(truth, pred[1:k]) / length(truth)
 end
 
 """
@@ -38,7 +38,7 @@ Precision-at-``N`` (Precision@``N``) evaluates correctness of a top-``N`` recomm
 """
 struct Precision <: RankingMetric end
 function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
-    count_true_positive(truth, pred[1:k]) / k
+    count_intersect(truth, pred[1:k]) / k
 end
 
 """
