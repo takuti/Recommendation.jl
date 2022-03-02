@@ -16,7 +16,11 @@ function measure(metric::RankingMetric, truth::AbstractVector{T}, pred::Abstract
 end
 
 function count_true_positive(truth::AbstractVector{T}, pred::AbstractVector{T}) where T
-    sum(in(truth), pred)
+    if length(truth) == 0 || length(pred) == 0
+        0
+    else
+        sum(in(truth), pred)
+    end
 end
 
 function coverage(items::Union{AbstractSet, AbstractVector}, catalog::Union{AbstractSet, AbstractVector})
