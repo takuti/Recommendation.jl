@@ -1,5 +1,5 @@
 export Metric, AccuracyMetric, RankingMetric
-export measure, count_intersect, coverage
+export measure, count_intersect, coverage, aggregated_diversity, novelty
 
 abstract type Metric end
 
@@ -21,4 +21,14 @@ end
 
 function coverage(items::Union{AbstractSet, AbstractVector}, catalog::Union{AbstractSet, AbstractVector})
     count_intersect(items, catalog) / length(catalog)
+end
+
+function aggregated_diversity(recommendations::AbstractVector{<:AbstractVector{<:Integer}})
+    # number of distinct items recommended across all users
+    length(Set(reduce(vcat, recommendations)))
+end
+
+function novelty(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, observed::AbstractVector{<:AbstractVector{<:Integer}})
+    # avg number of recommended items that have not been observed yet
+    mean(map(t -> length(setdiff(t[1], t[2])), zip(recommendations, observed)))
 end
