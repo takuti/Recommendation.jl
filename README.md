@@ -37,7 +37,7 @@ julia> Pkg.test("Recommendation")
 Note that unit tests for dataset loaders (e.g., `load_movielens_latest()`) are conditionally triggered as follows, so that CI does not make excessive download requests to the external sites:
 
 ```julia
-julia> Pkg.test("Recommendation", test_args=["download"])
+julia> Pkg.test("Recommendation", test_args=["data", "download"])
 ```
 
 Build documentation contents:

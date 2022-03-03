@@ -1,5 +1,5 @@
 export Metric, AccuracyMetric, RankingMetric
-export measure, count_true_positive
+export measure, count_intersect, coverage
 
 abstract type Metric end
 
@@ -11,10 +11,14 @@ end
 
 abstract type RankingMetric <: Metric end
 
-function measure(metric::RankingMetric, truth::Array{T}, pred::Array{T}, k::Integer) where T
+function measure(metric::RankingMetric, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 
-function count_true_positive(truth::Array{T}, pred::Array{T}) where T
-    sum(in(truth), pred)
+function count_intersect(s1::Union{AbstractSet, AbstractVector}, s2::Union{AbstractSet, AbstractVector})
+    length(intersect(s1, s2))
+end
+
+function coverage(items::Union{AbstractSet, AbstractVector}, catalog::Union{AbstractSet, AbstractVector})
+    count_intersect(items, catalog) / length(catalog)
 end
