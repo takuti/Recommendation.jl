@@ -1,5 +1,5 @@
 export Metric, AccuracyMetric, RankingMetric
-export measure, count_intersect, coverage, find_all_items, aggregated_diversity, novelty
+export measure, count_intersect, coverage, find_all_items, aggregated_diversity, novelty, count_users_contain, entropy, gini
 
 abstract type Metric end
 
@@ -35,4 +35,31 @@ end
 function novelty(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, observed::AbstractVector{<:AbstractVector{<:Integer}})
     # avg number of recommended items that have not been observed yet
     mean(map(t -> length(setdiff(t[1], t[2])), zip(recommendations, observed)))
+end
+
+function count_users_contain(item::Integer, recommendations::AbstractVector{<:AbstractVector{<:Integer}})
+    sum(map(recs -> (item in recs), recommendations))
+end
+
+function entropy(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, n::Integer)
+    n_users = size(recommendations, 1)
+    items = find_all_items(recommendations)
+    entropy = 0
+    for item in items
+        recs_i = count_users_contain(item, recommendations)
+        entropy += (recs_i / (n * n_users)) * log(recs_i / (n * n_users))
+    end
+    -entropy
+end
+
+function gini(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, n::Integer)
+    n_users = size(recommendations, 1)
+    items = find_all_items(recommendations)
+    n_items = length(items)
+    gini = 0
+    for (index, item) in enumerate(items)
+        recs_i = count_users_contain(item, recommendations)
+        gini += (n_items + 1 - index) / (n_items + 1) * (recs_i / (n * n_users))
+    end
+    2 * gini
 end
