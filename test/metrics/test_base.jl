@@ -14,7 +14,8 @@ recommendations = [[1, 2, 3], [2, 4, 6, 8], [1, 5, 10]]
 
 @test count_users_contain(2, recommendations) == 2
 @test entropy([[1]], 1) == 0.0  # - (1 / 1) * log(1 / 1)
-@test gini([[1]], 1) == 1.0  # 2 * ((1 + 1 - 1) / (1 + 1)) * 1 = 2 * 1 / 2 = 1
+@test gini([[1]], 1) == 0.0
+@test gini([[1, 2], [1, 3]], 2) == 0.25  # [(2*1-3-1) * 1/4 + (2*2-3-1) * 1/4 + (2*3-3-1) * 2/4] / [3-1] = 0.25
 
 @test coverage([1, 2, 3], [1, 2, 3, 4]) == 0.75
 @test coverage(Set(["a", "b", "c", "d"]), Set(["c", "d", "e", "f"])) == 0.5

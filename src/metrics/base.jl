@@ -46,20 +46,22 @@ function entropy(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, n
     items = find_all_items(recommendations)
     entropy = 0
     for item in items
-        recs_i = count_users_contain(item, recommendations)
-        entropy += (recs_i / (n * n_users)) * log(recs_i / (n * n_users))
+        p_i = count_users_contain(item, recommendations) / (n * n_users)
+        entropy += p_i * log(p_i)
     end
     -entropy
 end
 
 function gini(recommendations::AbstractVector{<:AbstractVector{<:Integer}}, n::Integer)
     n_users = size(recommendations, 1)
-    items = find_all_items(recommendations)
-    n_items = length(items)
-    gini = 0
-    for (index, item) in enumerate(items)
-        recs_i = count_users_contain(item, recommendations)
-        gini += (n_items + 1 - index) / (n_items + 1) * (recs_i / (n * n_users))
+    probs = sort(map(item -> count_users_contain(item, recommendations) / (n * n_users), collect(find_all_items(recommendations))))
+    if first(probs) == last(probs) #  all items are chosen equally often
+        return 0.0
     end
-    2 * gini
+    n_items = length(probs)
+    gini = 0
+    for (index, p_i) in enumerate(probs)
+        gini += (2 * index - n_items - 1) * p_i
+    end
+    gini / (n_items - 1)
 end
