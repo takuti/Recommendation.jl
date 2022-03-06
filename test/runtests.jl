@@ -50,9 +50,10 @@ end
 end
 
 @testset_default_or_if "evaluation" begin
-    include("metrics/test_base.jl")
     include("metrics/test_accuracy.jl")
     include("metrics/test_ranking.jl")
+    include("metrics/test_intra_list.jl")
+    include("metrics/test_aggregated.jl")
 
     include("evaluation/test_evaluate.jl")
     include("evaluation/test_cross_validation.jl")
