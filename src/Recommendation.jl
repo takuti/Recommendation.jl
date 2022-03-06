@@ -34,6 +34,8 @@ include("model/factorization_machines.jl")
 include("metrics/base.jl")
 include("metrics/accuracy.jl")
 include("metrics/ranking.jl")
+include("metrics/intra_list.jl")
+include("metrics/aggregated.jl")
 
 include("evaluation/evaluate.jl")
 include("evaluation/cross_validation.jl")
