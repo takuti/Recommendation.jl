@@ -8,4 +8,7 @@ println("-- Testing intra-list evaluation metrics")
 @test measure(Coverage(), [1, 2, 3], catalog=[1, 2, 3, 4]) == 0.75
 @test measure(Coverage(), Set(["a", "b", "c", "d"]), catalog=Set(["c", "d", "e", "f"])) == 0.5
 
+# (1, 2) + (1, 3) + (2, 3) = 1.5
+@test measure(IntraListSimilarity(), [1, 2, 3], sims=[1.0 0.5 0.5; 0.5 1.0 0.5; 0.5 0.5 1.0]) == 1.5
+
 @test measure(Novelty(), [1, 2, 3], observed=[2]) == 2  # novel items: {1, 3}
