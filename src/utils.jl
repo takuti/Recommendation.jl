@@ -1,4 +1,4 @@
-export matrix, vector, isfilled, onehot, binarize_multi_label
+export matrix, vector, isfilled, get_ranked_triples, onehot, binarize_multi_label
 
 function matrix(m::Integer, n::Integer)
     Array{Union{Missing, AbstractFloat}}(missing, m, n)
@@ -10,6 +10,13 @@ end
 
 function isfilled(a::AbstractArray)
     findfirst(v -> isa(v, Unknown), a) == nothing
+end
+
+function get_ranked_triples(R::AbstractMatrix)
+    vcat(map(t -> vcat(collect(Iterators.product(t...))...),
+             filter(t -> length(t[2]) > 0 && length(t[3]) > 0,
+                    map(t -> ([t[1]], findall(!iszero, t[2]), findall(iszero, t[2])),
+                        enumerate(eachrow(R)))))...)
 end
 
 """

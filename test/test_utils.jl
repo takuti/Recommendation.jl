@@ -47,7 +47,18 @@ function test_binarize_multi_label()
     @test_throws ErrorException binarize_multi_label([1, 2, 3, 4], [1, 1, 2, 3, 4])
 end
 
+function test_get_ranked_triples()
+    println("-- Testing ranked triples generator")
+    R = [1 0 3 0
+         0 2 3 4]
+    @test sorted(get_ranked_triples(R)) == sorted([
+        (1, 1, 2), (1, 1, 4), (1, 3, 2), (1, 3, 4),
+        (2, 2, 1), (2, 3, 1), (2, 4, 1)
+    ])
+end
+
 test_onehot_value()
 test_onehot_vector()
 test_onehot_matrix()
 test_binarize_multi_label()
+test_get_ranked_triples()
