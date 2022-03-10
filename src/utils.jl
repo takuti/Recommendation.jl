@@ -1,4 +1,4 @@
-export matrix, vector, isfilled, get_ranked_triples, onehot, binarize_multi_label
+export matrix, vector, isfilled, get_pairwise_preference_triples, onehot, binarize_multi_label
 
 function matrix(m::Integer, n::Integer)
     Array{Union{Missing, AbstractFloat}}(missing, m, n)
@@ -12,7 +12,14 @@ function isfilled(a::AbstractArray)
     findfirst(v -> isa(v, Unknown), a) == nothing
 end
 
-function get_ranked_triples(R::AbstractMatrix)
+"""
+    get_pairwise_preference_triples(R::AbstractMatrix) -> Vector{Tuple{Int, Int, Int}}
+
+Return user-item-item triples corresponding to a user-item matrix `R`
+(i.e., ``(u, i, j) \\in D_s`` in [BPR: Bayesian Personalized Ranking from Implicit Feedback](https://dl.acm.org/doi/10.5555/1795114.1795167)).
+In the pairwise item ranking context, each triple represents that user ``u`` prefers item ``i`` over ``j``.
+"""
+function get_pairwise_preference_triples(R::AbstractMatrix)
     vcat(map(t -> vcat(collect(Iterators.product(t...))...),
              filter(t -> length(t[2]) > 0 && length(t[3]) > 0,
                     map(t -> ([t[1]], findall(!iszero, t[2]), findall(iszero, t[2])),
