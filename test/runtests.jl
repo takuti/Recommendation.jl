@@ -45,6 +45,7 @@ end
         include("model/test_item_knn.jl")
         include("model/test_svd.jl")
         include("model/test_matrix_factorization.jl")
+        include("model/test_bpr_matrix_factorization.jl")
         include("model/test_factorization_machines.jl")
     end
 end

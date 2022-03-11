@@ -86,6 +86,11 @@ MF
 
 MF is attractive in terms of not only efficiency but extensibility. In the above formulation, prediction for each user-item pair can be written by a simple vector product as $r_{u,i} = \mathbf{p}_u^{\mathrm{T}} \mathbf{q}_i$, and extension of the formula is also possible. That is, we can incorporate different features (e.g., biases and temporal factors) into the model as linear combinations. For example, let $\mu$ be a global mean of all elements in $R$, and $b_u, b_i$ be respectively a user and item bias term. Here, we assume that each observation can be represented as $r_{u,i} = \mu + b_u + b_i + \mathbf{p}_u^{\mathrm{T}} \mathbf{q}_i$. This formulation is known as [biased MF](https://ieeexplore.ieee.org/document/5197422), and it is possible to capture more information than the original MF even on the same set of events $\mathcal{S}$.
 
-Additionally, options for loss functions are also abundant. To give an example, [Chen et al.](https://arxiv.org/abs/1109.2271) showed various types of features and loss functions which can be incorporated into a MF scheme. An appropriate choice of their combinations is likely to lead surprisingly better accuracy compared to the classical MF.
+Additionally, options for loss functions are also abundant. To give an example, [Chen et al.](https://arxiv.org/abs/1109.2271) showed various types of features and loss functions which can be incorporated into a MF scheme. An appropriate choice of their combinations is likely to lead surprisingly better accuracy compared to the classical MF, and `Recommendation.jl` currently supports [Bayesian personalized ranking (BPR) loss](https://dl.acm.org/doi/10.5555/1795114.1795167) as an alternative option.
+
+```@docs
+BPRMatrixFactorization
+BPRMF
+```
 
 It should be noted that the technique has many limitations behind great success of MF-based recommendation. Since extension of MF only allows us to append new features as linear combinations, representing more complex relationships between features is not straightforward. As a consequence, modern recommenders tend to use more complex models which are higher dimensional and hard to optimize such as [tensor factorization](https://dl.acm.org/citation.cfm?id=1864727).

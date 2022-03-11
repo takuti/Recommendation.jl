@@ -29,6 +29,7 @@ include("model/user_knn.jl")
 include("model/item_knn.jl")
 include("model/svd.jl")
 include("model/matrix_factorization.jl")
+include("model/bpr_matrix_factorization.jl")
 include("model/factorization_machines.jl")
 
 include("metrics/base.jl")
