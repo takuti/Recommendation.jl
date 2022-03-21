@@ -14,6 +14,10 @@ Conduct `n_folds` cross validation for a combination of recommender `recommender
 """
 function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
+    if n_folds < 2
+        error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
+    end
+
     n_users, n_items = size(data.R)
 
     events = shuffle(data.events)
@@ -55,6 +59,10 @@ end
 Conduct `n_folds` cross validation for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args`.
 """
 function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+
+    if n_folds < 2
+        error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
+    end
 
     n_users, n_items = size(data.R)
 

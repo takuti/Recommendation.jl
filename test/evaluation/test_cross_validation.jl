@@ -5,6 +5,9 @@ function test_cross_validation_accuracy(v)
          v 2 3 3 v 5 v 1]
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
+    # 1-fold cross validation is invalid
+    @test_throws ErrorException cross_validation(1, MAE, MF, data, 2)
+
     fold = 5
 
     # MF(data, 2)
@@ -26,9 +29,14 @@ function test_cross_validation_ranking(v)
          v 2 3 3 v 5 v 1]
     data = DataAccessor(isa(v, Unknown) ? m : sparse(m))
 
-    # 5-fold, top-4 recommendation
-    fold = 5
+    # top-4 recommendation
     k = 4
+
+    # 1-fold cross validation is invalid
+    @test_throws ErrorException cross_validation(1, Recall, k, MF, data, 2)
+
+    # 5-fold cross validation
+    fold = 5
 
     # MF(data, 2)
     @test cross_validation(fold, Recall, k, MF, data, 2) <= 0.5
