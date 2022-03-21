@@ -26,7 +26,9 @@ function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::In
     step = convert(Integer, round(n_events / n_folds))
     accum = 0.0
 
-    for head in 1:step:n_events
+    @info "$n_folds-fold cross validation against $n_events samples"
+
+    for (index, head) in enumerate(1:step:n_events)
         tail = min(head + step - 1, n_events)
 
         truth_events = events[head:tail]
@@ -40,6 +42,7 @@ function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::In
         fit!(recommender)
 
         accuracy = evaluate(recommender, truth_data, metric(), k)
+        @info "fold#$index: tested with samples in [$head, $tail]. $metric = $accuracy"
         if isnan(accuracy); continue; end
         accum += accuracy
     end
@@ -72,7 +75,9 @@ function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, reco
     step = convert(Integer, round(n_events / n_folds))
     accum = 0.0
 
-    for head in 1:step:n_events
+    @info "$n_folds-fold cross validation against $n_events samples"
+
+    for (index, head) in enumerate(1:step:n_events)
         tail = min(head + step - 1, n_events)
 
         truth_events = events[head:tail]
@@ -86,6 +91,7 @@ function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, reco
         fit!(recommender)
 
         accuracy = evaluate(recommender, truth_data, metric())
+        @info "fold#$index: tested with samples in [$head, $tail]. $metric = $accuracy"
         if isnan(accuracy); continue; end
         accum += accuracy
     end
