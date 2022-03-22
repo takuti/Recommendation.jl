@@ -4,38 +4,38 @@ export CoOccurrence
 
     CoOccurrence(
         data::DataAccessor,
-        i_ref::Integer
+        item_ref::Integer
     )
 
-Recommend items which are most frequently co-occurred with a reference item `i_ref`.
+Recommend items which are most frequently co-occurred with a reference item `item_ref`.
 """
 struct CoOccurrence <: Recommender
     data::DataAccessor
-    i_ref::Integer
+    item_ref::Integer
     scores::AbstractVector
 
-    function CoOccurrence(data::DataAccessor, i_ref::Integer)
+    function CoOccurrence(data::DataAccessor, item_ref::Integer)
         n_items = size(data.R, 2)
-        new(data, i_ref, vector(n_items))
+        new(data, item_ref, vector(n_items))
     end
 end
 
 isdefined(recommender::CoOccurrence) = isfilled(recommender.scores)
 
 function fit!(recommender::CoOccurrence)
-    # bit vector representing whether the reference item `i_ref` is rated by a user or not
-    v_ref = (!iszero).(recommender.data.R[:, recommender.i_ref])
+    # bit vector representing whether the reference item `item_ref` is rated by a user or not
+    vec_ref = (!iszero).(recommender.data.R[:, recommender.item_ref])
 
     # total num of ratings for the reference item
-    c = sum(v_ref)
+    c = sum(vec_ref)
 
-    # for each item `i`, count num of users who rated both `i` and `i_ref`
-    CC = vec(v_ref' * (!iszero).(recommender.data.R))
+    # for each item `i`, count num of users who rated both `i` and `item_ref`
+    CC = vec(vec_ref' * (!iszero).(recommender.data.R))
 
     recommender.scores[:] = CC / c * 100.0
 end
 
-function predict(recommender::CoOccurrence, u::Integer, i::Integer)
+function predict(recommender::CoOccurrence, user::Integer, item::Integer)
     validate(recommender)
-    recommender.scores[i]
+    recommender.scores[item]
 end

@@ -90,7 +90,7 @@ function fit!(recommender::MatrixFactorization;
     recommender.Q[:] = Q[:]
 end
 
-function predict(recommender::MatrixFactorization, u::Integer, i::Integer)
+function predict(recommender::MatrixFactorization, user::Integer, item::Integer)
     validate(recommender)
-    dot(recommender.P[u, :], recommender.Q[i, :])
+    dot(recommender.P[user, :], recommender.Q[item, :])
 end

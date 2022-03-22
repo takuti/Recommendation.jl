@@ -95,7 +95,7 @@ function fit!(recommender::BPRMatrixFactorization;
     recommender.Q[:] = Q[:]
 end
 
-function predict(recommender::BPRMatrixFactorization, u::Integer, i::Integer)
+function predict(recommender::BPRMatrixFactorization, user::Integer, item::Integer)
     validate(recommender)
-    dot(recommender.P[u, :], recommender.Q[i, :])
+    dot(recommender.P[user, :], recommender.Q[item, :])
 end

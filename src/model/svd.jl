@@ -37,7 +37,7 @@ function fit!(recommender::SVD)
     recommender.Vt[:] = res.Vt[1:recommender.n_factors, :]
 end
 
-function predict(recommender::SVD, u::Integer, i::Integer)
+function predict(recommender::SVD, user::Integer, item::Integer)
     validate(recommender)
-    dot(recommender.U[u, :] .* recommender.S, recommender.Vt[:, i])
+    dot(recommender.U[user, :] .* recommender.S, recommender.Vt[:, item])
 end

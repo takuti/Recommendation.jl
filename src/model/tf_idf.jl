@@ -38,8 +38,8 @@ struct TFIDF <: Recommender
     end
 end
 
-function predict(recommender::TFIDF, u::Integer, i::Integer)
-    uv = recommender.data.user_attributes[u]
+function predict(recommender::TFIDF, user::Integer, item::Integer)
+    uv = recommender.data.user_attributes[user]
     profile = recommender.data.R' * uv # attribute x 1
-    ((recommender.data.R .* recommender.idf) * profile)[i]
+    ((recommender.data.R .* recommender.idf) * profile)[item]
 end
