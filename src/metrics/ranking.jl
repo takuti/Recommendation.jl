@@ -17,7 +17,10 @@ Here, ``|\\mathcal{I}^+_u \\cap I_N(u)|`` is the number of *true positives*.
     )
 """
 struct Recall <: RankingMetric end
-function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
+function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
+    if isnothing(topk)
+        topk = length(pred)
+    end
     count_intersect(truth, pred[1:topk]) / length(truth)
 end
 
@@ -37,7 +40,10 @@ Precision-at-``k`` (Precision@``k``) evaluates correctness of a top-``k`` (`topk
     )
 """
 struct Precision <: RankingMetric end
-function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
+function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
+    if isnothing(topk)
+        topk = length(pred)
+    end
     count_intersect(truth, pred[1:topk]) / topk
 end
 
@@ -58,7 +64,7 @@ It should be noticed that, MAP is not a simple mean of sum of Precision@``1``, P
     )
 """
 struct MAP <: RankingMetric end
-function measure(metric::MAP, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
+function measure(metric::MAP, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     tp = accum = 0
     n_pred = length(pred)
 
@@ -88,7 +94,7 @@ AUC calculation keeps track the number of true positives at different rank in ``
     )
 """
 struct AUC <: RankingMetric end
-function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
+function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     tp = correct = 0
     for r in pred
         if findfirst(isequal(r), truth) != nothing
@@ -120,7 +126,7 @@ RR can be zero if and only if ``\\mathcal{I}^+_u`` is empty.
     )
 """
 struct ReciprocalRank <: RankingMetric end
-function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
+function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     n_pred = length(pred)
     for n = 1:n_pred
         if findfirst(isequal(pred[n]), truth) != nothing
@@ -148,7 +154,7 @@ MPR internally considers not only top-``N`` recommended items also all of the no
     )
 """
 struct MPR <: RankingMetric end
-function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
+function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     accum = 0
     n_pred = length(pred)
     for t in truth
@@ -171,7 +177,10 @@ Like MPR, normalized discounted cumulative gain (NDCG) computes a score for ``I(
     )
 """
 struct NDCG <: RankingMetric end
-function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
+function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
+    if isnothing(topk)
+        topk = length(pred)
+    end
     dcg = idcg = 0
     for n = 1:topk
         d = 1 / log2(n + 1)

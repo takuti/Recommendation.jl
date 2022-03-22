@@ -1,5 +1,5 @@
 function test_recall(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
-    actual = measure(Recall(), truth, pred, topk)
+    actual = measure(Recall(), truth, pred[1:topk])
     expected = 0.333
     eps = 0.001
 
@@ -7,7 +7,7 @@ function test_recall(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
 end
 
 function test_precision(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
-    actual = measure(Precision(), truth, pred, topk)
+    actual = measure(Precision(), truth, pred[1:topk])
     expected = 0.5
     eps = 0.001
 
@@ -47,7 +47,7 @@ function test_mpr(truth::Array{Int,1}, pred::Array{Int,1})
 end
 
 function test_ndcg(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
-    actual = measure(NDCG(), truth, pred, topk)
+    actual = measure(NDCG(), truth, pred[1:topk])
     expected = 0.613
     eps = 0.001
 
