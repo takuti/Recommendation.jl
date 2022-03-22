@@ -3,9 +3,9 @@ export Recall, Precision, MAP, AUC, ReciprocalRank, MPR, NDCG
 """
     Recall
 
-Recall-at-``N`` (Recall@``N``) indicates coverage of truth samples as a result of top-``N`` recommendation. The value is computed by the following equation:
+Recall-at-``k`` (Recall@``k``) indicates coverage of truth samples as a result of top-``k`` (`topk`) recommendation. The value is computed by the following equation:
 ```math
-\\mathrm{Recall@}N = \\frac{|\\mathcal{I}^+_u \\cap I_N(u)|}{|\\mathcal{I}^+_u|}.
+\\mathrm{Recall@}k = \\frac{|\\mathcal{I}^+_u \\cap I_N(u)|}{|\\mathcal{I}^+_u|}.
 ```
 Here, ``|\\mathcal{I}^+_u \\cap I_N(u)|`` is the number of *true positives*.
 
@@ -13,32 +13,32 @@ Here, ``|\\mathcal{I}^+_u \\cap I_N(u)|`` is the number of *true positives*.
         metric::Recall,
         truth::AbstractVector{T},
         pred::AbstractVector{T},
-        k::Integer
+        topk::Integer
     )
 """
 struct Recall <: RankingMetric end
-function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
-    count_intersect(truth, pred[1:k]) / length(truth)
+function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
+    count_intersect(truth, pred[1:topk]) / length(truth)
 end
 
 """
     Precision
 
-Precision-at-``N`` (Precision@``N``) evaluates correctness of a top-``N`` recommendation list ``I_N(u)`` according to the portion of true positives in the list as:
+Precision-at-``k`` (Precision@``k``) evaluates correctness of a top-``k`` (`topk`) recommendation list ``I_N(u)`` according to the portion of true positives in the list as:
 ```math
-\\mathrm{Precision@}N = \\frac{|\\mathcal{I}^+_u \\cap I_N(u)|}{|I_N(u)|}.
+\\mathrm{Precision@}k = \\frac{|\\mathcal{I}^+_u \\cap I_N(u)|}{|I_N(u)|}.
 ```
 
     measure(
         metric::Precision,
         truth::AbstractVector{T},
         pred::AbstractVector{T},
-        k::Integer
+        topk::Integer
     )
 """
 struct Precision <: RankingMetric end
-function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
-    count_intersect(truth, pred[1:k]) / k
+function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
+    count_intersect(truth, pred[1:topk]) / topk
 end
 
 """
@@ -58,7 +58,7 @@ It should be noticed that, MAP is not a simple mean of sum of Precision@``1``, P
     )
 """
 struct MAP <: RankingMetric end
-function measure(metric::MAP, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
+function measure(metric::MAP, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
     tp = accum = 0
     n_pred = length(pred)
 
@@ -88,7 +88,7 @@ AUC calculation keeps track the number of true positives at different rank in ``
     )
 """
 struct AUC <: RankingMetric end
-function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
+function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
     tp = correct = 0
     for r in pred
         if findfirst(isequal(r), truth) != nothing
@@ -120,7 +120,7 @@ RR can be zero if and only if ``\\mathcal{I}^+_u`` is empty.
     )
 """
 struct ReciprocalRank <: RankingMetric end
-function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
+function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
     n_pred = length(pred)
     for n = 1:n_pred
         if findfirst(isequal(pred[n]), truth) != nothing
@@ -148,7 +148,7 @@ MPR internally considers not only top-``N`` recommended items also all of the no
     )
 """
 struct MPR <: RankingMetric end
-function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer=0) where T
+function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer=0) where T
     accum = 0
     n_pred = length(pred)
     for t in truth
@@ -167,13 +167,13 @@ Like MPR, normalized discounted cumulative gain (NDCG) computes a score for ``I(
         metric::NDCG,
         truth::AbstractVector{T},
         pred::AbstractVector{T},
-        k::Integer
+        topk::Integer
     )
 """
 struct NDCG <: RankingMetric end
-function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
+function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
     dcg = idcg = 0
-    for n = 1:k
+    for n = 1:topk
         d = 1 / log2(n + 1)
         if findfirst(isequal(pred[n]), truth) != nothing
             dcg += d

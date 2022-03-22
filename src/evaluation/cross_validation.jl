@@ -4,7 +4,7 @@ export cross_validation
     cross_validation(
         n_folds::Integer,
         metric::Type{<:RankingMetric},
-        k::Integer,
+        topk::Integer,
         recommender_type::Type{<:Recommender},
         data::DataAccessor,
         recommender_args...
@@ -12,7 +12,7 @@ export cross_validation
 
 Conduct `n_folds` cross validation for a combination of recommender `recommender_type` and ranking metric `metric`. A recommender is initialized with `recommender_args` and runs top-`k` recommendation.
 """
-function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, topk::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
 
     if n_folds < 2
         error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
@@ -41,7 +41,7 @@ function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::In
         recommender = recommender_type(train_data, recommender_args...)
         fit!(recommender)
 
-        accuracy = evaluate(recommender, truth_data, metric(), k)
+        accuracy = evaluate(recommender, truth_data, metric(), topk)
         @info "fold#$index: tested with samples in [$head, $tail]. $metric = $accuracy"
         if isnan(accuracy); continue; end
         accum += accuracy

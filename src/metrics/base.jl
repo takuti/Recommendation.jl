@@ -9,7 +9,7 @@ function measure(metric::AccuracyMetric, truth::AbstractVector, pred::AbstractVe
 end
 
 abstract type RankingMetric <: Metric end
-function measure(metric::RankingMetric, truth::AbstractVector{T}, pred::AbstractVector{T}, k::Integer) where T
+function measure(metric::RankingMetric, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Integer) where T
     error("measure is not implemented for metric type $(typeof(metric))")
 end
 
