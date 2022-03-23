@@ -3,20 +3,17 @@ export evaluate
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
                   metric::AccuracyMetric)
     validate(recommender, truth_data)
-    n_users, n_items = size(truth_data.R)
 
-    accum = 0.0
+    nonzero_indices = findall(!iszero, truth_data.R)
 
-    for u in 1:n_users
-        pred = zeros(n_items)
-        for i in 1:n_items
-            pred[i] = predict(recommender, u, i)
-        end
-        accum += measure(metric, truth_data.R[u, :], pred)
+    truth = zeros(length(nonzero_indices))
+    pred = zeros(length(nonzero_indices))
+    for (j, idx) in enumerate(nonzero_indices)
+        truth[j] = truth_data.R[idx]
+        pred[j] = predict(recommender, idx[1], idx[2])
     end
 
-    # return average accuracy over the all target users
-    accum / n_users
+    measure(metric, truth, pred)
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
