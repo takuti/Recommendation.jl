@@ -28,7 +28,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
         truth = [first(t) for t in sort(collect(zip(candidates, truth_data.R[u, :])), by=t->last(t), rev=true)]
         recos = recommend(recommender, u, topk, candidates)
         pred = [first(t) for t in sort(recos, by=t->last(t), rev=true)]
-        accum += measure(metric, truth, pred)
+        accum += measure(metric, truth, pred, topk)
     end
 
     # return average accuracy over the all target users
