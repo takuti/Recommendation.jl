@@ -8,6 +8,7 @@ Pages = ["evaluation.md"]
 
 ```@docs
 cross_validation
+leave_one_out
 ```
 
 ## Rating metrics

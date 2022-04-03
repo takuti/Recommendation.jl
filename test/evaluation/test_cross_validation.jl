@@ -28,6 +28,7 @@ function test_cross_validation_accuracy(v)
     # leave-one-out cross validation with MF(data, 2)
     n_samples = length(data.events)
     @test 0.0 < cross_validation(n_samples, MAE, MF, data, 2) <= 2.5
+    @test 0.0 < leave_one_out(MAE, MF, data, 2) <= 2.5
 end
 
 function test_cross_validation_ranking(v)
@@ -60,6 +61,7 @@ function test_cross_validation_ranking(v)
     # leave-one-out cross validation with MF(data, 2)
     n_samples = length(data.events)
     @test 0.0 <= cross_validation(n_samples, Recall, k, MF, data, 2) <= 1.0
+    @test 0.0 <= leave_one_out(Recall, k, MF, data, 2) <= 1.0
 end
 
 println("-- Testing cross validation with accuracy metrics")
