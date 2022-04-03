@@ -25,7 +25,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 
     candidates = Array(1:n_items)
     for u in 1:n_users
-        truth = [first(t) for t in sort(collect(zip(candidates, truth_data.R[u, :])), by=t->last(t), rev=true)]
+        truth = sortperm(truth_data.R[u, :], rev=true)
         pred = [first(item_score_pair) for item_score_pair in recommend(recommender, u, topk, candidates)]
         accum += measure(metric, truth, pred, topk)
     end
