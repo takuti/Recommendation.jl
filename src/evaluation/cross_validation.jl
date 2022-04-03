@@ -18,15 +18,23 @@ function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, topk:
         error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
     end
 
-    n_users, n_items = size(data.R)
-
     events = shuffle(data.events)
     n_events = length(events)
+
+    if n_folds > n_events
+        error("`n_folds = $n_folds` must be less than $n_events, the number of all samples.")
+    end
+
+    n_users, n_items = size(data.R)
 
     step = convert(Integer, round(n_events / n_folds))
     accum = 0.0
 
-    @info "$n_folds-fold cross validation against $n_events samples"
+    if n_folds == n_events
+        @info "Leave-one-out cross validation against $n_events samples"
+    else
+        @info "$n_folds-fold cross validation against $n_events samples"
+    end
 
     for (index, head) in enumerate(1:step:n_events)
         tail = min(head + step - 1, n_events)
@@ -67,15 +75,23 @@ function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, reco
         error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
     end
 
-    n_users, n_items = size(data.R)
-
     events = shuffle(data.events)
     n_events = length(events)
+
+    if n_folds > n_events
+        error("`n_folds = $n_folds` must be less than $n_events, the number of all samples.")
+    end
+
+    n_users, n_items = size(data.R)
 
     step = convert(Integer, round(n_events / n_folds))
     accum = 0.0
 
-    @info "$n_folds-fold cross validation against $n_events samples"
+    if n_folds == n_events
+        @info "Leave-one-out cross validation against $n_events samples"
+    else
+        @info "$n_folds-fold cross validation against $n_events samples"
+    end
 
     for (index, head) in enumerate(1:step:n_events)
         tail = min(head + step - 1, n_events)
