@@ -19,8 +19,8 @@ function measure(metric::RMSE, truth::AbstractVector, pred::AbstractVector)
     if n != length(pred)
         error("`truth` and `pred` have different size, which are $(n) and $(length(pred)), respectively")
     end
-    if iszero(n)
-        0
+    if n == 0
+        0.0
     else
         sqrt(sum((truth - pred).^2) / n)
     end
@@ -45,8 +45,8 @@ function measure(metric::MAE, truth::AbstractVector, pred::AbstractVector)
     if n != length(pred)
         error("`truth` and `pred` have different size, which are $(n) and $(length(pred)), respectively")
     end
-    if iszero(n)
-        0
+    if n == 0
+        0.0
     else
         sum(abs.(truth - pred)) / n
     end
