@@ -35,8 +35,8 @@ function test_cross_validation_ranking(v)
     # 1-fold cross validation is invalid
     @test_throws ErrorException cross_validation(1, Recall, k, MF, data, 2)
 
-    # 2-fold cross validation
-    fold = 2
+    # 3-fold cross validation
+    fold = 3
 
     # MF(data, 2)
     @test 0.0 <= cross_validation(fold, Recall, k, MF, data, 2) <= 1.0
