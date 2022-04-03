@@ -66,10 +66,10 @@ function fit!(recommender::UserKNN)
     end
 end
 
-function predict(recommender::UserKNN, u::Integer, i::Integer)
+function predict(recommender::UserKNN, user::Integer, item::Integer)
     validate(recommender)
 
-    user_similarity_pairs = collect(enumerate(recommender.sim[u, :]))
+    user_similarity_pairs = collect(enumerate(recommender.sim[user, :]))
 
     # closest neighbor is always target user him/herself, so omit him/her
     neighbors = sort(user_similarity_pairs, by=tuple->last(tuple), rev=true)[2:(recommender.n_neighbors + 1)]
@@ -78,7 +78,7 @@ function predict(recommender::UserKNN, u::Integer, i::Integer)
     for (u_near, w) in neighbors
         v_near = recommender.data.R[u_near, :]
 
-        r = v_near[i]
+        r = v_near[item]
         if iszero(r); continue; end
 
         if recommender.normalize
@@ -92,8 +92,8 @@ function predict(recommender::UserKNN, u::Integer, i::Integer)
     pred = iszero(denom) ? 0 : numer / denom
 
     if recommender.normalize
-        ii = (!iszero).(recommender.data.R[u, :])
-        pred += mean(recommender.data.R[u, ii])
+        ii = (!iszero).(recommender.data.R[user, :])
+        pred += mean(recommender.data.R[user, ii])
     end
 
     pred

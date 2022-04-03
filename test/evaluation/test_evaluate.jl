@@ -12,7 +12,7 @@ function test_evaluate_explicit(v)
     truth_data = DataAccessor(truth_m)
 
     # average error should be less than 2.5 in the 1-to-5 rating
-    @test evaluate(recommender, truth_data, RMSE()) < 2.5
+    @test 0.0 < evaluate(recommender, truth_data, RMSE()) < 2.5
 end
 
 function test_evaluate_implicit(v)
@@ -28,8 +28,8 @@ function test_evaluate_implicit(v)
                1 0 1 1 1 1 0 0]
     truth_data = DataAccessor(truth_m)
 
-    # average error should be less than or equal to 0.5 in the [0, 1] scale
-    @test evaluate(recommender, truth_data, Recall(), 4) <= 0.5
+    # must return a meaningful non-zero value as an error, but it shouldn't be too good (>0.8)
+    @test 0.0 < evaluate(recommender, truth_data, Recall(), 4) <= 0.8
 end
 
 println("-- Testing evaluate function for explicit feedback")

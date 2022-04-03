@@ -3,37 +3,38 @@ export evaluate
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
                   metric::AccuracyMetric)
     validate(recommender, truth_data)
-    n_users, n_items = size(truth_data.R)
 
-    accum = 0.0
+    nonzero_indices = findall(!iszero, truth_data.R)
 
-    for u in 1:n_users
-        pred = zeros(n_items)
-        for i in 1:n_items
-            pred[i] = predict(recommender, u, i)
-        end
-        accum += measure(metric, truth_data.R[u, :], pred)
+    truth = zeros(length(nonzero_indices))
+    pred = zeros(length(nonzero_indices))
+    for (j, idx) in enumerate(nonzero_indices)
+        truth[j] = truth_data.R[idx]
+        pred[j] = predict(recommender, idx[1], idx[2])
     end
 
-    # return average accuracy over the all target users
-    accum / n_users
+    measure(metric, truth, pred)
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::RankingMetric, k::Integer=0)
+                  metric::RankingMetric, topk::Integer)
     validate(recommender, truth_data)
     n_users, n_items = size(truth_data.R)
 
-    accum = 0.0
+    accum = Threads.Atomic{Float64}(0.0)
 
-    candidates = Array(1:n_items)
-    for u in 1:n_users
-        truth = [first(t) for t in sort(collect(zip(candidates, truth_data.R[u, :])), by=t->last(t), rev=true)]
-        recos = recommend(recommender, u, k, candidates)
-        pred = [first(t) for t in sort(recos, by=t->last(t), rev=true)]
-        accum += measure(metric, truth, pred, k)
+    Threads.@threads for u in 1:n_users
+        observed_items = findall(!iszero, truth_data.R[u, :])
+        if length(observed_items) == 0
+            @warn "user#$u does not have any test samples that are observed but are not used for training. $metric is default to 0.0"
+            continue
+        end
+        truth = [first(t) for t in sort(collect(zip(observed_items, truth_data.R[u, observed_items])), by=t->last(t), rev=true)]
+        candidates = findall(iszero, recommender.data.R[u, :]) # items that were unobserved as of building the model
+        pred = [first(item_score_pair) for item_score_pair in recommend(recommender, u, topk, candidates)]
+        Threads.atomic_add!(accum, measure(metric, truth, pred, topk))
     end
 
     # return average accuracy over the all target users
-    accum / n_users
+    accum[] / n_users
 end

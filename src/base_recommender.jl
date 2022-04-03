@@ -28,17 +28,17 @@ function fit!(recommender::Recommender; kwargs...)
     error("fit! is not implemented for recommender type $(typeof(recommender))")
 end
 
-function recommend(recommender::Recommender, u::Integer, k::Integer, candidates::AbstractVector{T}) where {T<:Integer}
+function recommend(recommender::Recommender, user::Integer, topk::Integer, candidates::AbstractVector{T}) where {T<:Integer}
     d = Dict{T,AbstractFloat}()
     for candidate in candidates
-        score = predict(recommender, u, candidate)
+        score = predict(recommender, user, candidate)
         if isnan(score); continue; end
         d[candidate] = score
     end
     ranked_recs = sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))
-    ranked_recs[1:min(length(ranked_recs), k)]
+    ranked_recs[1:min(length(ranked_recs), topk)]
 end
 
-function predict(recommender::Recommender, u::Integer, i::Integer)
+function predict(recommender::Recommender, user::Integer, item::Integer)
     error("predict is not implemented for recommender type $(typeof(recommender))")
 end

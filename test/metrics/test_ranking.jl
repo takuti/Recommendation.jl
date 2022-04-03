@@ -1,13 +1,13 @@
-function test_recall(truth::Array{Int,1}, pred::Array{Int,1}, k::Int)
-    actual = measure(Recall(), truth, pred, k)
+function test_recall(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
+    actual = measure(Recall(), truth, pred[1:topk])
     expected = 0.333
     eps = 0.001
 
     @test abs(actual - expected) < eps
 end
 
-function test_precision(truth::Array{Int,1}, pred::Array{Int,1}, k::Int)
-    actual = measure(Precision(), truth, pred, k)
+function test_precision(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
+    actual = measure(Precision(), truth, pred[1:topk])
     expected = 0.5
     eps = 0.001
 
@@ -46,8 +46,8 @@ function test_mpr(truth::Array{Int,1}, pred::Array{Int,1})
     @test abs(actual - expected) < eps
 end
 
-function test_ndcg(truth::Array{Int,1}, pred::Array{Int,1}, k::Int)
-    actual = measure(NDCG(), truth, pred, k)
+function test_ndcg(truth::Array{Int,1}, pred::Array{Int,1}, topk::Int)
+    actual = measure(NDCG(), truth, pred[1:topk])
     expected = 0.613
     eps = 0.001
 
@@ -58,12 +58,12 @@ println("-- Testing ranking metrics")
 
 truth = [1, 2, 4]
 pred = [1, 3, 2, 6, 4, 5]
-k = 2
+topk = 2
 
-test_recall(truth, pred, k)
-test_precision(truth, pred, k)
+test_recall(truth, pred, topk)
+test_precision(truth, pred, topk)
 test_map(truth, pred)
 test_auc(truth, pred)
 test_mrr(truth, pred)
 test_mpr(truth, pred)
-test_ndcg(truth, pred, k)
+test_ndcg(truth, pred, topk)

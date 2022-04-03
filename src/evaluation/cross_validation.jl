@@ -1,10 +1,10 @@
-export cross_validation
+export cross_validation, leave_one_out
 
 """
     cross_validation(
         n_folds::Integer,
         metric::Type{<:RankingMetric},
-        k::Integer,
+        topk::Integer,
         recommender_type::Type{<:Recommender},
         data::DataAccessor,
         recommender_args...
@@ -12,35 +12,14 @@ export cross_validation
 
 Conduct `n_folds` cross validation for a combination of recommender `recommender_type` and ranking metric `metric`. A recommender is initialized with `recommender_args` and runs top-`k` recommendation.
 """
-function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, k::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
-
-    n_users, n_items = size(data.R)
-
-    events = shuffle(data.events)
-    n_events = length(events)
-
-    step = convert(Integer, round(n_events / n_folds))
-    accum = 0.0
-
-    for head in 1:step:n_events
-        tail = min(head + step - 1, n_events)
-
-        truth_events = events[head:tail]
-        truth_data = DataAccessor(truth_events, n_users, n_items)
-
-        train_events = vcat(events[1:head - 1], events[tail + 1:end])
-        train_data = DataAccessor(train_events, n_users, n_items)
-
-        # get recommender from the specified data type
+function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, topk::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+    accum_accuracy = 0.0
+    for (train_data, truth_data) in split_events(data, n_folds)
         recommender = recommender_type(train_data, recommender_args...)
         fit!(recommender)
-
-        accuracy = evaluate(recommender, truth_data, metric(), k)
-        if isnan(accuracy); continue; end
-        accum += accuracy
+        accum_accuracy += evaluate(recommender, truth_data, metric(), topk)
     end
-
-    accum / n_folds
+    accum_accuracy / n_folds
 end
 
 """
@@ -55,32 +34,40 @@ end
 Conduct `n_folds` cross validation for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args`.
 """
 function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
-
-    n_users, n_items = size(data.R)
-
-    events = shuffle(data.events)
-    n_events = length(events)
-
-    step = convert(Integer, round(n_events / n_folds))
-    accum = 0.0
-
-    for head in 1:step:n_events
-        tail = min(head + step - 1, n_events)
-
-        truth_events = events[head:tail]
-        truth_data = DataAccessor(truth_events, n_users, n_items)
-
-        train_events = vcat(events[1:head - 1], events[tail + 1:end])
-        train_data = DataAccessor(train_events, n_users, n_items)
-
-        # get recommender from the specified data type
+    accum_accuracy = 0.0
+    for (train_data, truth_data) in split_events(data, n_folds)
         recommender = recommender_type(train_data, recommender_args...)
         fit!(recommender)
-
-        accuracy = evaluate(recommender, truth_data, metric())
-        if isnan(accuracy); continue; end
-        accum += accuracy
+        accum_accuracy = evaluate(recommender, truth_data, metric())
     end
+    accum_accuracy / n_folds
+end
 
-    accum / n_folds
+"""
+    leave_one_out(
+        metric::Type{<:RankingMetric},
+        topk::Integer,
+        recommender_type::Type{<:Recommender},
+        data::DataAccessor,
+        recommender_args...
+    )
+
+Conduct leave-one-out cross validation (LOOCV) for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args` and runs top-`k` recommendation.
+"""
+function leave_one_out(metric::Type{<:RankingMetric}, topk::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+    cross_validation(length(data.events), metric, topk, recommender_type, data, recommender_args...)
+end
+
+"""
+    leave_one_out(
+        metric::Type{<:AccuracyMetric},
+        recommender_type::Type{<:Recommender},
+        data::DataAccessor,
+        recommender_args...
+    )
+
+Conduct leave-one-out cross validation (LOOCV) for a combination of recommender `recommender_type` and accuracy metric `metric`. A recommender is initialized with `recommender_args`.
+"""
+function leave_one_out(metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
+    cross_validation(length(data.events), metric, recommender_type, data, recommender_args...)
 end

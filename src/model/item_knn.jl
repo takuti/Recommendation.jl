@@ -65,16 +65,16 @@ function fit!(recommender::ItemKNN; adjusted_cosine::Bool=false)
     end
 end
 
-function predict(recommender::ItemKNN, u::Integer, i::Integer)
+function predict(recommender::ItemKNN, user::Integer, item::Integer)
     validate(recommender)
 
     # filter out negative similarities
-    item_similarity_pairs = collect(enumerate(max.(recommender.sim[i, :], 0)))
+    item_similarity_pairs = collect(enumerate(max.(recommender.sim[item, :], 0)))
     neighbors = sort(item_similarity_pairs, by=tuple->last(tuple), rev=true)[1:recommender.n_neighbors]
 
     numer = denom = 0
     for (i_near, s) in neighbors
-        r = recommender.data.R[u, i_near]
+        r = recommender.data.R[user, i_near]
         if iszero(r); continue; end
 
         numer += s * r

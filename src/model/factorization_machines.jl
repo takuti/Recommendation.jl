@@ -120,19 +120,19 @@ function fit!(recommender::FactorizationMachines;
     recommender.V[:] = V[:]
 end
 
-function predict(recommender::FactorizationMachines, u::Integer, i::Integer)
+function predict(recommender::FactorizationMachines, user::Integer, item::Integer)
     validate(recommender)
     n_users, n_items = size(recommender.data.R)
 
     u_onehot = zeros(n_users)
-    u_onehot[u] = 1.
+    u_onehot[user] = 1.
 
     i_onehot = zeros(n_items)
-    i_onehot[i] = 1.
+    i_onehot[item] = 1.
 
     x = vcat(u_onehot, i_onehot,
-             get_user_attribute(recommender.data, u),
-             get_item_attribute(recommender.data, i))
+             get_user_attribute(recommender.data, user),
+             get_item_attribute(recommender.data, item))
 
     interaction = sum((recommender.V' * x).^2 - (recommender.V'.^2 * x.^2)) / 2.
     recommender.w0[] + dot(recommender.w, x) + interaction

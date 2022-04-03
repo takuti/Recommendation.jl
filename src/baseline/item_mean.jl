@@ -21,7 +21,7 @@ function fit!(recommender::ItemMean)
     recommender.scores[:] = vec(mean(recommender.data.R, dims=1))
 end
 
-function predict(recommender::ItemMean, u::Integer, i::Integer)
+function predict(recommender::ItemMean, user::Integer, item::Integer)
     validate(recommender)
-    recommender.scores[i]
+    recommender.scores[item]
 end
