@@ -20,6 +20,8 @@ struct Recall <: RankingMetric end
 function measure(metric::Recall, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     if isnothing(topk)
         topk = length(pred)
+    else
+        topk = min(length(pred), topk)
     end
     count_intersect(truth, pred[1:topk]) / length(truth)
 end
@@ -43,6 +45,8 @@ struct Precision <: RankingMetric end
 function measure(metric::Precision, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
     if isnothing(topk)
         topk = length(pred)
+    else
+        topk = min(length(pred), topk)
     end
     count_intersect(truth, pred[1:topk]) / topk
 end
