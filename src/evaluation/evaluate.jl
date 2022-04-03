@@ -23,9 +23,9 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 
     accum = 0.0
 
-    candidates = Array(1:n_items)
     for u in 1:n_users
         truth = sortperm(truth_data.R[u, :], rev=true)
+        candidates = findall(iszero, recommender.data.R[u, :]) # items that were unobserved as of building the model
         pred = [first(item_score_pair) for item_score_pair in recommend(recommender, u, topk, candidates)]
         accum += measure(metric, truth, pred, topk)
     end
