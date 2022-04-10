@@ -1,5 +1,5 @@
 export DataAccessor
-export create_matrix, set_user_attribute, get_user_attribute, set_item_attribute, get_item_attribute, split_events
+export create_matrix, set_user_attribute, get_user_attribute, set_item_attribute, get_item_attribute, split_data
 
 struct DataAccessor
     events::Array{Event,1}
@@ -63,7 +63,7 @@ function get_item_attribute(data::DataAccessor, item::Integer)
     get(data.item_attributes, item, [])
 end
 
-function split_events(data::DataAccessor, n_folds::Integer)
+function split_data(data::DataAccessor, n_folds::Integer)
     if n_folds < 2
         error("`n_folds` must be greater than 1 to split the samples into train and test sets.")
     end

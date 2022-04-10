@@ -14,7 +14,7 @@ Conduct `n_folds` cross validation for a combination of recommender `recommender
 """
 function cross_validation(n_folds::Integer, metric::Type{<:RankingMetric}, topk::Integer, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
     accum_accuracy = 0.0
-    for (train_data, truth_data) in split_events(data, n_folds)
+    for (train_data, truth_data) in split_data(data, n_folds)
         recommender = recommender_type(train_data, recommender_args...)
         fit!(recommender)
         accum_accuracy += evaluate(recommender, truth_data, metric(), topk)
@@ -35,7 +35,7 @@ Conduct `n_folds` cross validation for a combination of recommender `recommender
 """
 function cross_validation(n_folds::Integer, metric::Type{<:AccuracyMetric}, recommender_type::Type{<:Recommender}, data::DataAccessor, recommender_args...)
     accum_accuracy = 0.0
-    for (train_data, truth_data) in split_events(data, n_folds)
+    for (train_data, truth_data) in split_data(data, n_folds)
         recommender = recommender_type(train_data, recommender_args...)
         fit!(recommender)
         accum_accuracy = evaluate(recommender, truth_data, metric())

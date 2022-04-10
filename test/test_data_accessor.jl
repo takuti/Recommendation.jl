@@ -16,10 +16,10 @@ function test_data_accessor()
     data = DataAccessor(sparse([1 0 0; 4 5 0]))
     @test size(data.R) == (2, 3)
 
-    @test_throws ErrorException split_events(data, 1)
-    @test_throws ErrorException split_events(data, 100)
-    @test length(split_events(data, 2)) == 2
-    @test length(split_events(data, 3)) == 3
+    @test_throws ErrorException split_data(data, 1)
+    @test_throws ErrorException split_data(data, 100)
+    @test length(split_data(data, 2)) == 2
+    @test length(split_data(data, 3)) == 3
 end
 
 test_data_accessor()
