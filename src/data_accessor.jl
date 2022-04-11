@@ -63,6 +63,21 @@ function get_item_attribute(data::DataAccessor, item::Integer)
     get(data.item_attributes, item, [])
 end
 
+function split_data(data::DataAccessor, test_ratio::AbstractFloat)
+    events = shuffle(data.events)
+    n_events = length(events)
+    n_test = convert(Integer, round(n_events * test_ratio))
+    n_users, n_items = size(data.R)
+
+    truth_events = events[1:n_test]
+    truth_data = DataAccessor(truth_events, n_users, n_items)
+
+    train_events = events[(n_test + 1):end]
+    train_data = DataAccessor(train_events, n_users, n_items)
+
+    (train_data, truth_data)
+end
+
 function split_data(data::DataAccessor, n_folds::Integer)
     if n_folds < 2
         error("`n_folds` must be greater than 1 to split the samples into train and test sets.")

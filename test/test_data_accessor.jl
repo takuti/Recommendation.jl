@@ -18,6 +18,7 @@ function test_data_accessor()
 
     @test_throws ErrorException split_data(data, 1)
     @test_throws ErrorException split_data(data, 100)
+    @test length(split_data(data, 0.2)) == 2
     @test length(split_data(data, 2)) == 2
     @test length(split_data(data, 3)) == 3
 end
