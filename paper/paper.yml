@@ -1,21 +1,15 @@
-title: "My JuliaCon proceeding"
+title: "Recommendation.jl: A Framework for Building Recommender Systems in Julia"
 keywords:
   - Julia
-  - Optimization
-  - Game theory
-  - Compiler
+  - recommender systems
+  - machine learning
+  - evaluation metrics
 authors:
-  - name: 1st author
-    orcid: 0000-0003-1361-440X
+  - name: Takuya Kitazawa
+    orcid: 0000-0003-4561-4420
     affiliation: 1
-  - name: 2nd author
-    affiliation: 1, 2
-  - name: 3rd author
-    affiliation: 2
 affiliations:
-  - name: University
+  - name: Independent Researcher, Canada
     index: 1
-  - name: National Lab
-    index: 2
-date: 24 April 2019
+date: 13 September 2022
 bibliography: ref.bib
