@@ -51,12 +51,16 @@ for dataset in datasets
         @info "Recommender: $recommender"
         r = recommender(train_data, params...)
         fit!(r)
-        for metric in metrics
-            if metric <: RankingMetric
-                res = evaluate(r, truth_data, metric(), topk)
-            else
-                res = evaluate(r, truth_data, metric())
-            end
+
+        # accuracy metrics
+        results = evaluate(r, truth_data, [metric() for metric in accuracy_metrics])
+        for (metric, res) in zip(accuracy_metrics, results)
+            @info "$metric = $res"
+        end
+
+        # ranking metrics
+        results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
+        for (metric, res) in zip(ranking_metrics, results)
             @info "$metric = $res"
         end
     end
