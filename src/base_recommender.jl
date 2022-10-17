@@ -35,8 +35,8 @@ function recommend(recommender::Recommender, user::Integer, topk::Integer, candi
         if isnan(score); continue; end
         d[candidate] = score
     end
-    ranked_recs = sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))
-    ranked_recs[1:min(length(ranked_recs), topk)]
+    pairs = collect(d)
+    partialsort(pairs, 1:min(length(pairs), topk), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))
 end
 
 function predict(recommender::Recommender, user::Integer, item::Integer)
