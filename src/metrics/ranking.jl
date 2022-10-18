@@ -162,7 +162,11 @@ function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T},
     accum = 0
     n_pred = length(pred)
     for t in truth
-        r = (coalesce(findfirst(isequal(t), pred), 0) - 1) / n_pred
+        rank = findfirst(isequal(t), pred)
+        if isa(rank, Unknown)
+            rank = n_pred
+        end
+        r = (rank - 1) / n_pred
         accum += r
     end
     accum * 100 / length(truth)
