@@ -182,7 +182,7 @@ Like MPR, normalized discounted cumulative gain (NDCG) computes a score for ``I(
 """
 struct NDCG <: RankingMetric end
 function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
-    if isnothing(topk)
+    if isnothing(topk) || topk > length(pred)
         topk = length(pred)
     end
     dcg = idcg = 0
