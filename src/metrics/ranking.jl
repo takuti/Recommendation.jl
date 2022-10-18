@@ -137,7 +137,7 @@ function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::Abstrac
             return 1 / n
         end
     end
-    return 0
+    return 0.0
 end
 
 """
