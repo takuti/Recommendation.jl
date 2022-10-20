@@ -34,10 +34,11 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
     accums = [Threads.Atomic{Float64}(0.0) for i in 1:length(metrics)]
 
     Threads.@threads for u in 1:n_users
-        truth = filter(idx -> !iszero(truth_data.R[u, idx]), sortperm(truth_data.R[u, :], rev=true))
-        if length(truth) == 0
+        nnz = sum(!iszero, truth_data.R[u, :])
+        if nnz == 0
             continue
         end
+        truth = partialsortperm(truth_data.R[u, :], 1:nnz, rev=true)
         candidates = findall(iszero, recommender.data.R[u, :]) # items that were unobserved as of building the model
         pred = [first(item_score_pair) for item_score_pair in recommend(recommender, u, topk, candidates)]
         for (i, metric) in enumerate(metrics)
