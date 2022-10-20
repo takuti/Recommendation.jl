@@ -110,7 +110,12 @@ function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T},
     end
     # number of all possible tp-fp pairs
     pairs = tp * (length(pred) - tp)
-    correct / pairs
+    if pairs == 0
+        # if none of the recommended items is in truth, return the worst value
+        0.0
+    else
+        correct / pairs
+    end
 end
 
 """
