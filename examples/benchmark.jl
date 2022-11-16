@@ -20,10 +20,12 @@ using Recommendation
 value_prediction_recommenders = [
     ItemMean => [],
     UserMean => [],
+    SVD => [16],
+    SVD => [32],
+    SVD => [64],
     # BPRMatrixFactorization => [],
     # FactorizationMachines => [],
     # MatrixFactorization => [],
-    # SVD => [],
     # ItemKNN => [5],
     # UserKNN => [5, true],
 ]
