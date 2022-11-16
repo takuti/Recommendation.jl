@@ -15,20 +15,28 @@ end
 
 using Recommendation
 
-recommenders = [
-    # (recommender => params, accuracy_metrics, ranking_metrics)
-    (ItemMean => [], true, true),
-    (MostPopular => [], false, true),
-    (ThresholdPercentage => [3.0], false, true),
-    (UserMean => [], true, true),
-    # CoOccurrence => [1],
+# recommenders that predict values (e.g., ratings) for missing user-item pairs,
+# which enable the outputs to be evaluated by accuracy metrics.
+value_prediction_recommenders = [
+    ItemMean => [],
+    UserMean => [],
     # BPRMatrixFactorization => [],
     # FactorizationMachines => [],
-    # ItemKNN => [5],
     # MatrixFactorization => [],
     # SVD => [],
+    # ItemKNN => [5],
+    # UserKNN => [5, true],
+]
+
+# recommenders that order missing user-item pairs by their own definition of
+# "scores" such as popularity count and item co-occurrence. They cannot be
+# evaluated by accuracy measures, since the resulting scores are not directly
+# approximating the original user-item data.
+rank_by_score_recommenders = [
+    MostPopular => [],
+    ThresholdPercentage => [3.0],
+    # CoOccurrence => [1],
     # TfIdf => [],
-    # UserKNN => [5, true]
 ]
 
 accuracy_metrics = [
@@ -69,25 +77,36 @@ for dataset in datasets
     @info "Dataset: $dataset"
     data = dataset()
     train_data, truth_data = split_data(data, test_ratio)
-    for ((recommender, params), use_accuracy_metrics, use_ranking_metrics) in recommenders
-        @info "Recommender: $recommender"
+
+    @info "Evaluating value prediction-based recommenders"
+    for (recommender, params) in value_prediction_recommenders
+        @info "Recommender: $recommender($params...)"
         r = recommender(train_data, params...)
         fit!(r)
 
         # accuracy metrics
-        if use_accuracy_metrics
-            results = evaluate(r, truth_data, [metric() for metric in accuracy_metrics])
-            for (metric, res) in zip(accuracy_metrics, results)
-                @info "$metric = $res"
-            end
+        results = evaluate(r, truth_data, [metric() for metric in accuracy_metrics])
+        for (metric, res) in zip(accuracy_metrics, results)
+            @info "  $metric = $res"
         end
 
         # ranking metrics
-        if use_ranking_metrics
-            results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
-            for (metric, res) in zip(ranking_metrics, results)
-                @info "$metric = $res"
-            end
+        results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
+        for (metric, res) in zip(ranking_metrics, results)
+            @info "  $metric = $res"
+        end
+    end
+
+    @info "Evaluating custom ranking score-based recommenders"
+    for (recommender, params) in rank_by_score_recommenders
+        @info "Recommender: $recommender($params...)"
+        r = recommender(train_data, params...)
+        fit!(r)
+
+        # ranking metrics
+        results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
+        for (metric, res) in zip(ranking_metrics, results)
+            @info "  $metric = $res"
         end
     end
 end
