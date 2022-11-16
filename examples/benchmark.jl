@@ -50,13 +50,13 @@ ranking_metrics = [
     AUC,
     ReciprocalRank,
     MPR,
-    NDCG
+    NDCG,
+    AggregatedDiversity,
+    ShannonEntropy,
+    GiniIndex,
 ]
 
 # metrics = [
-#     AggregatedDiversity,
-#     ShannonEntropy,
-#     GiniIndex,
 #     Coverage,
 #     Novelty,
 #     IntraListSimilarity,
@@ -90,7 +90,7 @@ for dataset in datasets
             @info "  $metric = $res"
         end
 
-        # ranking metrics
+        # ranking / aggregated metrics
         results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
         for (metric, res) in zip(ranking_metrics, results)
             @info "  $metric = $res"
@@ -103,7 +103,7 @@ for dataset in datasets
         r = recommender(train_data, params...)
         fit!(r)
 
-        # ranking metrics
+        # ranking / aggregated metrics
         results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
         for (metric, res) in zip(ranking_metrics, results)
             @info "  $metric = $res"
