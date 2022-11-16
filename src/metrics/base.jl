@@ -19,6 +19,6 @@ function measure(metric::IntraListMetric, recommendations::Union{AbstractSet, Ab
 end
 
 abstract type AggregatedMetric <: Metric end
-function measure(metric::AggregatedMetric, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; kwargs...)
+function measure(metric::AggregatedMetric, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Union{Integer, Nothing})
     error("measure is not implemented for metric type $(typeof(metric))")
 end
