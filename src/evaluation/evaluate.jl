@@ -26,14 +26,15 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
     evaluate(recommender, truth_data, [metric], topk)[1]
 end
 
-function check_metrics_type(metrics::AbstractVector{Metric}, accepted_type::Type{<:Metric})
+function check_metrics_type(metrics::AbstractVector{T},
+                            accepted_type::Type{<:Metric}) where {T<:Metric}
     if !all(metric -> typeof(metric) <: accepted_type, metrics)
         error("$metrics contains something different from $accepted_type")
     end
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metrics::AbstractVector{Metric}, topk::Integer)
+                  metrics::AbstractVector{T}, topk::Integer) where {T<:Metric}
     validate(recommender, truth_data)
     check_metrics_type(metrics, Union{RankingMetric, AggregatedMetric})
 
