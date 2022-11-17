@@ -46,7 +46,7 @@ accuracy_metrics = [
     MAE,
 ]
 
-ranking_metrics = [
+topk_metrics = [
     Recall,
     Precision,
     AUC,
@@ -75,6 +75,21 @@ datasets = [
 test_ratio = 0.2
 topk = 10
 
+function eval(instantiated_recommender::Recommender, truth_data::DataAccessor,
+              metrics::AbstractVector{T}, topk=nothing) where T
+    instantiated_metrics = [metric() for metric in metrics]
+    if isnothing(topk)
+        # accuracy metrics
+        results = evaluate(instantiated_recommender, truth_data, instantiated_metrics)
+    else
+        # ranking / aggregated metrics
+        results = evaluate(instantiated_recommender, truth_data, instantiated_metrics, topk)
+    end
+    for (metric, res) in zip(metrics, results)
+        @info "  $metric = $res"
+    end
+end
+
 for dataset in datasets
     @info "Dataset: $dataset"
     data = dataset()
@@ -85,18 +100,8 @@ for dataset in datasets
         @info "Recommender: $recommender($params...)"
         r = recommender(train_data, params...)
         fit!(r)
-
-        # accuracy metrics
-        results = evaluate(r, truth_data, [metric() for metric in accuracy_metrics])
-        for (metric, res) in zip(accuracy_metrics, results)
-            @info "  $metric = $res"
-        end
-
-        # ranking / aggregated metrics
-        results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
-        for (metric, res) in zip(ranking_metrics, results)
-            @info "  $metric = $res"
-        end
+        eval(r, truth_data, accuracy_metrics)
+        eval(r, truth_data, topk_metrics, topk)
     end
 
     @info "Evaluating custom ranking score-based recommenders"
@@ -104,11 +109,6 @@ for dataset in datasets
         @info "Recommender: $recommender($params...)"
         r = recommender(train_data, params...)
         fit!(r)
-
-        # ranking / aggregated metrics
-        results = evaluate(r, truth_data, [metric() for metric in ranking_metrics], topk)
-        for (metric, res) in zip(ranking_metrics, results)
-            @info "  $metric = $res"
-        end
+        eval(r, truth_data, topk_metrics, topk)
     end
 end
