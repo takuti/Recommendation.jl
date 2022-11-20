@@ -58,13 +58,6 @@ topk_metrics = [
     GiniIndex,
 ]
 
-# metrics = [
-#     Coverage,
-#     Novelty,
-#     IntraListSimilarity,
-#     Serendipity,
-# ]
-
 datasets = [
     load_movielens_100k,
     # load_movielens_latest,
@@ -82,9 +75,18 @@ function eval(instantiated_recommender::Recommender, truth_data::DataAccessor,
         # accuracy metrics
         results = evaluate(instantiated_recommender, truth_data, instantiated_metrics)
     else
+        # intra-list metrics:
+        # * IntraListSimilarity can be calculated with an item-item similarity metrix, which can be built by ItemKNN.
+        # * Serendipity requires context-specific definition of relevance and unexpectedness.
+        coverage, novelty = evaluate(instantiated_recommender, truth_data,
+                                     [Coverage(), Novelty()], topk, allow_repeat=true)
+        @info "  Coverage = $coverage"
+        @info "  Novelty = $novelty"
+
         # ranking / aggregated metrics
         results = evaluate(instantiated_recommender, truth_data, instantiated_metrics, topk)
     end
+
     for (metric, res) in zip(metrics, results)
         @info "  $metric = $res"
     end
