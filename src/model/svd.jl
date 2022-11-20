@@ -16,28 +16,30 @@ struct SVD <: Recommender
     U::AbstractMatrix
     S::AbstractVector
     Vt::AbstractMatrix
+    R::AbstractMatrix
 
     function SVD(data::DataAccessor, n_factors::Integer)
         n_users, n_items = size(data.R)
         U = matrix(n_users, n_factors)
         S = vector(n_factors)
         Vt = matrix(n_factors, n_items)
-        new(data, n_factors, U, S, Vt)
+        new(data, n_factors, U, S, Vt, matrix(n_users, n_items))
     end
 end
 
 SVD(data::DataAccessor) = SVD(data, 20)
 
-isdefined(recommender::SVD) = isfilled(recommender.U)
+isdefined(recommender::SVD) = isfilled(recommender.R)
 
 function fit!(recommender::SVD)
     res = svd(recommender.data.R)
     recommender.U[:] = res.U[:, 1:recommender.n_factors]
     recommender.S[:] = res.S[1:recommender.n_factors]
     recommender.Vt[:] = res.Vt[1:recommender.n_factors, :]
+    recommender.R[:] = recommender.U * Diagonal(recommender.S) * recommender.Vt
 end
 
 function predict(recommender::SVD, user::Integer, item::Integer)
     validate(recommender)
-    dot(recommender.U[user, :] .* recommender.S, recommender.Vt[:, item])
+    recommender.R[user, item]
 end
