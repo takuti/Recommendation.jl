@@ -1,7 +1,12 @@
-export evaluate
+export evaluate, check_metrics_type
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
                   metric::AccuracyMetric)
+    evaluate(recommender, truth_data, [metric])[1]
+end
+
+function evaluate(recommender::Recommender, truth_data::DataAccessor,
+                  metrics::AbstractVector{T}) where {T<:AccuracyMetric}
     validate(recommender, truth_data)
 
     nonzero_indices = findall(!iszero, truth_data.R)
@@ -13,28 +18,65 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
         pred[j] = predict(recommender, idx[1], idx[2])
     end
 
-    measure(metric, truth, pred)
+    [measure(metric, truth, pred) for metric in metrics]
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::RankingMetric, topk::Integer)
-    validate(recommender, truth_data)
-    n_users, n_items = size(truth_data.R)
+                  metric::Metric, topk::Integer)
+    evaluate(recommender, truth_data, [metric], topk)[1]
+end
 
-    accum = Threads.Atomic{Float64}(0.0)
+function check_metrics_type(metrics::AbstractVector{T},
+                            accepted_type::Type{<:Metric}) where {T<:Metric}
+    if !all(metric -> typeof(metric) <: accepted_type, metrics)
+        error("$metrics contains something different from $accepted_type")
+    end
+end
+
+function evaluate(recommender::Recommender, truth_data::DataAccessor,
+                  metrics::AbstractVector{T}, topk::Integer; allow_repeat=false) where {T<:Metric}
+    validate(recommender, truth_data)
+    check_metrics_type(metrics, Union{RankingMetric, AggregatedMetric, Coverage, Novelty})
+
+    n_users, n_items = size(truth_data.R)
+    all_items = 1:n_items
+
+    accums = [Threads.Atomic{Float64}(0.0) for i in 1:length(metrics)]
+    recommendations = Vector{Vector{Integer}}()
 
     Threads.@threads for u in 1:n_users
         observed_items = findall(!iszero, truth_data.R[u, :])
-        if length(observed_items) == 0
-            @warn "user#$u does not have any test samples that are observed but are not used for training. $metric is default to 0.0"
+        nnz = length(observed_items)
+        if nnz == 0
             continue
         end
-        truth = [first(t) for t in sort(collect(zip(observed_items, truth_data.R[u, observed_items])), by=t->last(t), rev=true)]
-        candidates = findall(iszero, recommender.data.R[u, :]) # items that were unobserved as of building the model
+        if allow_repeat
+            candidates = all_items
+        else
+            # items that were unobserved as of building the model
+            candidates = findall(iszero, recommender.data.R[u, :])
+        end
         pred = [first(item_score_pair) for item_score_pair in recommend(recommender, u, topk, candidates)]
-        Threads.atomic_add!(accum, measure(metric, truth, pred, topk))
+
+        truth = partialsortperm(truth_data.R[u, :], 1:nnz, rev=true)
+        for (i, metric) in enumerate(metrics)
+            if typeof(metric) <: RankingMetric
+                Threads.atomic_add!(accums[i], measure(metric, truth, pred, topk))
+            elseif typeof(metric) <: Coverage
+                Threads.atomic_add!(accums[i], measure(metric, pred, catalog=all_items))
+            elseif typeof(metric) <: Novelty
+                Threads.atomic_add!(accums[i], float(measure(metric, pred, observed=observed_items)))
+            end
+        end
+        push!(recommendations, pred)
     end
 
     # return average accuracy over the all target users
-    accum[] / n_users
+    res = [accum[] for accum in accums] ./ n_users
+    for (i, metric) in enumerate(metrics)
+        if typeof(metric) <: AggregatedMetric
+            res[i] = measure(metric, recommendations, topk=topk)
+        end
+    end
+    res
 end

@@ -28,7 +28,7 @@ Let ``U`` and ``I`` be a set of users and items, respectively, and ``L_N(u)`` a 
 ```
 """
 struct AggregatedDiversity <: AggregatedMetric end
-function measure(metric::AggregatedDiversity, recommendations::AbstractVector{<:AbstractVector{<:Integer}})
+function measure(metric::AggregatedDiversity, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Union{Integer, Nothing}=nothing)
     # number of distinct items recommended across all users
     length(find_all_items(recommendations))
 end
@@ -60,7 +60,10 @@ measure(
 ```
 """
 struct ShannonEntropy <: AggregatedMetric end
-function measure(metric::ShannonEntropy, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Integer)
+function measure(metric::ShannonEntropy, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Union{Integer, Nothing}=nothing)
+    if isnothing(topk)
+        error("ShannonEntropy requires an integer keyword argument `topk`")
+    end
     n_users = size(recommendations, 1)
     items = find_all_items(recommendations)
     entropy = 0
@@ -90,7 +93,10 @@ measure(
 The index is 0 when all items are equally chosen in terms of the number of recommended users.
 """
 struct GiniIndex <: AggregatedMetric end
-function measure(metric::GiniIndex, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Integer)
+function measure(metric::GiniIndex, recommendations::AbstractVector{<:AbstractVector{<:Integer}}; topk::Union{Integer, Nothing}=nothing)
+    if isnothing(topk)
+        error("GiniIndex requires an integer keyword argument `topk`")
+    end
     n_users = size(recommendations, 1)
     probs = sort(map(item -> count_users_contain(item, recommendations) / (topk * n_users), collect(find_all_items(recommendations))))
     if first(probs) == last(probs) #  all items are chosen equally often

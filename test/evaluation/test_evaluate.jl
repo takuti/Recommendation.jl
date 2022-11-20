@@ -1,3 +1,9 @@
+function test_metrics_type_validation()
+    metrics = [MAE(), Recall()]
+    check_metrics_type(metrics, Union{AccuracyMetric, RankingMetric})
+    @test_throws ErrorException check_metrics_type(metrics, Union{RankingMetric, AggregatedMetric})
+end
+
 function test_evaluate_explicit(v)
     m = [v 3 v 1 2 1 v 4
          1 2 v v 3 2 v 3
@@ -31,6 +37,9 @@ function test_evaluate_implicit(v)
     # must return a meaningful non-zero value as an error, but it shouldn't be too good (>0.8)
     @test 0.0 < evaluate(recommender, truth_data, Recall(), 4) <= 0.8
 end
+
+println("-- Testing metrics type validation function")
+test_metrics_type_validation()
 
 println("-- Testing evaluate function for explicit feedback")
 test_evaluate_explicit(nothing)

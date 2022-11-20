@@ -29,14 +29,8 @@ function fit!(recommender::Recommender; kwargs...)
 end
 
 function recommend(recommender::Recommender, user::Integer, topk::Integer, candidates::AbstractVector{T}) where {T<:Integer}
-    d = Dict{T,AbstractFloat}()
-    for candidate in candidates
-        score = predict(recommender, user, candidate)
-        if isnan(score); continue; end
-        d[candidate] = score
-    end
-    ranked_recs = sort(collect(d), lt=((k1,v1), (k2,v2)) -> v1>v2 || ((v1==v2) && k1<k2))
-    ranked_recs[1:min(length(ranked_recs), topk)]
+    pairs = filter(p -> !isnan(last(p)), [item => predict(recommender, user, item) for item in candidates])
+    partialsort(pairs, 1:min(length(pairs), topk), by=last, rev=true)
 end
 
 function predict(recommender::Recommender, user::Integer, item::Integer)

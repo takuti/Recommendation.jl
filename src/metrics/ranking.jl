@@ -110,7 +110,12 @@ function measure(metric::AUC, truth::AbstractVector{T}, pred::AbstractVector{T},
     end
     # number of all possible tp-fp pairs
     pairs = tp * (length(pred) - tp)
-    correct / pairs
+    if pairs == 0
+        # if none of the recommended items is in truth, return the worst value
+        0.0
+    else
+        correct / pairs
+    end
 end
 
 """
@@ -137,7 +142,7 @@ function measure(metric::ReciprocalRank, truth::AbstractVector{T}, pred::Abstrac
             return 1 / n
         end
     end
-    return 0
+    return 0.0
 end
 
 """
@@ -162,7 +167,11 @@ function measure(metric::MPR, truth::AbstractVector{T}, pred::AbstractVector{T},
     accum = 0
     n_pred = length(pred)
     for t in truth
-        r = (coalesce(findfirst(isequal(t), pred), 0) - 1) / n_pred
+        rank = findfirst(isequal(t), pred)
+        if isa(rank, Unknown)
+            rank = n_pred
+        end
+        r = (rank - 1) / n_pred
         accum += r
     end
     accum * 100 / length(truth)
@@ -182,7 +191,7 @@ Like MPR, normalized discounted cumulative gain (NDCG) computes a score for ``I(
 """
 struct NDCG <: RankingMetric end
 function measure(metric::NDCG, truth::AbstractVector{T}, pred::AbstractVector{T}, topk::Union{Integer, Nothing}=nothing) where T
-    if isnothing(topk)
+    if isnothing(topk) || topk > length(pred)
         topk = length(pred)
     end
     dcg = idcg = 0

@@ -28,6 +28,10 @@ function test_auc(truth::Array{Int,1}, pred::Array{Int,1})
     eps = 0.001
 
     @test abs(actual - expected) < eps
+
+    # no overlap between truth vs. pred
+    actual = measure(AUC(), [1, 2, 3], [4, 5, 6])
+    @test actual == 0.0
 end
 
 function test_mrr(truth::Array{Int,1}, pred::Array{Int,1})
