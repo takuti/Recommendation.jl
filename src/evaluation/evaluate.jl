@@ -37,6 +37,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 
     accums = [Threads.Atomic{Float64}(0.0) for i in 1:length(metrics)]
     recommendations = Vector{Vector{Integer}}()
+    recs_lock = Threads.ReentrantLock()
 
     Threads.@threads for u in 1:n_users
         observed_items = findall(!iszero, truth_data.R[u, :])
@@ -62,7 +63,9 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
                 Threads.atomic_add!(accums[i], float(measure(metric, pred, observed=observed_items)))
             end
         end
-        push!(recommendations, pred)
+        lock(recs_lock) do
+            push!(recommendations, pred)
+        end
     end
 
     # return average accuracy over the all target users
