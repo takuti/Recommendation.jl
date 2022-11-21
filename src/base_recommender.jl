@@ -36,3 +36,13 @@ end
 function predict(recommender::Recommender, user::Integer, item::Integer)
     error("predict is not implemented for recommender type $(typeof(recommender))")
 end
+
+function predict(recommender::Recommender, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    n_elements = length(indices)
+    pred = zeros(n_elements)
+    Threads.@threads for j in 1:n_elements
+        idx = indices[j]
+        pred[j] = predict(recommender, idx[1], idx[2])
+    end
+    pred
+end

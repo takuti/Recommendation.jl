@@ -38,6 +38,9 @@ function test_recommend()
     @test last(pairs[2]) == 1
     @test first(pairs[3]) == 3
     @test last(pairs[3]) == 0
+
+    @test predict(recommender, 1, 3) == 0
+    @test predict(recommender, [CartesianIndex(1, 3), CartesianIndex(2, 2), CartesianIndex(3, 1)]) == [0, 1, 2]
 end
 
 function test_data_size_validation()

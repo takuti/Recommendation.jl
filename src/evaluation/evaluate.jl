@@ -10,15 +10,8 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
     validate(recommender, truth_data)
 
     nonzero_indices = findall(!iszero, truth_data.R)
-    n_elements = length(nonzero_indices)
-    truth = zeros(n_elements)
-    pred = zeros(n_elements)
-    Threads.@threads for j in 1:n_elements
-        idx = nonzero_indices[j]
-        truth[j] = truth_data.R[idx]
-        pred[j] = predict(recommender, idx[1], idx[2])
-    end
-
+    truth = truth_data.R[nonzero_indices]
+    pred = predict(recommender, nonzero_indices)
     [measure(metric, truth, pred) for metric in metrics]
 end
 
