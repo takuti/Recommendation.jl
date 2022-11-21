@@ -43,3 +43,8 @@ function predict(recommender::SVD, user::Integer, item::Integer)
     validate(recommender)
     recommender.R[user, item]
 end
+
+function predict(recommender::SVD, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    validate(recommender)
+    recommender.R[indices]
+end

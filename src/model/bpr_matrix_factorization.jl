@@ -101,3 +101,8 @@ function predict(recommender::BPRMatrixFactorization, user::Integer, item::Integ
     validate(recommender)
     recommender.R[user, item]
 end
+
+function predict(recommender::BPRMatrixFactorization, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    validate(recommender)
+    recommender.R[indices]
+end
