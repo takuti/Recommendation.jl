@@ -16,6 +16,7 @@ function test_svd()
     @test first(rec[2]) == 2
     @test first(rec[3]) == 5
     @test first(rec[4]) == 6
+    @test predict(recommender, 1, 2) > predict(recommender, 1, 5)
 end
 
 test_svd()

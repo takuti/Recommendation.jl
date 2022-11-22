@@ -36,6 +36,18 @@ function test_evaluate_implicit(v)
 
     # must return a meaningful non-zero value as an error, but it shouldn't be too good (>0.8)
     @test 0.0 < evaluate(recommender, truth_data, Recall(), 4) <= 0.8
+
+    n_items = size(m)[2]
+
+    # top-{all items} recommendation leads to the max coverage
+    @test evaluate(recommender, truth_data, Coverage(), n_items, allow_repeat=true) == 1.0
+
+    # top-{all items} recommendation always give max novelty if repetition is allowed
+    # 5 unobserved (zeros) in user#1 truth, 5 in user#2, 3 in user#3; (5+5+3)/3=4.3333
+    @test isapprox(evaluate(recommender, truth_data, Novelty(), n_items, allow_repeat=true), 4.3333, atol=1e-3)
+
+    # top-{all items} recommendation achieves max diversity across the recs
+    @test evaluate(recommender, truth_data, AggregatedDiversity(), n_items, allow_repeat=true) == n_items
 end
 
 println("-- Testing metrics type validation function")

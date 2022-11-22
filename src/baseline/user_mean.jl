@@ -27,3 +27,9 @@ function predict(recommender::UserMean, user::Integer, item::Integer)
     validate(recommender)
     recommender.scores[user]
 end
+
+function predict(recommender::UserMean, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    validate(recommender)
+    users = map(idx -> idx[1], indices)
+    recommender.scores[users]
+end

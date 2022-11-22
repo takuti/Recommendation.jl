@@ -10,20 +10,14 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
     validate(recommender, truth_data)
 
     nonzero_indices = findall(!iszero, truth_data.R)
-
-    truth = zeros(length(nonzero_indices))
-    pred = zeros(length(nonzero_indices))
-    for (j, idx) in enumerate(nonzero_indices)
-        truth[j] = truth_data.R[idx]
-        pred[j] = predict(recommender, idx[1], idx[2])
-    end
-
+    truth = truth_data.R[nonzero_indices]
+    pred = predict(recommender, nonzero_indices)
     [measure(metric, truth, pred) for metric in metrics]
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::Metric, topk::Integer)
-    evaluate(recommender, truth_data, [metric], topk)[1]
+                  metric::Metric, topk::Integer; allow_repeat=false)
+    evaluate(recommender, truth_data, [metric], topk, allow_repeat=allow_repeat)[1]
 end
 
 function check_metrics_type(metrics::AbstractVector{T},
@@ -43,6 +37,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 
     accums = [Threads.Atomic{Float64}(0.0) for i in 1:length(metrics)]
     recommendations = Vector{Vector{Integer}}()
+    recs_lock = Threads.ReentrantLock()
 
     Threads.@threads for u in 1:n_users
         observed_items = findall(!iszero, truth_data.R[u, :])
@@ -68,7 +63,9 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
                 Threads.atomic_add!(accums[i], float(measure(metric, pred, observed=observed_items)))
             end
         end
-        push!(recommendations, pred)
+        lock(recs_lock) do
+            push!(recommendations, pred)
+        end
     end
 
     # return average accuracy over the all target users

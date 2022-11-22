@@ -21,13 +21,14 @@ struct MatrixFactorization <: Recommender
     n_factors::Integer
     P::AbstractMatrix
     Q::AbstractMatrix
+    R::AbstractMatrix
 
     function MatrixFactorization(data::DataAccessor, n_factors::Integer)
         n_users, n_items = size(data.R)
         P = matrix(n_users, n_factors)
         Q = matrix(n_items, n_factors)
 
-        new(data, n_factors, P, Q)
+        new(data, n_factors, P, Q, matrix(n_users, n_items))
     end
 end
 
@@ -43,7 +44,7 @@ const MF = MatrixFactorization
 
 MF(data::DataAccessor) = MF(data, 20)
 
-isdefined(recommender::MatrixFactorization) = isfilled(recommender.P)
+isdefined(recommender::MatrixFactorization) = isfilled(recommender.R)
 
 function fit!(recommender::MatrixFactorization;
               reg::Float64=1e-3, learning_rate::Float64=1e-3,
@@ -88,9 +89,15 @@ function fit!(recommender::MatrixFactorization;
 
     recommender.P[:] = P[:]
     recommender.Q[:] = Q[:]
+    recommender.R[:] = P * Q'
 end
 
 function predict(recommender::MatrixFactorization, user::Integer, item::Integer)
     validate(recommender)
-    dot(recommender.P[user, :], recommender.Q[item, :])
+    recommender.R[user, item]
+end
+
+function predict(recommender::MatrixFactorization, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    validate(recommender)
+    recommender.R[indices]
 end

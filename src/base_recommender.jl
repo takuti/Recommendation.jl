@@ -29,10 +29,27 @@ function fit!(recommender::Recommender; kwargs...)
 end
 
 function recommend(recommender::Recommender, user::Integer, topk::Integer, candidates::AbstractVector{T}) where {T<:Integer}
-    pairs = filter(p -> !isnan(last(p)), [item => predict(recommender, user, item) for item in candidates])
+    pairs = filter(
+        p -> !isnan(last(p)),
+        candidates .=> predict(recommender, user, candidates)
+    )
     partialsort(pairs, 1:min(length(pairs), topk), by=last, rev=true)
 end
 
 function predict(recommender::Recommender, user::Integer, item::Integer)
     error("predict is not implemented for recommender type $(typeof(recommender))")
+end
+
+function predict(recommender::Recommender, user::Integer, candidates::AbstractVector{T}) where {T<:Integer}
+    predict(recommender, map(item -> CartesianIndex(user, item), candidates))
+end
+
+function predict(recommender::Recommender, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    n_elements = length(indices)
+    pred = zeros(n_elements)
+    for j in 1:n_elements
+        idx = indices[j]
+        pred[j] = predict(recommender, idx[1], idx[2])
+    end
+    pred
 end

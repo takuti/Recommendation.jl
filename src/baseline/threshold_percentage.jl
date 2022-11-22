@@ -32,3 +32,9 @@ function predict(recommender::ThresholdPercentage, user::Integer, item::Integer)
     validate(recommender)
     recommender.scores[item]
 end
+
+function predict(recommender::ThresholdPercentage, indices::AbstractVector{T}) where {T<:CartesianIndex{2}}
+    validate(recommender)
+    items = map(idx -> idx[2], indices)
+    recommender.scores[items]
+end
