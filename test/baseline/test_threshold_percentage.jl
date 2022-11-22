@@ -3,6 +3,9 @@ function test_threshold_percentage(data)
     fit!(recommender)
     @test predict(recommender, 1, 1) == 50.0
     @test predict(recommender, 1, 2) == 100.0
+
+    actual = predict(recommender, [CartesianIndex(1, 1), CartesianIndex(1, 2)])
+    @test actual == [50.0, 100.0]
 end
 
 println("-- Testing ThresholdPercentage recommender")
