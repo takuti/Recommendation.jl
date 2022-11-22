@@ -16,8 +16,8 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::Metric, topk::Integer)
-    evaluate(recommender, truth_data, [metric], topk)[1]
+                  metric::Metric, topk::Integer; allow_repeat=false)
+    evaluate(recommender, truth_data, [metric], topk, allow_repeat=allow_repeat)[1]
 end
 
 function check_metrics_type(metrics::AbstractVector{T},
