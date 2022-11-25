@@ -1,6 +1,6 @@
 As depicted in \fig{recommender}, a common first step of building a recommender is to capture user-item events and translate them into matrix representation. Here, \texttt{Recommendation.jl} eases the step by providing a unified wrapper called \texttt{DataAccessor}. Since data for recommender systems is easily standardizable as a collection of a user, item, and auxiliary attributes, the common interface helps developers to follow the separation-of-concerns principle and ensure the easiness and reliability of data manipulation. 
 
-To be more precise, raw data is always converted into a \texttt{DataAccessor} instance at the data preprocessing phase with proper validation (e.g., data type check, missing value handling), and hence the subsequent steps can simply take the instance and access the data (or metadata) without worrying about unexpected input. \fig{accessor} illustrates the procedure.
+To be more precise, raw data is always converted into a \texttt{DataAccessor} instance at the data preprocessing phase with proper validation (e.g., data type check, missing value handling), and hence the subsequent steps can simply take the instance, and access the data (or metadata) without worrying about unexpected input. \fig{accessor} illustrates the procedure.
 
 \begin{figure}[htbp]
     \centering
@@ -57,4 +57,4 @@ set_user_attribute(data::DataAccessor,
                    attribute::AbstractVector)
 \end{lstlisting}
 
-Additionally, the package provides data loaders that import publicly available datasets such as MovieLens \cite{harper2015movielens}, Amazon Reviews \cite{ni2019justifying}, HetRec 2011 Last.FM\footnote{\url{https://www.last.fm/}} dataset \cite{Cantador:RecSys2011}, as well as a synthetic implicit feedback generator using a simple rule-based method demonstrated in \cite{Aharon2013}. These modules return a ready-to-use \texttt{DataAccessor} instance for easing experiments.
+Additionally, the package provides data loaders that import publicly available datasets such as MovieLens \cite{harper2015movielens}, Amazon Reviews \cite{ni2019justifying}, and HetRec 2011 Last.FM\footnote{\url{https://www.last.fm/}} dataset \cite{Cantador:RecSys2011}, as well as a synthetic implicit feedback generator using a simple rule-based method demonstrated in \cite{Aharon2013}. These modules return a ready-to-use \texttt{DataAccessor} instance for easing experiments.
