@@ -20,9 +20,10 @@ using Recommendation
 value_prediction_recommenders = [
     ItemMean => [],
     UserMean => [],
+    SVD => [4],
+    SVD => [8],
     SVD => [16],
     SVD => [32],
-    SVD => [64],
     # BPRMatrixFactorization => [],
     # FactorizationMachines => [],
     # MatrixFactorization => [],
@@ -41,12 +42,16 @@ rank_by_score_recommenders = [
     # TfIdf => [],
 ]
 
-accuracy_metrics = [
+function instantiate(metrics::AbstractVector{DataType})
+    [metric() for metric in metrics]
+end
+
+accuracy_metrics = instantiate([
     RMSE,
     MAE,
-]
+])
 
-topk_metrics = [
+topk_metrics = instantiate([
     Recall,
     Precision,
     AUC,
@@ -56,7 +61,14 @@ topk_metrics = [
     AggregatedDiversity,
     ShannonEntropy,
     GiniIndex,
-]
+])
+
+# * IntraListSimilarity can be calculated with an item-item similarity metrix, which can be built by ItemKNN.
+# * Serendipity requires context-specific definition of relevance and unexpectedness.
+intra_list_metrics = instantiate([
+    Coverage,
+    Novelty
+])
 
 datasets = [
     load_movielens_100k,
@@ -65,52 +77,40 @@ datasets = [
     # load_lastfm
 ]
 
-test_ratio = 0.2
 topk = 10
-
-function eval(instantiated_recommender::Recommender, truth_data::DataAccessor,
-              metrics::AbstractVector{T}, topk=nothing) where T
-    instantiated_metrics = [metric() for metric in metrics]
-    if isnothing(topk)
-        # accuracy metrics
-        results = evaluate(instantiated_recommender, truth_data, instantiated_metrics)
-    else
-        # intra-list metrics:
-        # * IntraListSimilarity can be calculated with an item-item similarity metrix, which can be built by ItemKNN.
-        # * Serendipity requires context-specific definition of relevance and unexpectedness.
-        coverage, novelty = evaluate(instantiated_recommender, truth_data,
-                                     [Coverage(), Novelty()], topk, allow_repeat=true)
-        @info "  Coverage = $coverage"
-        @info "  Novelty = $novelty"
-
-        # ranking / aggregated metrics
-        results = evaluate(instantiated_recommender, truth_data, instantiated_metrics, topk)
-    end
-
-    for (metric, res) in zip(metrics, results)
-        @info "  $metric = $res"
-    end
-end
+n_folds = 5
 
 for dataset in datasets
     @info "Dataset: $dataset"
     data = dataset()
-    train_data, truth_data = split_data(data, test_ratio)
 
     @info "Evaluating value prediction-based recommenders"
     for (recommender, params) in value_prediction_recommenders
         @info "Recommender: $recommender($params...)"
-        r = recommender(train_data, params...)
-        fit!(r)
-        eval(r, truth_data, accuracy_metrics)
-        eval(r, truth_data, topk_metrics, topk)
+        results = cross_validation(n_folds, accuracy_metrics, recommender, data, params...)
+        for (metric, res) in zip(accuracy_metrics, results)
+            @info "  $metric = $res"
+        end
+        results = cross_validation(n_folds, topk_metrics, topk, recommender, data, params...)
+        for (metric, res) in zip(topk_metrics, results)
+            @info "  $metric = $res"
+        end
+        results = cross_validation(n_folds, intra_list_metrics, topk, recommender, data, params..., allow_repeat=true)
+        for (metric, res) in zip(intra_list_metrics, results)
+            @info "  $metric = $res"
+        end
     end
 
     @info "Evaluating custom ranking score-based recommenders"
     for (recommender, params) in rank_by_score_recommenders
         @info "Recommender: $recommender($params...)"
-        r = recommender(train_data, params...)
-        fit!(r)
-        eval(r, truth_data, topk_metrics, topk)
+        results = cross_validation(n_folds, topk_metrics, topk, recommender, data, params...)
+        for (metric, res) in zip(topk_metrics, results)
+            @info "  $metric = $res"
+        end
+        results = cross_validation(n_folds, intra_list_metrics, topk, recommender, data, params..., allow_repeat=true)
+        for (metric, res) in zip(intra_list_metrics, results)
+            @info "  $metric = $res"
+        end
     end
 end

@@ -16,7 +16,7 @@ function evaluate(recommender::Recommender, truth_data::DataAccessor,
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metric::Metric, topk::Integer; allow_repeat=false)
+                  metric::Metric, topk::Integer; allow_repeat::Bool=false)
     evaluate(recommender, truth_data, [metric], topk, allow_repeat=allow_repeat)[1]
 end
 
@@ -28,7 +28,7 @@ function check_metrics_type(metrics::AbstractVector{T},
 end
 
 function evaluate(recommender::Recommender, truth_data::DataAccessor,
-                  metrics::AbstractVector{T}, topk::Integer; allow_repeat=false) where {T<:Metric}
+                  metrics::AbstractVector{T}, topk::Integer; allow_repeat::Bool=false) where {T<:Metric}
     validate(recommender, truth_data)
     check_metrics_type(metrics, Union{RankingMetric, AggregatedMetric, Coverage, Novelty})
 
