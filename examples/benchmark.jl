@@ -37,7 +37,7 @@ value_prediction_recommenders = [
 # approximating the original user-item data.
 rank_by_score_recommenders = [
     MostPopular => [],
-    ThresholdPercentage => [3.0],
+    # ThresholdPercentage => [3.0],
     # CoOccurrence => [1],
     # TfIdf => [],
 ]
