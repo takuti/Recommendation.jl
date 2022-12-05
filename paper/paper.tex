@@ -1,0 +1,57 @@
+\documentclass{juliacon}
+\usepackage{enumitem}
+\usepackage{dsfont}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{blkarray, bigstrut}
+\usepackage{multirow}
+
+\setlength\parskip{6pt}
+\setlist[itemize]{parsep=0pt}
+\setlist[enumerate]{parsep=0pt}
+
+\newcommand{\eq}[1]{Equation~(\ref{eq:#1})}
+\newcommand{\alg}[1]{Algorithm~\ref{alg:#1}}
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tab}[1]{Table~\ref{tab:#1}}
+\newcommand{\lst}[1]{List~\ref{lst:#1}}
+\newcommand{\sect}[1]{Section~\ref{sec:#1}}
+
+\setcounter{page}{1}
+
+\begin{document}
+
+\input{header}
+
+\maketitle
+
+\begin{abstract}
+A recommender system is a data-driven application that generates personalized content for users. This paper demonstrates \texttt{Recommendation.jl}, an open-source package for building recommender systems in Julia. In practice, the Julia programming language can be a deeply satisfying option to efficiently and effectively address the recommender's unique characteristics, which rely heavily on repetitive matrix computations in multi-stage data pipelines. To make the systems trustworthy in terms of not only accuracy and scalability but usability and fairness at large, the package provides highly extensible APIs with a diverse set of ready-to-use baseline datasets, recommendation algorithms, and evaluation metrics.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+\input{section/introduction.tex}
+
+\section{Unified Interface for Accessing User-Item Data}
+\label{sec:data}
+\input{section/data.tex}
+
+\section{Recommendation Algorithms}
+\label{sec:algorithm}
+\input{section/algorithm.tex}
+
+\section{Evaluation Framework}
+\label{sec:evaluation}
+\input{section/evaluation.tex}
+
+\section{Experimental Results}
+\label{sec:experiment}
+\input{section/experiment.tex}
+
+\section{Conclusion}
+\input{section/conclusion.tex}
+
+\input{bib.tex}
+
+\end{document}

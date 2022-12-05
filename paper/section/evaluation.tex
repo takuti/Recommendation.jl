@@ -1,0 +1,234 @@
+One of the notable characteristics of \texttt{Recommendation.jl} is a diverse set of evaluation metrics, including not only the standard accuracy metrics but fairness metrics such as diversity and serendipity. Even though the idea of diverse or serendipitous recommendations is not new in the literature, the topic has rapidly gained traction these days as society realizes the importance of ethical implications in intelligent systems \cite{milano2020recommender}. This section highlights the high-level concept of these metrics and their implementation in Julia based on a common abstract type, \texttt{Matric}.
+
+\begin{lstlisting}[language = Julia]
+abstract type Metric end
+\end{lstlisting}  
+
+For accuracy metrics, users can use the standard evaluation scheme, \texttt{cross\_validation} and \texttt{leave\_one\_out}, provided by the package. For instance, the following module runs \texttt{n\_folds} cross-validation for a specific combination of recommender and ranking metric. Notice that a recommender is initialized with \texttt{recommender\_args} for making a top-k recommendation.
+
+\begin{lstlisting}[language = Julia]
+cross_validation(
+    n_folds::Integer, 
+    metric::Metric, 
+    topk::Integer, 
+    recommender_type::Type{<:Recommender}, 
+    data::DataAccessor, 
+    recommender_args...; 
+    # control whether recommending the same item to 
+    # the same user multiple times is allowed
+    allow_repeat=false
+)
+\end{lstlisting}
+
+It should be noted that evaluating recommender systems is not always the same as measuring the accuracy of machine learning-based prediction, and there is a separate research domain discussing what an appropriate evaluation method is. In the open-source community, the Python-based \texttt{RecPack} package \cite{michiels2022recpack} considers this point and provides a dedicated layer called \texttt{Scenario}, which can be a future direction \texttt{Recommendation.jl} possibly aims for.
+
+\subsection{Rating Metrics}
+\label{sec:rating-metrics}
+
+First and foremost, even though the community focuses more on implicit feedback-based ranking problems lately, rating prediction is still an important foundation in the field of recommender systems as the previous sections mentioned.
+
+\begin{lstlisting}[language = Julia]
+abstract type AccuracyMetric <: Metric end
+function measure(metric::AccuracyMetric, 
+                 truth::AbstractVector, 
+                 pred::AbstractVector)
+end  
+\end{lstlisting}
+
+As a subtype of \texttt{AccuracyMetric}, \texttt{Recommendation.jl} is capable to compute Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE) given pairs of \texttt{truth} and \texttt{prediction} values.
+
+\subsection{Ranking Metrics}
+\label{sec:ranking-metrics}
+
+An output from a recommender system is commonly a ranked list of items, and hence measuring the goodness of the ranking is another way to evaluate the systems. 
+
+\begin{lstlisting}[language = Julia]
+abstract type RankingMetric <: Metric end
+function measure(metric::RankingMetric, 
+                 truth::AbstractVector{T}, 
+                 pred::AbstractVector{T}, 
+                 topk::Union{Integer, Nothing}
+                ) where T
+end
+\end{lstlisting}
+
+Although the interface is the same across the metrics, each of them has a different objective as part of its formulation. To review the differences with some intuition, let a target user $u \in \mathcal{U}$, set of all items $\mathcal{I}$, ordered set of top-$k$ recommended items $I_k(u) \subset \mathcal{I}$, and set of truth items $\mathcal{I}^+_u$. 
+
+\subsubsection{Recall-at-$k$}
+
+Recall-at-$k$ (Recall@$k$) indicates coverage of truth samples as a result of top-$k$ recommendation. The value is computed by the following equation:
+$$
+\mathrm{Recall@}k = \frac{|\mathcal{I}^+_u \cap I_k(u)|}{|\mathcal{I}^+_u|}.
+$$
+
+Here, $|\mathcal{I}^+_u \cap I_k(u)|$ is the number of \textit{true positives} which can be simply computed by the following piece of code:
+
+\begin{lstlisting}[language = Julia]
+function count_intersect(
+    truth::Union{AbstractSet, AbstractVector}, 
+    prediction::Union{AbstractSet, AbstractVector})
+    length(intersect(truth, prediction))
+end
+\end{lstlisting}
+
+\subsubsection{Precision-at-$k$}
+
+Unlike Recall@$N$, Precision-at-$k$ (Precision@$k$) evaluates the correctness of a top-$k$ recommendation list $I_k(u)$ according to the portion of true positives in the list as:
+$$
+\mathrm{Precision@}k = \frac{|\mathcal{I}^+_u \cap \mathcal{I}_k(u)|}{|\mathcal{I}_k(u)|}.
+$$
+In other words, Precision@$k$ measures how much the recommendation list covers true pairs.
+
+\subsubsection{Mean Average Precision (MAP)}
+
+While the original Precision@$k$ provides a score for a fixed-length recommendation list $I_k(u)$, mean average precision (MAP) computes an average of the scores against all possible recommendation sizes from 1 to $|\mathcal{I}|$. MAP is formulated with an indicator function for $i_n$, the $n$-th item of $I(u)$, as:
+\begin{equation*}
+\mathrm{MAP} = \frac{1}{|\mathcal{I}^+_u|} \sum_{n = 1}^{|\mathcal{I}|} \mathrm{Precision@}n \cdot \mathds{1}_{\mathcal{I}^+_u}(i_n).
+\end{equation*}
+It should be noticed that MAP is not a simple mean of the sum of Precision@$1$, Precision@$2$, $\dots$, Precision@$|\mathcal{I}|$, and higher-ranked true positives lead better MAP.
+
+\subsubsection{Area under the ROC Curve (AUC)}
+
+ROC curve and area under the ROC curve (AUC) are generally used in the evaluation of classification problems, but these concepts can also be interpreted in the context of the ranking problem. The AUC metric for ranking considers all possible pairs of truth and other items which are respectively denoted by $i^+ \in \mathcal{I}^+_u$ and $i^- \in \mathcal{I}^-_u$, and it expects that the ``best'' recommender completely ranks $i^+$ higher than $i^-$.
+
+AUC calculation keeps tracking the number of true positives at different ranks in $\mathcal{I}$. In the implementation of \texttt{measure()}, the code adds the number of true positives which were ranked higher than the current non-truth sample to the accumulated count of correct pairs. Ultimately, an AUC score is computed as a portion of the correct ordered $(i^+, i^-)$ pairs in all possible combinations determined by $|\mathcal{I}^+_u| \times |\mathcal{I}^-_u|$ in set notation. 
+
+\subsubsection{Reciprocal Rank (RR)}
+
+If we are only interested in the first true positive, reciprocal rank (RR) could be a reasonable choice to quantitatively assess the recommendation lists. For $n_{\mathrm{tp}} \in \left[ 1, |\mathcal{I}| \right]$, a position of the first true positive in $I(u)$, RR simply returns its inverse:
+\begin{equation*}
+  \mathrm{RR} = \frac{1}{n_{\mathrm{tp}}}.
+\end{equation*}
+RR can be zero if and only if $\mathcal{I}^+_u$ is empty.
+
+\subsubsection{Mean Percentile Rank (MPR)}
+Mean percentile rank (MPR) is a ranking metric based on $r_{i} \in [0, 100]$, the percentile ranking of an item $i$ within the sorted list of all items for a user $u$. It can be formulated as:
+\begin{equation*}
+\mathrm{MPR} = \frac{1}{|\mathcal{I}^+_u|} \sum_{i \in \mathcal{I}^+_u} r_{i}.
+\end{equation*}
+$r_{i} = 0\%$ is the best value which means the truth item $i$ is ranked at the highest position in a recommendation list. On the other hand, $r_{i} = 100\%$ is the worst case that the item $i$ is at the lowest rank.
+
+MPR internally considers not only top-$k$ recommended items but also all of the non-recommended items, and it accumulates the percentile ranks for all true positives, unlike MRR. So, the measure is suitable to estimate users' overall satisfaction with a recommender. Intuitively, $\mathrm{MPR} > 50\%$ should be worse than random ranking from a user's point of view.
+
+\subsubsection{Normalized Discounted Cumulative Gain (NDCG)}
+
+Like MPR, normalized discounted cumulative gain (NDCG) computes a score for $I(u)$ which emphasizes higher-ranked true positives. In addition to being a more well-formulated measure, the difference between NDCG and MPR is that NDCG allows us to specify an expected ranking within $\mathcal{I}^+_u$; that is, the metric can incorporate $\mathrm{rel}_n$, a relevance score which suggests how likely the $n$-th sample is to be ranked at the top of a recommendation list, and it directly corresponds to an expected ranking of the truth samples.
+
+\subsection{Aggregated Metrics}
+\label{sec:aggregated-metrics}
+
+Aggregated metrics return a single score for an array of multiple top-$k$ recommendation lists as the following function signature illustrates. 
+
+\begin{lstlisting}[language = Julia]
+abstract type AggregatedMetric <: Metric end
+function measure(
+    metric::AggregatedMetric, 
+    recommendations::
+        AbstractVector{<:AbstractVector{<:Integer}}; 
+    topk::Union{Integer, Nothing})
+end
+\end{lstlisting}
+
+A comprehensive summary of these metrics is available in \cite{shani2011evaluating}, and Equation~(20) and (21) on page 26 provide the formulation of two metrics that are available in \texttt{Recommendation.jl}, the Gini index and Shannon Entropy. Unlike calculating errors for every truth-prediction pair as we have seen in the previous sections, aggregating multiple recommendation lists gives a bird's eye view of how good a recommender system is as a whole. Thus, the metrics are useful to measure the global diversity of the recommender's outputs.
+
+\subsubsection{Aggregated Diversity}
+
+\texttt{AggregatedDiversity} calculates the number of distinct items recommended across all users. A larger value indicates a more diverse recommendation result overall.
+
+Let $\mathcal{U}$ and $\mathcal{I}$ be a set of users and items, respectively, and $L_k(u)$ a list of top-$k$ recommended items for a user $u$. Here, an aggregated diversity can be calculated as:
+\begin{equation*}
+\left| \bigcup\limits_{u \in \mathcal{U}} L_k(u) \right|.
+\end{equation*}
+
+Not to mention the equation is translated to a simple set operation in Julia.
+
+\subsubsection{Shannon Entropy}
+
+If we focus more on individual items and how many users are recommended a particular item, the diversity of top-$k$ recommender can be defined by Shannon Entropy (\texttt{ShannonEntropy}):
+\begin{align*}
+-\sum_{j = 1}^{|\mathcal{I}|} \Bigg( & \frac{\left|\{u \mid u \in \mathcal{U} \wedge i_j \in L_k(u) \}\right|}{k |\mathcal{U}|} \cdot \\ 
+& \ln \left( \frac{\left|\{u \mid u \in \mathcal{U} \wedge i_j \in L_k(u) \}\right|}{k |\mathcal{U}|}  \right) \Bigg),
+\end{align*}
+where $i_j$ denotes $j$-th item in the available item set $\mathcal{I}$. The ``worst'' entropy is zero when a single item is always recommended.
+
+\subsubsection{Gini Index}
+
+The Gini Index, which is normally used to measure a degree of inequality in the distribution of income, can also be applied to assess diversity in the context of top-$k$ recommendation:
+\begin{equation*}
+\frac{1}{|\mathcal{I}| - 1} \sum_{j = 1}^{|\mathcal{I}|} \left( (2j - |\mathcal{I}| - 1) \cdot \frac{\left|\{u \mid u \in \mathcal{U} \wedge i_j \in L_k(u) \}\right|}{k |\mathcal{U}|} \right).
+\end{equation*}
+\texttt{measure(metric::GiniIndex, recommendations, topk)} returns 0 when all items are equally chosen (``best''), and 1 when a single item is always chosen.
+
+\subsection{Intra-List Metrics}
+\label{sec:intra-list-metrics}
+
+Given a list of recommended items (for a single user), intra-list metrics quantify the quality of the recommendation list from a non-accuracy perspective. Kotkov et~al. \cite{kotkov2016survey} highlighted the foundation of these metrics, and \texttt{Recommendation.jl} implements four of them: \texttt{Coverage}, \texttt{Novelty}, \texttt{IntraListSimilarity}, and \texttt{Serendipity} under the following schema.
+
+\begin{lstlisting}[language = Julia]
+abstract type IntraListMetric <: Metric end
+function measure(
+    metric::IntraListMetric, 
+    recommendations::Union{AbstractSet, 
+                           AbstractVector}; 
+    kwargs...)
+end
+\end{lstlisting}
+
+Notice that standardizing an interface for the quality measures is not straightforward because the definition of ``quality'' is ambiguous. Hence, a list of \texttt{recommendations} can be given either as a set or array (vector) depending on whether the uniqueness of items in the list matters, for example. Meanwhile, \texttt{kwargs...} differ depending on a choice of metric.
+
+\subsubsection{Coverage}
+
+Catalog coverage is a ratio of recommended items among \texttt{catalog}, which represents a set of all available items.
+
+\begin{lstlisting}[language = Julia]
+struct Coverage <: IntraListMetric end
+measure(
+    metric::Coverage, recommendations;
+    catalog::Union{AbstractSet, AbstractVector}
+)
+\end{lstlisting}
+
+A larger coverage can indicate a recommender is unlikely biased toward a limited set of items. The set operation could leverage \texttt{count\_intersect()} \sect{ranking-metrics} highlighted.
+
+\subsubsection{Novelty}
+
+Novelty is the number of recommended items that have not been observed yet i.e., not in \texttt{observed}.
+
+\begin{lstlisting}[language = Julia]
+struct Novelty <: IntraListMetric end
+measure(
+    metric::Novelty, recommendations;
+    observed::Union{AbstractSet, AbstractVector}
+)
+\end{lstlisting}
+
+The metric quantifies the recommender's capability to surface unseen items, which allows users to encounter unexpected items for discovery.
+
+\subsubsection{Intra-List Similarity}
+
+Ziegler et~al. \cite{ziegler2005improving} demonstrated a metric that computes a sum of similarities between every pair of recommended items. A larger value represents less diversity.
+
+\begin{lstlisting}[language = Julia]
+struct IntraListSimilarity <: IntraListMetric end
+measure(
+    metric::IntraListSimilarity, recommendations;
+    similarities::AbstractMatrix
+)
+\end{lstlisting}
+
+To avoid redundant computation, \texttt{Recommendation.jl} asks users for pre-computing item-item \texttt{similarities} (i.e., a similarity for every single item-item pair), and the metric simply calculates a sum over all the possible pairs.
+
+\subsubsection{Serendipity}
+
+Serendipity is numerically defined by a sum of relevance-unexpectedness multiplications for all recommended items.
+
+\begin{lstlisting}[language = Julia]
+struct Serendipity <: IntraListMetric end
+measure(
+    metric::Serendipity, recommendations;
+    relevance::AbstractVector, 
+    unexpectedness::AbstractVector
+)
+\end{lstlisting}
+
+It should be noticed that we must first quantify \texttt{relevance} and \texttt{unexpectedness} before calculating the metric, and the results can be largely affected by how these factors are calculated.
